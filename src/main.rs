@@ -12,14 +12,14 @@ fn calculate_brightness(pixel: Rgba<u8>) -> f32 {
     brightness
 }
 
-fn match_group_with_letter(group: [[f32; 6]; 12]) -> char {
+fn match_group_with_letter(group: [[f32; 8]; 16]) -> char {
     let mut best_match = ' ';
     let mut best_match_value = f32::MIN;
 
     for (letter, letter_pixels) in abc::get_dict().iter() {
         let mut match_value = 0.0;
-        for y in 0..12 {
-            for x in 0..6 {
+        for y in 0..16 {
+            for x in 0..8 {
                 match_value += group[y][x] * letter_pixels[y][x] as f32;
             }
         }
@@ -40,27 +40,27 @@ fn main() -> io::Result<()> {
     // Convert to grayscale if necessary
     let (width, height) = img.dimensions();
 
-    // Calculate number of 6x12 groups
-    let num_groups_x = (width + 5) / 6;
-    let num_groups_y = (height + 11) / 12;
+    // Calculate number of 8x16 groups
+    let num_groups_x = (width + 7) / 8;
+    let num_groups_y = (height + 15) / 16;
 
     println!("Image dimensions: {}x{}", width, height);
-    println!("Number of 6x12 groups: {}x{}", num_groups_x, num_groups_y);
+    println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
 
-    // Iterate over 6x12 groups
+    // Iterate over 8x16 groups
     for y in 0..num_groups_y {
         for x in 0..num_groups_x {
             // Process pixels in the current group
 
-            let mut group = [[0.0; 6]; 12];
+            let mut group = [[0.0; 8]; 16];
 
-            for pixel_y in 0..12 {
-                for pixel_x in 0..6 {
-                    if (x * 6 + pixel_x) >= width || (y * 12 + pixel_y) >= height {
+            for pixel_y in 0..16 {
+                for pixel_x in 0..8 {
+                    if (x * 8 + pixel_x) >= width || (y * 16 + pixel_y) >= height {
                         group[pixel_y as usize][pixel_x as usize] = -0.5;
                         continue;
                     }
-                    let pixel = img.get_pixel(x * 6 + pixel_x, y * 12 + pixel_y);
+                    let pixel = img.get_pixel(x * 8 + pixel_x, y * 16 + pixel_y);
                     let brightness = calculate_brightness(pixel);
                     group[pixel_y as usize][pixel_x as usize] = brightness - 0.5;
                 }
