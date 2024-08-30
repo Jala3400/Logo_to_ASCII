@@ -13,7 +13,7 @@ struct Args {
     path: String,
 
     /// width of the letters in pixels
-    #[arg(short, long, default_value_t = 6)]
+    #[arg(short, long, default_value_t = 8)]
     width: u8,
 
     /// Inverse the colors of the image

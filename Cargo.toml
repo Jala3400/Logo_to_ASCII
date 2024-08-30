@@ -1,5 +1,5 @@
 [package]
-name = "Image_b_and_w_to_ASCII"
+name = "Logo_to_ASCII"
 version = "0.1.0"
 edition = "2021"
 
