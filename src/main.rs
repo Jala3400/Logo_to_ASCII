@@ -13,6 +13,10 @@ struct Args {
     #[arg(short, long)]
     path: String,
 
+    /// Path of the font to use (optional)
+    #[arg(short, long)]
+    font: Option<String>,
+
     /// Inverse the colors of the image
     #[arg(short, long, default_value_t = false)]
     inverse: bool,
@@ -84,7 +88,7 @@ fn main() -> io::Result<()> {
     // Load the image
     let img = image::open(&args.path).unwrap();
 
-    let font = abc::get_dict8x16();
+    let font = abc::get_dict8x16(&args.font);
 
     process_block(img, args, font);
 

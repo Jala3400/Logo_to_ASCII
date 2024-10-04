@@ -1,15 +1,21 @@
-use std::collections::HashMap;
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
+use std::collections::HashMap;
 
 use image::{Rgba, RgbaImage};
 
-pub fn get_dict8x16() -> HashMap<char, Vec<Vec<f32>>> {
+pub fn get_dict8x16(font_path: &Option<String>) -> HashMap<char, Vec<Vec<f32>>> {
     // Load or create an image
-    let mut img ;
+    let mut img;
 
     // Load a font
-    let font = Font::try_from_bytes(include_bytes!("C:/Windows/Fonts/Consola.ttf")).unwrap();
+    let font: Font<'_>;
+    if let Some(font_path) = font_path {
+        let font_data = std::fs::read(font_path).expect(&format!("Failed to read font file {font_path}"));
+        font = Font::try_from_vec(font_data).expect("Failed to load font");
+    } else {
+        font = Font::try_from_bytes(include_bytes!("C:/Windows/Fonts/Consola.ttf")).unwrap();
+    }
 
     // Define text properties
     let mut text;
@@ -40,7 +46,7 @@ pub fn get_dict8x16() -> HashMap<char, Vec<Vec<f32>>> {
             let mut row = Vec::new();
             for x in 0..img.width() {
                 let pixel = img.get_pixel(x, y);
-                row.push(calculate_brightness(pixel));
+                row.push(calculate_brightness(pixel) - 0.5);
             }
             character.push(row);
         }
