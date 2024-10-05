@@ -26,10 +26,10 @@ pub fn get_dict8x16(font_path: &Option<String>) -> HashMap<char, Vec<Vec<f32>>> 
     let mut characters = Vec::new();
 
     // Extract characters from the font
-    for c in 32..=126 as u8 {
+    for c in "8dqpb/\\'._ ".chars() {
         // ASCII printable characters
-        print!("{}", c as char);
-        characters.push(c as char);
+        print!("{}", c );
+        characters.push(c);
     }
     println!("");
 
