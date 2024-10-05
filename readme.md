@@ -1,32 +1,54 @@
-# Logo to ASCII art
+# Logo to ASCII
 
 Prueba de concepto para convertir una imagen en blanco y negro a ascii art (hecho en rust).
 
+A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosidad media de cada bloque, sino que elige el carácter que mejor se aproxima a su forma. No hace diferencia entre colores, solo mide la luminosidad que tiene cada pixel, por lo que funciona mejor con bordes bien definidos.
+
+![Cruz de Calatrava](./images/cruz.png)
+
+## Índice
+- [Logo to ASCII](#logo-to-ascii)
+  - [Índice](#índice)
+  - [Instalación](#instalación)
+  - [Uso](#uso)
+  - [¿Cómo funciona?](#cómo-funciona)
+
+## Instalación
+
+1. Descarga rust desde https://www.rust-lang.org/tools/installs:
+   1. Al terminar la instalación escribe `rustc --version` en la consola para comprobar que todo ha salido bien.
+2. Descarga este repositorio.
+3. Compllia el repositorio: En la consola de comandos ejecuta `cargo build`. 
+
+## Uso
+
+1. Ejecuta el programa desde la consola. Le tenemos que indicar la imagen que queremos usar, por lo que el comando quedaría así: `./target/debug/Logo_to_ASCII.exe --path <path_imagen>`.
+
+Ese comando imprimirá el texto en la consola.
+
+Otros casos a tener en cuenta:
+* Para imprimir la imagen en negativo (imprimiendo donde está el color negro) se deberá añadir `-i` al comando.
+* Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`. Se tratará como una fuente monoespacio.
+* Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
+
 ![Imagen procesada](./images/image.png)
-Imagen a ASCII
+Logo a ASCII
 
 ![Imagen procesada en negativo](./images/image-i.png)
-imagen a ASCII en negativo
+Logo a ASCII en negativo
 
-# ¿Cómo se usa?
+## ¿Cómo funciona?
 
-1. Descarga y compila el programa 
-2. En la consola ejecuta el comando `./target/debug/Logo_to_ASCII.exe --path <path_imagen>`
-3. Se escribirá en la consola el ascii art de la imagen (la parte que está en blanco. El transparente cuenta como negro)
+La idea surgió de un video en el que se convertía una imagen a ASCII. Sin embargo, se perdía mucha información, los carácteres no tenían la forma que debían.
 
-El texto se imprimirá en la consola. Para guardar el resultado en un archivo, redirige la salida a un archivo con el comando `./target/debug/Logo_to_ASCII.exe --path <path_imagen> > <nombre_archivo>.txt`
+Este algoritmo opera con píxeles en vez de con bloques.
 
-Para dibujar la imagen en negativo, se puede añadir el flag `-i` al final del comando.
+Primero se procesan los carácteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Se eligen las dimensiones 8x16 para hacer un mapa de bits de cada carácter. Este indica la luminosidad de cada pixel.
 
-Cada carácter ocupa 8x16 píxeles de la imágen original. Con el flag `-w6` ocuparán 6x12. Se recomienda usar imágenes con anchuras divisibles entre estos números (6 u 8 dependiendo de cuál se use).
+Al calcular la luminosidad se obtiene un valor de 0 a 1. Es importante restarle 0.5 para obtener valores negativos y positivos.
 
-# ¿Cómo funciona?
+Después se procesa la imagen, dividiéndola en bloques de 8x16 (la misma medida que nuestros carácteres) y se calcula la luminosidad de cada uno de los pixeles (restándole también 0.5). 
 
-Se procesa la imágen por bloques, comparándolos con cada carácter. Para cada carácter tenemos una matriz (lista de listas) que contiene 1 y -1 donde la letra tiene o no tiene un píxel. Estos se han puesto a mano, por lo que no encajan perfectamente, pero hacen el trabajo. 
+Por cada carácter, se multiplica el valor de cada pixel con su homólogo en el bloque, y se suman todos los valores ([0][0] * [0][0] + [0][1] * [0][1] + ...). Al final, se imprime el carácter con la puntuación más alta.
 
-Por cada píxel de la imágen se calcula su iluminación, entre 0 y 1, y se le resta 0.5, de modo que abarca un rango de -0.5 a 0.5. Lo único que importa es que la mitad de los píxeles tendrán valor negativo y la otra positivo.
-
-Cada bloque se compara con todos los caracteres, y se elige el que más se parezca. Para evaluar cada carácter, se multiplica el valor de cada píxel con el valor del píxel correspondiente de la matriz del carácter, y se suman todos los valores. Se elige el carácter con la suma más alta.
-
-De esta forma, el carácter que tenga más píxeles que coincidan con el bloque y menos donde el bloque no tenga, tendrá la suma más alta.
-Se puede ver mejor así: + · + = + | - · - = + | - · + = -
+El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un númro positivo, y al multiplicar dos números negativos también. Esto premia las coincidencias de pixeles (y no píxeles) y penaliza las diferencias.
