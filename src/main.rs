@@ -17,6 +17,10 @@ struct Args {
     #[arg(short, long)]
     font: Option<String>,
 
+    /// Path of the font to use (optional)
+    #[arg(short, long)]
+    chars: Option<String>,
+
     /// Inverse the colors of the image
     #[arg(short, long, default_value_t = false)]
     inverse: bool,
@@ -43,7 +47,7 @@ fn match_group_with_letter(group: [[f32; 8]; 16], font: &HashMap<char, Vec<Vec<f
     best_match
 }
 
-fn process_block(img: image::DynamicImage, args: Args, font: HashMap<char, Vec<Vec<f32>>>) {
+fn process_block(img: image::DynamicImage, inverse: bool, font: HashMap<char, Vec<Vec<f32>>>) {
     // Get the dimensions of the image
     let (width, height) = img.dimensions();
 
@@ -68,12 +72,12 @@ fn process_block(img: image::DynamicImage, args: Args, font: HashMap<char, Vec<V
                         continue;
                     }
                     let pixel = img.get_pixel(x * 8 + pixel_x, y * 16 + pixel_y);
-                    let brightness = calculate_brightness(&pixel);
-                    group[pixel_y as usize][pixel_x as usize] = brightness - 0.5;
-
-                    if args.inverse {
-                        group[pixel_y as usize][pixel_x as usize] *= -1.0;
-                    }
+                    let brightness = if pixel[3] == 0 {
+                        -0.5
+                    } else {
+                        (calculate_brightness(&pixel) - 0.5) * if inverse { -1.0 } else { 1.0 }
+                    };
+                    group[pixel_y as usize][pixel_x as usize] = brightness;
                 }
             }
             print!("{}", match_group_with_letter(group, &font));
@@ -88,9 +92,15 @@ fn main() -> io::Result<()> {
     // Load the image
     let img = image::open(&args.path).unwrap();
 
-    let font = abc::get_dict8x16(&args.font);
+    let chars = if let Some(chars) = args.chars {
+        chars
+    } else {
+        "8dbqp'·. ".to_string()
+    };
 
-    process_block(img, args, font);
+    let font = abc::get_dict8x16(args.font, chars);
+
+    process_block(img, args.inverse, font);
 
     Ok(())
 }
