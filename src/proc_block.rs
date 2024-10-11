@@ -1,10 +1,7 @@
 use image::GenericImageView;
 use std::collections::HashMap;
 
-use crate::{
-    calc_pixel::{calc_custom_brightness, calc_hue},
-    Args,
-};
+use crate::proc_pixel::{calc_custom_brightness, calc_hue};
 
 pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &HashMap<char, Vec<Vec<f32>>>) -> char {
     let mut best_match = ' ';
@@ -27,32 +24,12 @@ pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &HashMap<char, Vec<V
     best_match
 }
 
-pub fn convert_image(img: image::DynamicImage, args: Args, font: HashMap<char, Vec<Vec<f32>>>) {
-    // Get the dimensions of the image
-    let (width, height) = img.dimensions();
-
-    // Calculate number of 8x16 groups
-    let num_groups_x = (width + 7) / 8;
-    let num_groups_y = (height + 15) / 16;
-
-    println!("Image dimensions: {}x{}", width, height);
-    println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
-
-    // Iterate over 8x16 groups
-    for y in 0..num_groups_y {
-        for x in 0..num_groups_x {
-            let group = if args.color {
-                process_block_color(&img, x, y, args.inverse)
-            } else {
-                process_block(&img, x, y, args.inverse)
-            };
-            print!("{}", match_group_with_letter(group, &font));
-        }
-        println!();
-    }
-}
-
-fn process_block(img: &image::DynamicImage, x: u32, y: u32, inverse: bool) -> [[f32; 8]; 16] {
+pub fn process_block_brightness(
+    img: &image::DynamicImage,
+    x: u32,
+    y: u32,
+    inverse: bool,
+) -> [[f32; 8]; 16] {
     let mut group: [[f32; 8]; 16] = [[0.0; 8]; 16];
 
     for pixel_y in 0..16 {
@@ -68,7 +45,12 @@ fn process_block(img: &image::DynamicImage, x: u32, y: u32, inverse: bool) -> [[
     group
 }
 
-fn process_block_color(img: &image::DynamicImage, x: u32, y: u32, inverse: bool) -> [[f32; 8]; 16] {
+pub fn process_block_color(
+    img: &image::DynamicImage,
+    x: u32,
+    y: u32,
+    inverse: bool,
+) -> [[f32; 8]; 16] {
     let mut hue_count: HashMap<u8, u32> = HashMap::new();
     let mut group: [[f32; 8]; 16] = [[0.0; 8]; 16];
 

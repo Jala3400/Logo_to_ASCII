@@ -24,7 +24,7 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 ## Uso
 
 1. Ejecuta el programa desde la consola. Le tenemos que indicar la imagen que queremos usar, por lo que el comando quedaría así:
-   ```./target/debug/Logo_to_ASCII.exe --path <path_imagen>```
+   ```./target/debug/logo_to_ascii.exe --path <path_imagen>```
 
 Ese comando imprimirá el texto en la consola. El set por defecto de caracteres es el `8dbqp'·. ` (incluyendo el espacio).
 

@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use image::{Rgba, RgbaImage};
 
-use crate::calc_pixel::calculate_brightness;
+use crate::proc_pixel::calculate_brightness;
 
 pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Vec<Vec<f32>>> {
     // Load or create an image

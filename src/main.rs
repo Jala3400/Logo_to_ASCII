@@ -1,35 +1,8 @@
-mod abc;
-mod block;
-mod calc_pixel;
-
 use std::io;
 
-use block::convert_image;
 use clap::Parser;
+use logo_to_ascii::{abc, args::Args, proc_image::convert_image};
 
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    /// Path of the image to process
-    #[arg(short, long)]
-    path: String,
-
-    /// Path of the font to use (optional)
-    #[arg(short, long)]
-    font: Option<String>,
-
-    /// Path of the characters used (optional)
-    #[arg(long)]
-    chars: Option<String>,
-
-    /// Inverse the colors of the image
-    #[arg(short, long, default_value_t = false)]
-    inverse: bool,
-
-    /// Sould make a distictnion between colors
-    #[arg(short, long, default_value_t = false)]
-    color: bool,
-}
 fn main() -> io::Result<()> {
     let args: Args = Args::parse();
 
