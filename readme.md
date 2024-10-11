@@ -58,6 +58,10 @@ Logo a ASCII
 ![Imagen procesada en negativo](./images/image-i.png)
 Logo a ASCII en negativo
 
+* **En beta:** Colores.
+  * Para hacer una distición entre colores se puede añadir `-c` al comando. Esto imprimirá el carácter que mejor coincida con el hue más abundante en el bloque.
+  * Es muy probable que el resultado no sea el esperado. Puede que mejore añadiendo `-b <número_de_bloques>`. Este hará que diferentes hues cuenten como uno. El número que se añada será el número de bloques que se usarán para calcular el color más abundante. Para obtener el mejor resultado se recomienda probar con diferentes números.
+
 ## ¿Cómo funciona?
 
 La idea surgió de un video en el que se convertía una imagen a ASCII. Sin embargo, se perdía mucha información, los caracteres no tenían la forma que debían.
