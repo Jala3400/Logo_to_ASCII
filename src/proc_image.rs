@@ -2,7 +2,10 @@ use std::collections::HashMap;
 
 use image::GenericImageView;
 
-use crate::{args::Args, proc_block::{match_group_with_letter, process_block_brightness, process_block_color}};
+use crate::{
+    args::Args,
+    proc_block::{match_group_with_letter, process_block_brightness, process_block_color},
+};
 
 pub fn convert_image(img: image::DynamicImage, args: Args, font: HashMap<char, Vec<Vec<f32>>>) {
     // Get the dimensions of the image
@@ -32,7 +35,7 @@ fn process_block(
     font: &HashMap<char, Vec<Vec<f32>>>,
 ) {
     let group = if args.color {
-        process_block_color(img, x, y, args.inverse)
+        process_block_color(img, x, y, args.inverse, args.block)
     } else {
         process_block_brightness(img, x, y, args.inverse)
     };

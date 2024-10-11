@@ -18,7 +18,7 @@ pub fn calculate_brightness(pixel: &Rgba<u8>) -> f32 {
     brightness
 }
 
-pub fn calc_hue(pixel: Rgba<u8>) -> u8 {
+pub fn calc_hue(pixel: Rgba<u8>) -> u16 {
     let r = pixel[0] as f32 / 255.0;
     let g = pixel[1] as f32 / 255.0;
     let b = pixel[2] as f32 / 255.0;
@@ -40,10 +40,10 @@ pub fn calc_hue(pixel: Rgba<u8>) -> u8 {
         hue * 60.0
     };
 
-    hue.round() as u8
+    hue.round() as u16
 }
 
-// fn calculate_hue(pixel: Rgba<u8>) -> u8 {
+// pub fn calc_hue(pixel: Rgba<u8>) -> u16 {
 //     /*Hue = arctan ⁡ 2 ( 3 ⋅ ( G − B) , 2 R − G − B) Hue=arctan2( sqrt(3) ​ ⋅(G−B),2R−G−B) */
 //     let r = pixel[0] as f32 / 255.0;
 //     let g = pixel[1] as f32 / 255.0;
@@ -51,8 +51,19 @@ pub fn calc_hue(pixel: Rgba<u8>) -> u8 {
 
 //     let hue = (3.0_f32.sqrt() * (g - b)).atan2(2.0 * r - g - b).to_degrees();
 //     if hue < 0.0 {
-//         (hue + 360.0).round() as u8
+//         (hue + 360.0).round() as u16
 //     } else {
-//         hue.round() as u8
+//         hue.round() as u16
 //     }
 // }
+//
+
+pub fn calc_clamped_hue(pixel: Rgba<u8>, block: u16) -> u16 {
+    let hue = calc_hue(pixel);
+    let hue = if block == 0 {
+        hue
+    } else {
+        (((hue as u32 + (360 / block as u32)) % 360 * block as u32) / 360) as u16
+    };
+    hue
+}

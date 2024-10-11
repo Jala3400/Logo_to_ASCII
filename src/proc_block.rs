@@ -1,7 +1,7 @@
 use image::GenericImageView;
 use std::collections::HashMap;
 
-use crate::proc_pixel::{calc_custom_brightness, calc_hue};
+use crate::proc_pixel::{calc_clamped_hue, calc_custom_brightness};
 
 pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &HashMap<char, Vec<Vec<f32>>>) -> char {
     let mut best_match = ' ';
@@ -50,8 +50,9 @@ pub fn process_block_color(
     x: u32,
     y: u32,
     inverse: bool,
+    block: u16,
 ) -> [[f32; 8]; 16] {
-    let mut hue_count: HashMap<u8, u32> = HashMap::new();
+    let mut hue_count: HashMap<u16, u32> = HashMap::new();
     let mut group: [[f32; 8]; 16] = [[0.0; 8]; 16];
 
     // Count the frequency of each hue in the block
@@ -61,7 +62,7 @@ pub fn process_block_color(
                 continue;
             }
             let pixel = img.get_pixel(x * 8 + pixel_x, y * 16 + pixel_y);
-            let hue = calc_hue(pixel);
+            let hue = calc_clamped_hue(pixel, block);
             *hue_count.entry(hue).or_insert(0) += 1;
         }
     }
@@ -80,7 +81,7 @@ pub fn process_block_color(
                 continue;
             }
             let pixel = img.get_pixel(x * 8 + pixel_x, y * 16 + pixel_y);
-            let hue = calc_hue(pixel);
+            let hue = calc_clamped_hue(pixel, block);
             if hue == most_frequent_hue {
                 group[pixel_y as usize][pixel_x as usize] = calc_custom_brightness(pixel, inverse);
             } else {

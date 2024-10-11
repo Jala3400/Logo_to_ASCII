@@ -22,4 +22,8 @@ pub struct Args {
     /// Sould make a distictnion between colors
     #[arg(short, long, default_value_t = false)]
     pub color: bool,
+
+    /// Sould make a distictnion between colors
+    #[arg(short, long, default_value_t = 0)]
+    pub block: u16,
 }
