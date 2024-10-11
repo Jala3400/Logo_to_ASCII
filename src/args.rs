@@ -11,9 +11,9 @@ pub struct Args {
     #[arg(short, long)]
     pub font: Option<String>,
 
-    /// Path of the characters used (optional)
-    #[arg(long)]
-    pub chars: Option<String>,
+    /// Path of the characters used
+    #[arg(long, default_value = "8dbqp'·. ")]
+    pub chars: String,
 
     /// Inverse the colors of the image
     #[arg(short, long, default_value_t = false)]

@@ -9,13 +9,7 @@ fn main() -> io::Result<()> {
     // Load the image
     let img = image::open(&args.path).unwrap();
 
-    let chars = if let Some(chars) = &args.chars {
-        chars
-    } else {
-        "8dbqp'·. "
-    };
-
-    let font = abc::get_dict8x16(&args.font, chars);
+    let font = abc::get_dict8x16(&args.font, &args.chars);
 
     convert_image(img, args, font);
 
