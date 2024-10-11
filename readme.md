@@ -29,14 +29,14 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 Ese comando imprimirá el texto en la consola. El set por defecto de caracteres es el `8dbqp'·. ` (incluyendo el espacio).
 
 Opciones:
-* Para imprimir la imagen en negativo (imprimiendo donde está el color negro) se deberá añadir `-i` al comando.
+* Para imprimir la imagen en negativo (imprimiendo donde está el color negro) se debe añadir `-i` al comando.
 * Para cambiar el set de caracteres se puede usar el argumento `--chars <caracteres>`. El set de caracteres debe ir entre `"` o `'` si se quiere usar el espacio. 
 Para usar los caracteres de las comillas (`"` y `'`) se deben hacer pruebas dependiendo de la consola que se use.
 
 <details>
 <summary>Linux</summary>
 
-Se puede usar la barra invertida sin nungún problema: `--chars "chars'\""` usará `chars"'`.
+* Se puede usar la barra invertida sin nungún problema: `--chars "chars'\""` usará `chars"'`.
 
 </details>
 
@@ -49,6 +49,11 @@ Se puede usar la barra invertida sin nungún problema: `--chars "chars'\""` usar
 </details>
 <br>
 
+* Para añadir caracteres al grupo por defecto se puede usar `-a <caracteres_a_añadir>`.
+* Para usar todos los caracters ASCII imprimibles por pantalla (del 32 al 126 incluidos) se debe añadir `--all`.
+
+<!-- ![Cruz de Calatrava (todos los carácteres)](./images/cruz_all.png) -->
+
 * Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`. Se tomará como fuente monoespacio de 8x16.
 * Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
 
@@ -60,7 +65,8 @@ Logo a ASCII en negativo
 
 * **En beta:** Colores.
   * Para hacer una distición entre colores se puede añadir `-c` al comando. Esto imprimirá el carácter que mejor coincida con el hue más abundante en el bloque.
-  * Es muy probable que el resultado no sea el esperado. Puede que mejore añadiendo `-b <número_de_bloques>`. Este hará que diferentes hues cuenten como uno. El número indica cuántos bloques que se usarán para calcular el color más abundante. Para obtener el mejor resultado se recomienda probar con diferentes números.
+  * Es muy probable que el resultado no sea el esperado. Puede que mejore añadiendo `-n <número_de_colores>`. Este hará que diferentes hues cuenten como uno. El número indica cuántos bloques que se usarán para calcular el color más abundante. Para obtener el mejor resultado se recomienda probar con diferentes números.
+  * !! Hay que tener en cuenta que las imágenes no suelen tener un cambio brusco de un color a otro, si no que tienen algunos píxeles intermedios. Esto puede hacer que el resultado no encaje a la perfección, sobre todo cuando no se usa el argumento -n.
 
 ## ¿Cómo funciona?
 
@@ -80,5 +86,5 @@ El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un 
 
 ## Preguntas frecuentes
 
-* ¿Cómo imprimir un logo en negro?
-  Para imprimir un logo en negro con el fondo transparente hay que añadir `-i` al comando, para imprimir la imagen en negativo. Recordamos que el color transparente nunca se imprime.
+* ¿Cómo imprimir un logo de color negro?
+  Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-i` al comando, para imprimir la imagen en negativo. Recordamos que el color transparente nunca se imprime.

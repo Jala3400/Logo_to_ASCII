@@ -23,7 +23,7 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     pub all: bool,
 
-    /// Inverse the colors of the image
+    /// Inverse the colors of the image (transparent is never printed)
     #[arg(short, long, default_value_t = false)]
     pub inverse: bool,
 
@@ -31,7 +31,7 @@ pub struct Args {
     #[arg(short, long, default_value_t = false)]
     pub color: bool,
 
-    /// Hue clamp size (default 0)
+    /// Number of color the app processes when the -c flag is active (default 0)
     #[arg(short, long, default_value_t = 0)]
-    pub block: u16,
+    pub num_colors: u16,
 }
