@@ -3,16 +3,6 @@
 version = 3
 
 [[package]]
-name = "Logo_to_ASCII"
-version = "0.1.1"
-dependencies = [
- "clap",
- "image",
- "imageproc",
- "rusttype",
-]
-
-[[package]]
 name = "ab_glyph_rasterizer"
 version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -398,6 +388,16 @@ checksum = "07af8b9cdd281b7915f413fa73f29ebd5d55d0d3f0155584dade1ff18cea1b17"
 dependencies = [
  "autocfg",
  "scopeguard",
+]
+
+[[package]]
+name = "logo_to_ascii"
+version = "0.1.1"
+dependencies = [
+ "clap",
+ "image",
+ "imageproc",
+ "rusttype",
 ]
 
 [[package]]

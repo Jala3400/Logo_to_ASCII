@@ -24,7 +24,7 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 ## Uso
 
 1. Ejecuta el programa desde la consola. Le tenemos que indicar la imagen que queremos usar, por lo que el comando quedaría así:
-   ```./target/debug/Logo_to_ASCII.exe --path <path_imagen>```
+   ```./target/debug/logo_to_ascii.exe --path <path_imagen>```
 
 Ese comando imprimirá el texto en la consola. El set por defecto de caracteres es el `8dbqp'·. ` (incluyendo el espacio).
 
@@ -57,6 +57,10 @@ Logo a ASCII
 
 ![Imagen procesada en negativo](./images/image-i.png)
 Logo a ASCII en negativo
+
+* **En beta:** Colores.
+  * Para hacer una distición entre colores se puede añadir `-c` al comando. Esto imprimirá el carácter que mejor coincida con el hue más abundante en el bloque.
+  * Es muy probable que el resultado no sea el esperado. Puede que mejore añadiendo `-b <número_de_bloques>`. Este hará que diferentes hues cuenten como uno. El número indica el número de bloques que se usarán para calcular el color más abundante. Para obtener el mejor resultado se recomienda probar con diferentes números.
 
 ## ¿Cómo funciona?
 

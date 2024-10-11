@@ -4,14 +4,17 @@ use std::collections::HashMap;
 
 use image::{Rgba, RgbaImage};
 
-pub fn get_dict8x16(font_path: Option<String>, chars: String) -> HashMap<char, Vec<Vec<f32>>> {
+use crate::proc_pixel::calculate_brightness;
+
+pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Vec<Vec<f32>>> {
     // Load or create an image
     let mut img;
 
     // Load a font
     let font: Font<'_>;
     if let Some(font_path) = font_path {
-        let font_data = std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
+        let font_data =
+            std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
         font = Font::try_from_vec(font_data).expect("Failed to load font");
     } else {
         font = Font::try_from_bytes(include_bytes!("C:/Windows/Fonts/Consola.ttf")).unwrap();
@@ -29,7 +32,7 @@ pub fn get_dict8x16(font_path: Option<String>, chars: String) -> HashMap<char, V
     print!("Characters: ");
     for c in chars.chars() {
         // ASCII printable characters
-        print!("{}", c );
+        print!("{}", c);
         characters.push(c);
     }
     println!("");
@@ -56,13 +59,4 @@ pub fn get_dict8x16(font_path: Option<String>, chars: String) -> HashMap<char, V
     }
 
     char_map
-}
-
-pub fn calculate_brightness(pixel: &Rgba<u8>) -> f32 {
-    let r = pixel[0] as f32 / 255.0;
-    let g = pixel[1] as f32 / 255.0;
-    let b = pixel[2] as f32 / 255.0;
-
-    let brightness = (0.299 * r + 0.587 * g + 0.114 * b).sqrt();
-    brightness
 }
