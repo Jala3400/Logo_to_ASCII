@@ -35,7 +35,7 @@ fn process_block(
     font: &HashMap<char, Vec<Vec<f32>>>,
 ) {
     let group = if args.color {
-        process_block_color(img, x, y, args.inverse, args.block)
+        process_block_color(img, x, y, args.inverse, args.num_colors)
     } else {
         process_block_brightness(img, x, y, args.inverse)
     };
