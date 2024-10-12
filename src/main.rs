@@ -1,13 +1,20 @@
 use std::io;
 
 use clap::Parser;
+use imageproc::contrast::threshold;
 use logo_to_ascii::{abc, args::Args, proc_image::convert_image};
 
 fn main() -> io::Result<()> {
     let mut args: Args = Args::parse();
 
     // Load the image
-    let img = image::open(&args.path).unwrap();
+    let mut img = image::open(&args.path).unwrap();
+
+    if args.preprocess {
+        let gray_img = img.to_luma8();
+        let thresholded_img = threshold(&gray_img, 128);
+        img = image::DynamicImage::ImageLuma8(thresholded_img);
+    }
 
     if args.all {
         args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
