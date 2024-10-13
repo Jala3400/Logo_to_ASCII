@@ -34,8 +34,12 @@ pub struct Args {
     /// Number of color the app processes when the -c flag is active (default 0)
     #[arg(short, long, default_value_t = 0)]
     pub num_colors: u16,
-    
+
     /// Preprocess the image: black and white
     #[arg(short = 'r', long, default_value_t = false)]
     pub preprocess: bool,
+
+    /// Border detection
+    #[arg(short, long, default_value_t = 0)]
+    pub border: u32,
 }
