@@ -44,6 +44,6 @@ pub struct Args {
     pub border: u32,
 
     /// Threshold value for the black and white conversion
-    #[arg(short, long, default_value_t = 128)]
+    #[arg(short, long, default_value_t = u8::MAX/2)]
     pub threshold: u8,
 }
