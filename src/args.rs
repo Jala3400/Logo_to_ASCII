@@ -39,7 +39,11 @@ pub struct Args {
     #[arg(short = 'r', long, default_value_t = false)]
     pub preprocess: bool,
 
-    /// Border detection
+    /// Border thickness (0 to disable)
     #[arg(short, long, default_value_t = 0)]
     pub border: u32,
+
+    /// Threshold value for the black and white conversion
+    #[arg(short, long, default_value_t = 128)]
+    pub threshold: u8,
 }

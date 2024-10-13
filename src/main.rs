@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
 
     if args.preprocess || args.border != 0 {
         let gray_img = img.to_luma8();
-        let bw_image = threshold(&gray_img, 128);
+        let bw_image = threshold(&gray_img, args.threshold);
         if args.border != 0 {
             let contours = find_contours(&bw_image);
 
