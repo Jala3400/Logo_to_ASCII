@@ -31,11 +31,11 @@ pub struct Args {
     #[arg(short, long, default_value_t = false)]
     pub color: bool,
 
-    /// Number of color the app processes when the -c flag is active (default 0)
+    /// Threshold for the color difference (from 0 to 360)
     #[arg(short, long, default_value_t = 0)]
-    pub num_colors: u16,
+    pub difference: u16,
 
-    /// Preprocess the image: black and white
+    /// Preprocess the image (black and white conversion)
     #[arg(short = 'r', long, default_value_t = false)]
     pub preprocess: bool,
 
@@ -43,7 +43,7 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0)]
     pub border: u32,
 
-    /// Threshold value for the black and white conversion
-    #[arg(short, long, default_value_t = u8::MAX/2)]
+    /// Threshold value for the black and white conversion (from 0 to 255)
+    #[arg(short, long, default_value_t = 127)]
     pub threshold: u8,
 }
