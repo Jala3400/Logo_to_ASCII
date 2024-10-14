@@ -59,42 +59,13 @@ pub fn to_black_and_white(img: DynamicImage, args: &Args) -> DynamicImage {
 }
 
 pub fn borders_image(img: DynamicImage, args: &Args) -> DynamicImage {
-    let bw_image = to_black_and_white(img, args);
-    let borders = detect_borders(&bw_image, args.difference as f32 / 360 as f32);
-    let mut new_img = DynamicImage::new_luma8(bw_image.width(), bw_image.height());
-    for (x, y) in borders {
-        for dy in 0..args.border {
-            for dx in 0..args.border {
-                let nx = x as i32 + dx as i32 - (args.border / 2) as i32;
-                let ny = y as i32 + dy as i32 - (args.border / 2) as i32;
-                if nx >= 0
-                    && ny >= 0
-                    && nx < bw_image.width() as i32
-                    && ny < bw_image.height() as i32
-                {
-                    new_img.put_pixel(nx as u32, ny as u32, image::Rgba([255, 255, 255, 255]));
-                }
-            }
-        }
-    }
-    new_img
-}
-
-pub fn borders_image_color(img: DynamicImage, args: &Args) -> DynamicImage {
-    let borders = detect_color_borders(&img, args.difference);
+    let borders = if args.color {
+        detect_color_borders(&img, args.difference)
+    } else {
+        detect_borders(&img, args.difference as f32 / 360.0)
+    };
     let mut new_img = img.clone();
-    let thickness = if args.border == 0 { 1 } else { args.border };
-    for (x, y) in borders {
-        for dy in 0..thickness {
-            for dx in 0..thickness {
-                let nx = x as i32 + dx as i32 - (args.border / 2) as i32;
-                let ny = y as i32 + dy as i32 - (args.border / 2) as i32;
-                if nx >= 0 && ny >= 0 && nx < img.width() as i32 && ny < img.height() as i32 {
-                    new_img.put_pixel(nx as u32, ny as u32, image::Rgba([0, 0, 0, 255]));
-                }
-            }
-        }
-    }
+    paint_borders(&mut new_img, borders, args);
     new_img
 }
 
@@ -138,4 +109,19 @@ fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, 
     }
 
     borders
+}
+
+fn paint_borders(img: &mut image::DynamicImage, borders: Vec<(u32, u32)>, args: &Args) {
+    let thickness = if args.border == 0 { 1 } else { args.border };
+    for (x, y) in borders {
+        for dy in 0..thickness {
+            for dx in 0..thickness {
+                let nx = x as i32 + dx as i32 - (args.border / 2) as i32;
+                let ny = y as i32 + dy as i32 - (args.border / 2) as i32;
+                if nx >= 0 && ny >= 0 && nx < img.width() as i32 && ny < img.height() as i32 {
+                    img.put_pixel(nx as u32, ny as u32, image::Rgba([0, 0, 0, 255]));
+                }
+            }
+        }
+    }
 }

@@ -2,9 +2,7 @@ use clap::Parser;
 use logo_to_ascii::{
     abc,
     args::Args,
-    proc_image::{
-        borders_image, borders_image_color, convert_bitmap, get_bitmap, to_black_and_white,
-    },
+    proc_image::{borders_image, convert_bitmap, get_bitmap, to_black_and_white},
 };
 use std::io;
 
@@ -15,9 +13,9 @@ fn main() -> io::Result<()> {
     let img = image::open(&args.path).unwrap();
 
     let preprocessed_img = match (args.color, args.preprocess, args.border != 0) {
-        (true, true, _) => to_black_and_white(borders_image_color(img, &args), &args),
-        (true, false, _) => borders_image_color(img, &args),
-        (false, true, true) => borders_image(to_black_and_white(img, &args), &args),
+        (true, true, _) => to_black_and_white(borders_image(img, &args), &args),
+        (true, false, _) => borders_image(img, &args),
+        (false, true, true) => to_black_and_white(borders_image(img, &args), &args),
         (false, true, false) => to_black_and_white(img, &args),
         (false, false, true) => borders_image(img, &args),
         (false, false, false) => img,
