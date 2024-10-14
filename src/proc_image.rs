@@ -45,7 +45,7 @@ pub fn get_bitmap(img: DynamicImage, args: &Args) -> Vec<Vec<f32>> {
         let mut row = Vec::new();
         for x in 0..img.width() {
             let pixel = img.get_pixel(x, y);
-            row.push(calc_custom_brightness(pixel, args.inverse));
+            row.push(calc_custom_brightness(pixel, args.inverse, args.visible));
         }
         bitmap.push(row);
     }

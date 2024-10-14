@@ -1,9 +1,9 @@
 use image::Rgba;
 
-pub fn calc_custom_brightness(pixel: Rgba<u8>, inverse: bool) -> f32 {
+pub fn calc_custom_brightness(pixel: Rgba<u8>, inverse: bool, visible: bool) -> f32 {
     if pixel[3] == 0 {
         // If the pixel is transparent
-        -0.5
+        -0.5 * if visible { -1.0 } else { 1.0 }
     } else {
         (calculate_brightness(&pixel) - 0.5) * if inverse { -1.0 } else { 1.0 }
     }
