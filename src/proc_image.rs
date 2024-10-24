@@ -45,7 +45,7 @@ pub fn get_bitmap(img: DynamicImage, args: &Args) -> Vec<Vec<f32>> {
         let mut row = Vec::new();
         for x in 0..img.width() {
             let pixel = img.get_pixel(x, y);
-            row.push(calc_custom_brightness(pixel, args.inverse, args.visible));
+            row.push(calc_custom_brightness(&pixel, args.inverse, args.visible));
         }
         bitmap.push(row);
     }
@@ -112,12 +112,12 @@ fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, 
 }
 
 fn paint_borders(img: &mut image::DynamicImage, borders: Vec<(u32, u32)>, args: &Args) {
-    let thickness = if args.border == 0 { 1 } else { args.border };
+    let thickness = if args.border == 0 { 8 } else { args.border };
     for (x, y) in borders {
         for dy in 0..thickness {
             for dx in 0..thickness {
-                let nx = x as i32 + dx as i32 - (args.border / 2) as i32;
-                let ny = y as i32 + dy as i32 - (args.border / 2) as i32;
+                let nx = x as i32 + dx as i32 - (thickness / 2) as i32;
+                let ny = y as i32 + dy as i32 - (thickness / 2) as i32;
                 if nx >= 0 && ny >= 0 && nx < img.width() as i32 && ny < img.height() as i32 {
                     img.put_pixel(nx as u32, ny as u32, image::Rgba([0, 0, 0, 255]));
                 }

@@ -45,7 +45,7 @@ pub struct Args {
     pub threshold: u8,
 
     /// Threshold for the color difference (from 0 to 360)
-    #[arg(short, long, default_value_t = 0)]
+    #[arg(short, long, default_value_t = 30)]
     pub difference: u16,
 
     /// Makes transparent pixels visible
