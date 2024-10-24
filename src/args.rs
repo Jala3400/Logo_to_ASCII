@@ -27,11 +27,28 @@ pub struct Args {
     #[arg(short, long, default_value_t = false)]
     pub inverse: bool,
 
-    /// Sould make a distictnion between colors
+    /// Separates colors (change thickenss with `-b`)
     #[arg(short, long, default_value_t = false)]
     pub color: bool,
 
-    /// Number of color the app processes when the -c flag is active (default 0)
+    /// Detect borders measuring brightness (when not used with color) (0 to disable)
     #[arg(short, long, default_value_t = 0)]
-    pub num_colors: u16,
+    pub border: u32,
+
+    /// Preprocess the image to black and white.
+    /// Makes the transparent pixels black.
+    #[arg(short = 'r', long, default_value_t = false)]
+    pub preprocess: bool,
+
+    /// Threshold value for the black and white conversion (from 0 to 255)
+    #[arg(short, long, default_value_t = 127)]
+    pub threshold: u8,
+
+    /// Threshold for the color difference (from 0 to 360)
+    #[arg(short, long, default_value_t = 30)]
+    pub difference: u16,
+
+    /// Makes transparent pixels visible
+    #[arg(short, long, default_value_t = false)]
+    pub visible: bool,
 }

@@ -1,10 +1,8 @@
+use crate::proc_pixel::calculate_brightness;
+use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 use std::collections::HashMap;
-
-use image::{Rgba, RgbaImage};
-
-use crate::proc_pixel::calculate_brightness;
 
 pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Vec<Vec<f32>>> {
     // Load or create an image
@@ -37,7 +35,7 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Ve
     }
     println!("");
 
-    let mut char_map: HashMap<char, Vec<Vec<f32>>> = HashMap::new();
+    let mut char_map = HashMap::new();
     for i in 0..characters.len() {
         let mut character = Vec::new();
         img = RgbaImage::new(8, 16);
