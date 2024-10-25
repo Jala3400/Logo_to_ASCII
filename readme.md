@@ -1,6 +1,6 @@
-<div style="display:flex; justify-content: space-evenly">
-<img src="./images/cruz.png"/> 
-<img src="./images/tentaculos.png" /> 
+<div>
+<img src="./images/cruz.png" height="400"/> 
+<img src="./images/tentaculos.png" height="400"/> 
 </div>
 
 # Logo to ASCII
