@@ -7,7 +7,7 @@ use image::{DynamicImage, GenericImage, GenericImageView};
 use imageproc::contrast::threshold;
 use std::collections::HashMap;
 
-pub fn convert_bitmap(bitmap: Vec<Vec<f32>>, font: HashMap<char, Vec<Vec<f32>>>) {
+pub fn convert_bitmap(bitmap: &Vec<Vec<f32>>, font: &HashMap<char, Vec<Vec<f32>>>) {
     // Get the dimensions of the image
     let height = bitmap.len();
     let width = bitmap[0].len();
@@ -29,6 +29,8 @@ pub fn convert_bitmap(bitmap: Vec<Vec<f32>>, font: HashMap<char, Vec<Vec<f32>>>)
                     let ix = x * 8 + bx;
                     if iy < height && ix < width {
                         group[by][bx] = bitmap[iy][ix];
+                    } else if iy >= height || ix >= width {
+                        group[by][bx] = -0.5;
                     }
                 }
             }
@@ -38,7 +40,7 @@ pub fn convert_bitmap(bitmap: Vec<Vec<f32>>, font: HashMap<char, Vec<Vec<f32>>>)
     }
 }
 
-pub fn get_bitmap(img: DynamicImage, args: &Args) -> Vec<Vec<f32>> {
+pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Vec<Vec<f32>> {
     let mut bitmap = Vec::new();
 
     for y in 0..img.height() {
@@ -53,20 +55,18 @@ pub fn get_bitmap(img: DynamicImage, args: &Args) -> Vec<Vec<f32>> {
     bitmap
 }
 
-pub fn to_black_and_white(img: DynamicImage, args: &Args) -> DynamicImage {
+pub fn to_black_and_white(img: &DynamicImage, args: &Args) -> DynamicImage {
     let gray_img = img.to_luma8();
     image::DynamicImage::ImageLuma8(threshold(&gray_img, args.threshold))
 }
 
-pub fn borders_image(img: DynamicImage, args: &Args) -> DynamicImage {
+pub fn borders_image(mut img: &mut DynamicImage, args: &Args) {
     let borders = if args.color {
         detect_color_borders(&img, args.difference)
     } else {
         detect_borders(&img, args.difference as f32 / 360.0)
     };
-    let mut new_img = img.clone();
-    paint_borders(&mut new_img, borders, args);
-    new_img
+    paint_borders(&mut img, borders, args);
 }
 
 fn detect_borders(img: &image::DynamicImage, threshold: f32) -> Vec<(u32, u32)> {
