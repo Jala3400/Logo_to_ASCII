@@ -2,15 +2,16 @@ use crate::{
     args::Args,
     proc_block::match_group_with_letter,
     proc_pixel::{brightness_difference, calc_custom_brightness, hue_difference},
+    types::Bitmap,
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
 use imageproc::contrast::threshold;
 use std::collections::HashMap;
 
-pub fn convert_bitmap(bitmap: &Vec<Vec<f32>>, font: &HashMap<char, Vec<f32>>) {
+pub fn convert_bitmap(bitmap: &Bitmap, font: &HashMap<char, Vec<f32>>) {
     // Get the dimensions of the image
-    let height = bitmap.len();
-    let width = bitmap[0].len();
+    let height = bitmap.height;
+    let width = bitmap.width;
 
     // Calculate number of 8x16 groups
     let num_groups_x = (width + 7) / 8;
@@ -20,15 +21,15 @@ pub fn convert_bitmap(bitmap: &Vec<Vec<f32>>, font: &HashMap<char, Vec<f32>>) {
     println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
 
     // Iterate over 8x16 groups
-    for y in 0..num_groups_y {
-        for x in 0..num_groups_x {
+    for y in 0..num_groups_y as usize {
+        for x in 0..num_groups_x as usize {
             let mut group = [[0f32; 8]; 16];
-            for by in 0..16 {
-                for bx in 0..8 {
+            for by in 0..16 as usize {
+                for bx in 0..8 as usize {
                     let iy = y * 16 + by;
                     let ix = x * 8 + bx;
                     if iy < height && ix < width {
-                        group[by][bx] = bitmap[iy][ix];
+                        group[by][bx] = bitmap.data[iy * width + ix];
                     } else if iy >= height || ix >= width {
                         group[by][bx] = -0.5;
                     }
@@ -40,35 +41,39 @@ pub fn convert_bitmap(bitmap: &Vec<Vec<f32>>, font: &HashMap<char, Vec<f32>>) {
     }
 }
 
-pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Vec<Vec<f32>> {
+pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
     let mut bitmap = Vec::new();
 
     for y in 0..img.height() {
-        let mut row = Vec::new();
         for x in 0..img.width() {
             let pixel = img.get_pixel(x, y);
-            row.push(calc_custom_brightness(&pixel, args.inverse, args.visible));
+            bitmap.push(calc_custom_brightness(&pixel, args.inverse, args.visible));
         }
-        bitmap.push(row);
     }
 
-    bitmap
+    Bitmap {
+        data: bitmap,
+        width: img.width() as usize,
+        height: img.height() as usize,
+    }
 }
 
-pub fn black_and_white(img: &DynamicImage, args: &Args) -> Vec<Vec<f32>> {
+pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
     let gray_img = img.to_luma8();
     let bw = threshold(&gray_img, args.threshold);
 
     let mut bitmap = Vec::new();
     for y in 0..bw.height() {
-        let mut row = Vec::new();
         for x in 0..bw.width() {
             let pixel = bw.get_pixel(x, y);
-            row.push(if pixel[0] == 0 { -0.5 } else { 0.5 });
+            bitmap.push(if pixel[0] == 0 { -0.5 } else { 0.5 });
         }
-        bitmap.push(row);
     }
-    bitmap
+    Bitmap {
+        data: bitmap,
+        width: bw.width() as usize,
+        height: bw.height() as usize,
+    }
 }
 
 pub fn borders_image(mut img: &mut DynamicImage, args: &Args) {
