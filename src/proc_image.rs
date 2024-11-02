@@ -2,13 +2,12 @@ use crate::{
     args::Args,
     proc_block::match_group_with_letter,
     proc_pixel::{brightness_difference, calc_custom_brightness, hue_difference},
-    types::Bitmap,
+    types::{Bitmap, FontBitmap},
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
 use imageproc::contrast::threshold;
-use std::collections::HashMap;
 
-pub fn convert_bitmap(bitmap: &Bitmap, font: &HashMap<char, Vec<f32>>) {
+pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
     // Get the dimensions of the image
     let height = bitmap.height;
     let width = bitmap.width;

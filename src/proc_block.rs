@@ -1,14 +1,17 @@
-use std::collections::HashMap;
+use crate::types::FontBitmap;
 
-pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &HashMap<char, Vec<f32>>) -> char {
+pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &FontBitmap) -> char {
     let mut best_match = ' ';
     let mut best_match_value = f32::MIN;
 
-    for (letter, letter_pixels) in font.iter() {
+    let width = font.width;
+    let height = font.height;
+
+    for (letter, letter_pixels) in font.data.iter() {
         let mut match_value = 0.0;
-        for y in 0..16 {
-            for x in 0..8 {
-                match_value += group[y][x] * letter_pixels[y * 8 + x];
+        for y in 0..height {
+            for x in 0..width {
+                match_value += group[y][x] * letter_pixels.data[y * 8 + x];
             }
         }
 

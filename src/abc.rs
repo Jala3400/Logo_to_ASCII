@@ -1,12 +1,18 @@
-use crate::proc_pixel::calculate_brightness;
+use crate::{
+    proc_pixel::calculate_brightness,
+    types::{CharInfo, FontBitmap},
+};
 use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 use std::collections::HashMap;
 
-pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Vec<f32>> {
+pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
     // Load or create an image
     let mut img;
+
+    let width = 8;
+    let height = 16;
 
     // Load a font
     let font: Font<'_>;
@@ -20,7 +26,7 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Ve
 
     // Define text properties
     let mut text;
-    let scale = Scale::uniform(16.0);
+    let scale = Scale::uniform(height as f32);
     let color = Rgba([255, 255, 255, 255]);
 
     // Create an array to store characters
@@ -38,7 +44,7 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Ve
     let mut char_map = HashMap::new();
     for i in 0..characters.len() {
         let mut character = Vec::new();
-        img = RgbaImage::new(8, 16);
+        img = RgbaImage::new(width, height);
         let character_string = characters[i].to_string();
         text = &character_string;
         draw_text_mut(&mut img, color, 0, 0, scale, &font, text);
@@ -51,8 +57,13 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Ve
             }
         }
 
-        char_map.insert(characters[i], character);
+        let char_info = CharInfo { data: character };
+        char_map.insert(characters[i], char_info);
     }
 
-    char_map
+    FontBitmap {
+        data: char_map,
+        width: width as usize,
+        height: height as usize,
+    }
 }
