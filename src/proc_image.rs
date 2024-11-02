@@ -55,9 +55,20 @@ pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Vec<Vec<f32>> {
     bitmap
 }
 
-pub fn to_black_and_white(img: &DynamicImage, args: &Args) -> DynamicImage {
+pub fn black_and_white(img: &DynamicImage, args: &Args) -> Vec<Vec<f32>> {
     let gray_img = img.to_luma8();
-    image::DynamicImage::ImageLuma8(threshold(&gray_img, args.threshold))
+    let bw = threshold(&gray_img, args.threshold);
+
+    let mut bitmap = Vec::new();
+    for y in 0..bw.height() {
+        let mut row = Vec::new();
+        for x in 0..bw.width() {
+            let pixel = bw.get_pixel(x, y);
+            row.push(if pixel[0] == 0 { -0.5 } else { 0.5 });
+        }
+        bitmap.push(row);
+    }
+    bitmap
 }
 
 pub fn borders_image(mut img: &mut DynamicImage, args: &Args) {

@@ -2,7 +2,7 @@ use clap::Parser;
 use logo_to_ascii::{
     abc,
     args::Args,
-    proc_image::{borders_image, convert_bitmap, get_bitmap, to_black_and_white},
+    proc_image::{borders_image, convert_bitmap, get_bitmap, black_and_white},
 };
 use std::io;
 
@@ -22,14 +22,15 @@ fn main() -> io::Result<()> {
     if args.color || args.border != 0 {
         borders_image(&mut img, &args);
     }
-    if args.preprocess {
-        img = to_black_and_white(&img, &args);
-    }
 
     let elapsed = now.elapsed();
     println!("Preprocess: {:.2?}", elapsed);
 
-    let bitmap = get_bitmap(&img, &args);
+    let bitmap = if args.preprocess {
+        black_and_white(&img, &args)
+    } else {
+        get_bitmap(&img, &args)
+    };
 
     let elapsed = now.elapsed();
     println!("Bitmap: {:.2?}", elapsed);
