@@ -7,7 +7,7 @@ use image::{DynamicImage, GenericImage, GenericImageView};
 use imageproc::contrast::threshold;
 use std::collections::HashMap;
 
-pub fn convert_bitmap(bitmap: &Vec<Vec<f32>>, font: &HashMap<char, Vec<Vec<f32>>>) {
+pub fn convert_bitmap(bitmap: &Vec<Vec<f32>>, font: &HashMap<char, Vec<f32>>) {
     // Get the dimensions of the image
     let height = bitmap.len();
     let width = bitmap[0].len();

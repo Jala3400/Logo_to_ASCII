@@ -4,7 +4,7 @@ use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 use std::collections::HashMap;
 
-pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Vec<Vec<f32>>> {
+pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Vec<f32>> {
     // Load or create an image
     let mut img;
 
@@ -45,12 +45,10 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> HashMap<char, Ve
 
         // Get the color of each pixel from the image
         for y in 0..img.height() {
-            let mut row = Vec::new();
             for x in 0..img.width() {
                 let pixel = img.get_pixel(x, y);
-                row.push(calculate_brightness(pixel) - 0.5);
+                character.push(calculate_brightness(pixel) - 0.5);
             }
-            character.push(row);
         }
 
         char_map.insert(characters[i], character);
