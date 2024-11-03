@@ -23,18 +23,22 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
     for y in 0..num_groups_y as usize {
         for x in 0..num_groups_x as usize {
             let mut group = [[0f32; 8]; 16];
+            let mut bright_blocks = 0;
             for by in 0..16 as usize {
                 for bx in 0..8 as usize {
                     let iy = y * 16 + by;
                     let ix = x * 8 + bx;
                     if iy < height && ix < width {
                         group[by][bx] = bitmap.data[iy * width + ix];
+                        if group[by][bx] > -0.5 {
+                            bright_blocks += 1;
+                        }
                     } else if iy >= height || ix >= width {
                         group[by][bx] = -0.5;
                     }
                 }
             }
-            print!("{}", match_group_with_letter(group, &font));
+            print!("{}", match_group_with_letter(group, &font, bright_blocks));
         }
         println!();
     }

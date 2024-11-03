@@ -49,15 +49,24 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
         text = &character_string;
         draw_text_mut(&mut img, color, 0, 0, scale, &font, text);
 
+        let mut bright_blocks = 0;
+
         // Get the color of each pixel from the image
         for y in 0..img.height() {
             for x in 0..img.width() {
                 let pixel = img.get_pixel(x, y);
-                character.push(calculate_brightness(pixel) - 0.5);
+                let brightness = calculate_brightness(pixel);
+                if brightness > 0.0 {
+                    bright_blocks += 1;
+                }
+                character.push(brightness - 0.5);
             }
         }
 
-        let char_info = CharInfo { data: character };
+        let char_info = CharInfo {
+            data: character,
+            min: bright_blocks / 2,
+        };
         char_map.insert(characters[i], char_info);
     }
 

@@ -1,6 +1,10 @@
 use crate::types::FontBitmap;
 
-pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &FontBitmap) -> char {
+pub fn match_group_with_letter(
+    group: [[f32; 8]; 16],
+    font: &FontBitmap,
+    bright_blocks: usize,
+) -> char {
     let mut best_match = ' ';
     let mut best_match_value = f32::MIN;
 
@@ -8,6 +12,10 @@ pub fn match_group_with_letter(group: [[f32; 8]; 16], font: &FontBitmap) -> char
     let height = font.height;
 
     for (letter, letter_pixels) in font.data.iter() {
+        if bright_blocks < letter_pixels.min {
+            continue;
+        }
+
         let mut match_value = 0.0;
         for y in 0..height {
             for x in 0..width {
