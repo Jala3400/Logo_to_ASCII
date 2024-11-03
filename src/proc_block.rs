@@ -11,21 +11,17 @@ pub fn match_group_with_letter(
     let width = font.width;
     let height = font.height;
 
-    for (letter, letter_pixels) in font.data.iter() {
-        if bright_blocks < letter_pixels.min {
-            continue;
-        }
-
+    for letter in font.data.iter().take_while(|l| l.min < bright_blocks) {
         let mut match_value = 0.0;
         for y in 0..height {
             for x in 0..width {
-                match_value += group[y][x] * letter_pixels.data[y * 8 + x];
+                match_value += group[y][x] * letter.data[y * 8 + x];
             }
         }
 
         if match_value > best_match_value {
             best_match_value = match_value;
-            best_match = *letter;
+            best_match = letter.char;
         }
     }
 

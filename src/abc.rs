@@ -5,7 +5,6 @@ use crate::{
 use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
-use std::collections::HashMap;
 
 pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
     // Load or create an image
@@ -41,7 +40,11 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
     }
     println!("");
 
-    let mut char_map = HashMap::new();
+    let mut final_font = FontBitmap {
+        data: Vec::new(),
+        width: width as usize,
+        height: height as usize,
+    };
     for i in 0..characters.len() {
         let mut character = Vec::new();
         img = RgbaImage::new(width, height);
@@ -64,15 +67,12 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
         }
 
         let char_info = CharInfo {
+            char: characters[i],
             data: character,
             min: bright_blocks / 2,
         };
-        char_map.insert(characters[i], char_info);
+        final_font.insert_ord(char_info);
     }
 
-    FontBitmap {
-        data: char_map,
-        width: width as usize,
-        height: height as usize,
-    }
+    final_font
 }
