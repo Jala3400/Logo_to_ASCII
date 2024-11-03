@@ -14,7 +14,7 @@ fn main() -> io::Result<()> {
     args.difference = args.difference % 360;
 
     // Load the image
-    let mut img = image::open(&args.path).unwrap();
+    let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
 
     let elapsed = now.elapsed();
     println!("Abrir imagen: {:.2?}", elapsed);

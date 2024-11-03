@@ -132,14 +132,22 @@ fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, 
 
 fn paint_borders(img: &mut image::DynamicImage, borders: Vec<(u32, u32)>, args: &Args) {
     let thickness = if args.border == 0 { 8 } else { args.border };
+    let half_t = thickness / 2;
+    let width = img.width();
+    let height = img.height();
+    let black_pixel = image::Rgba([0, 0, 0, 255]);
+
     for (x, y) in borders {
-        for dy in 0..thickness {
-            for dx in 0..thickness {
-                let nx = x as i32 + dx as i32 - (thickness / 2) as i32;
-                let ny = y as i32 + dy as i32 - (thickness / 2) as i32;
-                if nx >= 0 && ny >= 0 && nx < img.width() as i32 && ny < img.height() as i32 {
-                    img.put_pixel(nx as u32, ny as u32, image::Rgba([0, 0, 0, 255]));
-                }
+        // Pre-calculate bounds
+        let x_start = x.saturating_sub(half_t);
+        let y_start = y.saturating_sub(half_t);
+        let x_end = (x + half_t).min(width);
+        let y_end = (y + half_t).min(height);
+
+        // Direct iteration over valid coordinates
+        for ny in y_start..y_end {
+            for nx in x_start..x_end {
+                img.put_pixel(nx, ny, black_pixel);
             }
         }
     }
