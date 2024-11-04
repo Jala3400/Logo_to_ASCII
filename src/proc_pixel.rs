@@ -68,15 +68,10 @@ pub fn calc_hue(pixel: &Rgba<u8>) -> u16 {
 //
 
 pub fn brightness_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
-    let brightness1 = calculate_brightness(pixel1);
-    let brightness2 = calculate_brightness(pixel2);
-
-    (brightness1 - brightness2).abs()
+    (calculate_brightness(pixel1) - calculate_brightness(pixel2)).abs()
 }
 
-pub fn hue_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
-    let hue1 = calc_custom_hue(pixel1) as f32;
-    let hue2 = calc_custom_hue(pixel2) as f32;
-
-    f32::min((hue1 - hue2).abs(), (360.0 - (hue1 - hue2).abs()).abs())
+pub fn hue_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> u16 {
+    let diff = calc_custom_hue(pixel1).abs_diff(calc_custom_hue(pixel2));
+    diff.min(360_u16.abs_diff(diff))
 }

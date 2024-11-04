@@ -1,7 +1,7 @@
 use crate::types::FontBitmap;
 
 pub fn match_group_with_letter(
-    group: [[f32; 8]; 16],
+    group: &[[f32; 8]; 16],
     font: &FontBitmap,
     bright_blocks: usize,
 ) -> char {

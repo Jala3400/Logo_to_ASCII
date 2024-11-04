@@ -19,11 +19,13 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
     println!("Image dimensions: {}x{}", width, height);
     println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
 
+    let mut group = [[0f32; 8]; 16];
+    let mut bright_blocks;
+
     // Iterate over 8x16 groups
     for y in 0..num_groups_y as usize {
         for x in 0..num_groups_x as usize {
-            let mut group = [[0f32; 8]; 16];
-            let mut bright_blocks = 0;
+            bright_blocks = 0;
             for by in 0..16 as usize {
                 for bx in 0..8 as usize {
                     let iy = y * 16 + by;
@@ -33,12 +35,12 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
                         if group[by][bx] > -0.5 {
                             bright_blocks += 1;
                         }
-                    } else if iy >= height || ix >= width {
+                    } else {
                         group[by][bx] = -0.5;
                     }
                 }
             }
-            print!("{}", match_group_with_letter(group, &font, bright_blocks));
+            print!("{}", match_group_with_letter(&group, font, bright_blocks));
         }
         println!();
     }
@@ -79,13 +81,13 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
     }
 }
 
-pub fn borders_image(mut img: &mut DynamicImage, args: &Args) {
+pub fn borders_image(img: &mut DynamicImage, args: &Args) {
     let borders = if args.color {
         detect_color_borders(&img, args.difference)
     } else {
         detect_borders(&img, args.difference as f32 / 360.0)
     };
-    paint_borders(&mut img, borders, args);
+    paint_borders(img, borders, args);
 }
 
 fn detect_borders(img: &image::DynamicImage, threshold: f32) -> Vec<(u32, u32)> {
@@ -119,8 +121,8 @@ fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, 
             let right_pixel = img.get_pixel(x + 1, y);
             let bottom_pixel = img.get_pixel(x, y + 1);
 
-            if hue_difference(&current_pixel, &right_pixel) > threshold as f32
-                || hue_difference(&current_pixel, &bottom_pixel) > threshold as f32
+            if hue_difference(&current_pixel, &right_pixel) > threshold
+                || hue_difference(&current_pixel, &bottom_pixel) > threshold
             {
                 borders.push((x, y));
             }

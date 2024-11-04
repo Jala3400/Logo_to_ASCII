@@ -2,7 +2,7 @@ use clap::Parser;
 use logo_to_ascii::{
     abc,
     args::Args,
-    proc_image::{borders_image, convert_bitmap, get_bitmap, black_and_white},
+    proc_image::{black_and_white, borders_image, convert_bitmap, get_bitmap},
 };
 use std::io;
 
