@@ -21,7 +21,7 @@ pub struct CharInfo {
 impl FontBitmap {
     pub fn insert_ord(&mut self, char_info: CharInfo) {
         let mut i = 0;
-        while i < self.data.len() && self.data[i].min > char_info.min {
+        while i < self.data.len() && self.data[i].min < char_info.min {
             i += 1;
         }
         self.data.insert(i, char_info);

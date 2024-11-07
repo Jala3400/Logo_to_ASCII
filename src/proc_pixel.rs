@@ -10,11 +10,11 @@ pub fn calc_custom_brightness(pixel: &Rgba<u8>, inverse: bool, visible: bool) ->
 }
 
 pub fn calculate_brightness(pixel: &Rgba<u8>) -> f32 {
-    let r = pixel[0] as f32 / 255.0;
-    let g = pixel[1] as f32 / 255.0;
-    let b = pixel[2] as f32 / 255.0;
+    let r = pixel[0] as f32;
+    let g = pixel[1] as f32;
+    let b = pixel[2] as f32;
 
-    let brightness = (0.299 * r + 0.587 * g + 0.114 * b).sqrt();
+    let brightness = ((0.299 * r + 0.587 * g + 0.114 * b) / 255.0).sqrt();
     brightness
 }
 

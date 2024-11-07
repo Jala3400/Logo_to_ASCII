@@ -5,7 +5,7 @@ pub fn match_group_with_letter(
     font: &FontBitmap,
     bright_blocks: usize,
 ) -> char {
-    let mut best_match = ' ';
+    let mut best_match = font.data[0].char;
     let mut best_match_value = f32::MIN;
 
     let width = font.width;
