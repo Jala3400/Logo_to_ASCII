@@ -20,12 +20,14 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
     println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
 
     let mut group = [[0f32; 8]; 16];
-    let mut bright_blocks;
+    let mut bright_pixels;
+    let mut full_pixels;
 
     // Iterate over 8x16 groups
     for y in 0..num_groups_y as usize {
         for x in 0..num_groups_x as usize {
-            bright_blocks = 0;
+            bright_pixels = 0;
+            full_pixels = 0;
             for by in 0..16 as usize {
                 for bx in 0..8 as usize {
                     let iy = y * 16 + by;
@@ -33,14 +35,21 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
                     if iy < height && ix < width {
                         group[by][bx] = bitmap.data[iy * width + ix];
                         if group[by][bx] > -0.5 {
-                            bright_blocks += 1;
+                            bright_pixels += 1;
+                        }
+                        if group[by][bx] == 0.5 {
+                            full_pixels += 1;
                         }
                     } else {
                         group[by][bx] = -0.5;
                     }
                 }
             }
-            print!("{}", match_group_with_letter(&group, font, bright_blocks));
+            if full_pixels == 8 * 16 {
+                print!("{}", font.data.last().unwrap().char);
+            } else {
+                print!("{}", match_group_with_letter(&group, font, bright_pixels));
+            }
         }
         println!();
     }
@@ -64,7 +73,26 @@ pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
 }
 
 pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
-    let gray_img = img.to_luma8();
+    let gray_img = image::ImageBuffer::from_raw(
+        img.width(),
+        img.height(),
+        img.to_luma_alpha8()
+            .into_raw()
+            .chunks(2)
+            .map(|chunk| {
+                if chunk[1] == 0 {
+                    if args.visible {
+                        255
+                    } else {
+                        0
+                    }
+                } else {
+                    chunk[0]
+                }
+            })
+            .collect::<Vec<u8>>(),
+    )
+    .unwrap();
     let bw = threshold(&gray_img, args.threshold);
 
     let mut bitmap = Vec::new();
