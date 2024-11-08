@@ -39,11 +39,11 @@ El caso más básico consiste en tratar logos de un solo color. Usaremos la sigu
 
 Para convertirla, ejecutamos el programa desde la consola. Le indicamos la imagen con el argumento `--path <path_imagen>`.
 
-`./target/debug/logo_to_ascii.exe --path <path_imagen>`
+```./target/debug/logo_to_ascii.exe --path <path_imagen>```
 
 Ese comando imprimirá el texto en la consola. El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 
-`./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava.png`
+```./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava.png```
 
 ![Cruz de Calatrava](./images/cruz.png)
 
@@ -54,7 +54,7 @@ Ese comando imprimirá el texto en la consola. El set por defecto de caracteres 
 > [!IMPORTANT]
 > Los píxeles transparentes nunca se imprimen. En este caso, la imagen tiene el fondo transparente, por lo que tenemos que añadir `-v` para imprimirlos.
 
-`./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -iv`
+```./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -iv```
 
 ![Cruz de Calatrava en negativo](./images/cruz_iv.png)
 
@@ -80,9 +80,9 @@ Ese comando imprimirá el texto en la consola. El set por defecto de caracteres 
 -   Para añadir caracteres al grupo por defecto se usa `-a <caracteres_a_añadir>`. Por ejemplo, `-a "_/\\"` añadirá los caracteres `_`, `/` y `\`.
 -   Para usar todos los caracteres ASCII imprimibles por pantalla (del 32 al 126 incluidos) se debe añadir `--all`.
 
-`./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava --all`
+```./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava --all```
 
-![Cruz de Calatrava con todos los carácteres](./images/cruz_all.png)
+![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
 
 -   Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`.
 
@@ -99,12 +99,24 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 
 -   Para hacer una diferencia entre colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`.
 
-`./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cb8`
+```./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cb8```
 
 ![Tentáculos](./images/tentaculos.png)
 
+-   Si se combina con `-i` y se tiene el fondo transparente solo se verán los bordes.
+
+```./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -ci```
+
+![Tentáculos borde](./images/tentaculos_i.png)
+
+-   Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-iv`
+
+```./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -civ```
+
+![Tentáculos inverso](./images/tentaculos_iv.png)
+
 -   Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
--   Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que lo detecte.
+-   Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 -   Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
 
 ### Imagen con muchos detalles
@@ -115,7 +127,7 @@ Por ejemplo:
 
 ![Palmera](./images/palm.jpg)
 
-`./target/debug/Logo_to_ASCII.exe --path '.\images\palm.jpg' -r`
+```./target/debug/Logo_to_ASCII.exe --path '.\images\palm.jpg' -r```
 
 ![Palmera](./images/palmera.png)
 
@@ -140,6 +152,8 @@ Primero se procesan los caracteres. En la consola tienen una proporción de 2 de
 
 Al calcular la luminosidad se obtiene un valor de 0 a 1. Es importante restarle 0.5 para obtener valores negativos y positivos.
 
+Además, se cuentan el número de píxeles con luminosidad positiva para una optimización futura.
+
 2. Preprocesado (si lo hay)
 
 Primero se detectan los bordes: un píxel se marca como borde si la diferencia entre su valor y el de los píxeles situados a su derecha y debajo es más grande que un valor preestablecido.
@@ -153,6 +167,12 @@ Finalmente se pasa la imagen a blanco y negro en caso de que se haya seleccionad
 Después se procesa la imagen, dividiéndola en bloques de 8x16 (la misma medida que nuestros caracteres) y se calcula la luminosidad de cada uno de los píxeles (restándole también 0.5).
 
 Por cada carácter, se multiplica el valor de cada píxel con su homólogo en el bloque, y se suman todos los valores ([0][0] * [0][0] + [0][1] * [0][1] + ...). Al final, se imprime el carácter con la puntuación más alta.
+
+**Optimización:**
+
+En este paso también se cuentan el número de píxeles iluminados del bloque. Por cómo funciona el algoritmo, es imponible que un carácter sea impreso si el número de pixeles iluminados del bloque es menor a la mitad de los de luminosidad positiva del carácter, por lo que se saltan estos.
+
+Además, si todos los píxeles están completamente iluminados se puede imprimir directamente el carácter más luminoso.
 
 El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un número positivo, y al multiplicar dos números negativos también. Esto premia las coincidencias de píxeles (y no píxeles) y penaliza las diferencias.
 
