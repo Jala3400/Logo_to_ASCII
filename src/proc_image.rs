@@ -29,27 +29,29 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
             bright_pixels = 0;
             full_pixels = 0;
             for by in 0..16 as usize {
+                let iy = y * 16 + by;
                 for bx in 0..8 as usize {
-                    let iy = y * 16 + by;
                     let ix = x * 8 + bx;
                     if iy < height && ix < width {
-                        group[by][bx] = bitmap.data[iy * width + ix];
-                        if group[by][bx] > -0.5 {
+                        let pixel = bitmap.data[iy * width + ix];
+                        group[by][bx] = pixel;
+                        if pixel > -0.5 {
                             bright_pixels += 1;
-                        }
-                        if group[by][bx] == 0.5 {
-                            full_pixels += 1;
+                            full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
                         group[by][bx] = -0.5;
                     }
                 }
             }
-            if full_pixels == 8 * 16 {
-                print!("{}", font.data.last().unwrap().char);
-            } else {
-                print!("{}", match_group_with_letter(&group, font, bright_pixels));
-            }
+            print!(
+                "{}",
+                if full_pixels == 128 {
+                    font.data.last().unwrap().char
+                } else {
+                    match_group_with_letter(&group, font, bright_pixels)
+                }
+            );
         }
         println!();
     }
@@ -57,11 +59,14 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
 
 pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
     let mut bitmap = Vec::new();
+    let mut max_brightness = -0.5f32;
 
     for y in 0..img.height() {
         for x in 0..img.width() {
             let pixel = img.get_pixel(x, y);
-            bitmap.push(calc_custom_brightness(&pixel, args.inverse, args.visible));
+            let brightness = calc_custom_brightness(&pixel, args.inverse, args.visible);
+            bitmap.push(brightness); 
+            max_brightness = max_brightness.max(brightness);
         }
     }
 
@@ -69,6 +74,7 @@ pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
         data: bitmap,
         width: img.width() as usize,
         height: img.height() as usize,
+        max_brightness,
     }
 }
 
@@ -106,6 +112,7 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
         data: bitmap,
         width: bw.width() as usize,
         height: bw.height() as usize,
+        max_brightness: 0.5,
     }
 }
 

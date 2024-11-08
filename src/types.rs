@@ -2,6 +2,7 @@ pub struct Bitmap {
     pub data: Vec<f32>,
     pub width: usize,
     pub height: usize,
+    pub max_brightness: f32,
 }
 
 #[derive(Debug)]
