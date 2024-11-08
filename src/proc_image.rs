@@ -5,7 +5,6 @@ use crate::{
     types::{Bitmap, FontBitmap},
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
-use imageproc::contrast::threshold;
 
 pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
     // Get the dimensions of the image
@@ -58,60 +57,59 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
 }
 
 pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
-    let mut bitmap = Vec::new();
+    let width = img.width() as usize;
+    let height = img.height() as usize;
+
+    // Pre-allocate vector with exact capacity
+    let mut bitmap = Vec::with_capacity(width * height);
     let mut max_brightness = -0.5f32;
 
-    for y in 0..img.height() {
-        for x in 0..img.width() {
-            let pixel = img.get_pixel(x, y);
-            let brightness = calc_custom_brightness(&pixel, args.inverse, args.visible);
-            bitmap.push(brightness); 
-            max_brightness = max_brightness.max(brightness);
-        }
-    }
+    // Process all pixels in one pass
+    bitmap.extend(img.pixels().map(|pixel| {
+        let brightness = calc_custom_brightness(&pixel.2, args.inverse, args.visible);
+        max_brightness = max_brightness.max(brightness);
+        brightness
+    }));
 
     Bitmap {
         data: bitmap,
-        width: img.width() as usize,
-        height: img.height() as usize,
+        width,
+        height,
         max_brightness,
     }
 }
 
 pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
-    let gray_img = image::ImageBuffer::from_raw(
-        img.width(),
-        img.height(),
-        img.to_luma_alpha8()
-            .into_raw()
-            .chunks(2)
-            .map(|chunk| {
-                if chunk[1] == 0 {
-                    if args.visible {
-                        255
-                    } else {
-                        0
-                    }
-                } else {
-                    chunk[0]
-                }
-            })
-            .collect::<Vec<u8>>(),
-    )
-    .unwrap();
-    let bw = threshold(&gray_img, args.threshold);
+    let width = img.width() as usize;
+    let height = img.height() as usize;
+    let luma_alpha = img.to_luma_alpha8();
+    let raw_data = luma_alpha.as_raw();
 
-    let mut bitmap = Vec::new();
-    for y in 0..bw.height() {
-        for x in 0..bw.width() {
-            let pixel = bw.get_pixel(x, y);
-            bitmap.push(if pixel[0] == 0 { -0.5 } else { 0.5 });
-        }
+    // Preallocate bitmap with exact capacity
+    let mut bitmap = Vec::with_capacity(width * height);
+
+    // Process pixels in chunks of 2 (luma + alpha)
+    for chunk in raw_data.chunks_exact(2) {
+        let value = if chunk[1] == 0 {
+            if args.visible {
+                0.5
+            } else {
+                -0.5
+            }
+        } else {
+            if chunk[0] > args.threshold {
+                0.5
+            } else {
+                -0.5
+            }
+        };
+        bitmap.push(value);
     }
+
     Bitmap {
         data: bitmap,
-        width: bw.width() as usize,
-        height: bw.height() as usize,
+        width,
+        height,
         max_brightness: 0.5,
     }
 }
