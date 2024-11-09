@@ -7,33 +7,21 @@ use logo_to_ascii::{
 use std::io;
 
 fn main() -> io::Result<()> {
-    use std::time::Instant;
-    let now = Instant::now();
-
     let mut args: Args = Args::parse();
     args.difference = args.difference % 360;
 
     // Load the image
     let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
 
-    let elapsed = now.elapsed();
-    println!("Abrir imagen: {:.2?}", elapsed);
-
     if args.color || args.border != 0 {
         borders_image(&mut img, &args);
     }
-
-    let elapsed = now.elapsed();
-    println!("Preprocess: {:.2?}", elapsed);
 
     let bitmap = if args.preprocess {
         black_and_white(&img, &args)
     } else {
         get_bitmap(&img, &args)
     };
-
-    let elapsed = now.elapsed();
-    println!("Bitmap: {:.2?}", elapsed);
 
     if args.all {
         args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
@@ -43,13 +31,7 @@ fn main() -> io::Result<()> {
 
     let font = abc::get_dict8x16(&args.font, &args.chars);
 
-    let elapsed = now.elapsed();
-    println!("Font: {:.2?}", elapsed);
-
     convert_bitmap(&bitmap, &font);
-
-    let elapsed = now.elapsed();
-    println!("convert: {:.2?}", elapsed);
 
     Ok(())
 }
