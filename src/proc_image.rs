@@ -97,11 +97,8 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
                 -0.5
             }
         } else {
-            if chunk[0] > args.threshold {
-                0.5
-            } else {
-                -0.5
-            }
+            let threshold_check = chunk[0] > args.threshold;
+            if threshold_check == !args.inverse { 0.5 } else { -0.5 }
         };
         bitmap.push(value);
     }

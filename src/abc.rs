@@ -24,7 +24,6 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
     }
 
     // Define text properties
-    let mut text;
     let scale = Scale::uniform(height as f32);
     let color = Rgba([255, 255, 255, 255]);
 
@@ -45,12 +44,12 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
         width: width as usize,
         height: height as usize,
     };
+
     for i in 0..characters.len() {
         let mut character = Vec::new();
         img = RgbaImage::new(width, height);
         let character_string = characters[i].to_string();
-        text = &character_string;
-        draw_text_mut(&mut img, color, 0, 0, scale, &font, text);
+        draw_text_mut(&mut img, color, 0, 0, scale, &font, &character_string);
 
         let mut bright_blocks = 0;
 

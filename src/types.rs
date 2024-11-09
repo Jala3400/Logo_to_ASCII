@@ -5,14 +5,12 @@ pub struct Bitmap {
     pub max_brightness: f32,
 }
 
-#[derive(Debug)]
 pub struct FontBitmap {
     pub data: Vec<CharInfo>, // It is ordered by the min value, from highest to lowest
     pub width: usize,
     pub height: usize,
 }
 
-#[derive(Debug)]
 pub struct CharInfo {
     pub char: char,
     pub data: Vec<f32>,
