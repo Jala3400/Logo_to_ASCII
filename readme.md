@@ -170,7 +170,7 @@ Por cada carácter, se multiplica el valor de cada píxel con su homólogo en el
 
 **Optimización:**
 
-En este paso también se cuentan el número de píxeles iluminados del bloque. Por cómo funciona el algoritmo, es imponible que un carácter sea impreso si el número de pixeles iluminados del bloque es menor a la mitad de los de luminosidad positiva del carácter, por lo que se saltan estos.
+En este paso también se cuentan el número de píxeles iluminados del bloque. Un carácter solo se considera para impresión si la mitad de sus píxeles con luminosidad positiva son al menos el número de los píxeles iluminados del bloque.
 
 Además, si todos los píxeles están completamente iluminados se puede imprimir directamente el carácter más luminoso.
 
@@ -180,6 +180,9 @@ El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un 
 
 -   ¿Cómo imprimir un logo de color negro?
     Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-i` al comando, para imprimir la imagen en negativo. Recordamos que el color transparente nunca se imprime.
+    
+-  ¿Por qué cuando paso el logo a blanco y negro (`-r`) desaparecen algunos colores?
+   El paso de una imagen a blanco y negro es un intento de hacer compatible la app con fotos más complejas, por lo que usa una cuenta diferente para calcular la luminosidad de cada píxel. Para que vuelvan a aparecer se debe cambiar el umbral con `-t64`. El umbral por defecto es 127. Con 64 debería valer, pero se puede ajustar si es necesario.
 
 -   ¿Por qué cuando cambio la fuente el texto se imprime con la misma fuente?
     La aplicación solo usa la fuente para comparar cada bloque de la imagen con los caracteres. Se deberá cambiar la fuente de la consola (o donde la quieras poner para que encaje). Es probable que se vea deformado, ya que la aplicación asume que es una fuente monoespacio de 8x16.

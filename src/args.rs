@@ -41,7 +41,7 @@ pub struct Args {
     pub preprocess: bool,
 
     /// Threshold value for the black and white conversion (from 0 to 255)
-    #[arg(short, long, default_value_t = 64)]
+    #[arg(short, long, default_value_t = 127)]
     pub threshold: u8,
 
     /// Threshold for the color difference (from 0 to 360)
