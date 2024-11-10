@@ -51,4 +51,8 @@ pub struct Args {
     /// Makes transparent pixels visible
     #[arg(short, long, default_value_t = false)]
     pub visible: bool,
+
+    /// Heigth of the chacacters
+    #[arg(short, long, default_value_t = 8)]
+    pub width: u32,
 }

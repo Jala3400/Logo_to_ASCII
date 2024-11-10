@@ -11,41 +11,49 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
     let height = bitmap.height;
     let width = bitmap.width;
 
-    // Calculate number of 8x16 groups
-    let num_groups_x = (width + 7) / 8;
-    let num_groups_y = (height + 15) / 16;
+    let block_width = font.width;
+    let block_height = font.height;
+
+    // Calculate number of groups
+    let num_groups_x = (width + block_width - 1) / block_width;
+    let num_groups_y = (height + block_height - 1) / block_height;
 
     println!("Image dimensions: {}x{}", width, height);
-    println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
+    println!(
+        "Number of {}x{} groups: {}x{}",
+        block_width, block_height, num_groups_x, num_groups_y
+    );
 
-    let mut group = [[0f32; 8]; 16];
+    let mut group = Vec::with_capacity(block_height * block_width);
     let mut bright_pixels;
     let mut full_pixels;
 
-    // Iterate over 8x16 groups
+    // Iterate over groups
     for y in 0..num_groups_y as usize {
         for x in 0..num_groups_x as usize {
+            group.clear();
             bright_pixels = 0;
             full_pixels = 0;
-            for by in 0..16 as usize {
-                let iy = y * 16 + by;
-                for bx in 0..8 as usize {
-                    let ix = x * 8 + bx;
+            for by in 0..block_height as usize {
+                let iy = y * block_height + by;
+                for bx in 0..block_width as usize {
+                    let ix = x * block_width + bx;
+                    let cords = iy * width + ix;
                     if iy < height && ix < width {
-                        let pixel = bitmap.data[iy * width + ix];
-                        group[by][bx] = pixel;
+                        let pixel = bitmap.data[cords];
+                        group.push(pixel);
                         if pixel > -0.5 {
                             bright_pixels += 1;
                             full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
-                        group[by][bx] = -0.5;
+                        group.push(-0.5);
                     }
                 }
             }
             print!(
                 "{}",
-                if full_pixels == 128 {
+                if full_pixels == block_height * block_width {
                     font.data.last().unwrap().char
                 } else {
                     match_group_with_letter(&group, font, bright_pixels)
@@ -98,7 +106,11 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
             }
         } else {
             let threshold_check = chunk[0] > args.threshold;
-            if threshold_check == !args.inverse { 0.5 } else { -0.5 }
+            if threshold_check == !args.inverse {
+                0.5
+            } else {
+                -0.5
+            }
         };
         bitmap.push(value);
     }

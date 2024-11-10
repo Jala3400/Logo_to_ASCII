@@ -1,4 +1,5 @@
 use crate::{
+    args::Args,
     proc_pixel::calculate_brightness,
     types::{CharInfo, FontBitmap},
 };
@@ -6,16 +7,16 @@ use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 
-pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
+pub fn get_dict(args: &Args) -> FontBitmap {
     // Load or create an image
     let mut img;
 
-    let width = 8;
-    let height = 16;
+    let width = args.width;
+    let height = args.width * 2;
 
     // Load a font
     let font: Font<'_>;
-    if let Some(font_path) = font_path {
+    if let Some(font_path) = args.font.as_ref() {
         let font_data =
             std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
         font = Font::try_from_vec(font_data).expect("Failed to load font");
@@ -28,11 +29,11 @@ pub fn get_dict8x16(font_path: &Option<String>, chars: &str) -> FontBitmap {
     let color = Rgba([255, 255, 255, 255]);
 
     // Create an array to store characters
-    let mut characters = Vec::new();
+    let mut characters = Vec::with_capacity(args.chars.len());
 
     // Extract characters from the font
     print!("Characters: ");
-    for c in chars.chars() {
+    for c in args.chars.chars() {
         // ASCII printable characters
         print!("{}", c);
         characters.push(c);

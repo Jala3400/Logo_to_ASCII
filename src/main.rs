@@ -29,7 +29,7 @@ fn main() -> io::Result<()> {
         args.chars.push_str(&args.add_chars);
     }
 
-    let font = abc::get_dict8x16(&args.font, &args.chars);
+    let font = abc::get_dict(&args);
 
     convert_bitmap(&bitmap, &font);
 
