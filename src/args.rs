@@ -19,6 +19,10 @@ pub struct Args {
     #[arg(short, long, default_value = "")]
     pub add_chars: String,
 
+    /// Use characters except:
+    #[arg(short='x', long, default_value = "")]
+    pub except: String,
+
     /// Use all ASCII pintable characters to convert the image
     #[arg(long, default_value_t = false)]
     pub all: bool,

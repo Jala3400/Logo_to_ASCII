@@ -28,6 +28,11 @@ fn main() -> io::Result<()> {
     } else {
         args.chars.push_str(&args.add_chars);
     }
+    args.chars = args
+        .chars
+        .chars()
+        .filter(|c| !args.except.contains(*c))
+        .collect();
 
     let font = abc::get_dict(&args);
 
