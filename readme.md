@@ -27,7 +27,7 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 1. Descarga rust desde https://www.rust-lang.org/tools/installs:
     1. Al terminar la instalación escribe `rustc --version` en la consola para comprobar que todo ha salido bien.
 2. Descarga este repositorio.
-3. Compila el repositorio: En la consola de comandos ejecuta `cargo build`.
+3. Compila el repositorio: En la consola de comandos ejecuta `cargo build --release`.
 
 ## Tutorial
 
@@ -39,11 +39,11 @@ El caso más básico consiste en tratar logos de un solo color. Usaremos la sigu
 
 Para convertirla, ejecutamos el programa desde la consola. Le indicamos la imagen con el argumento `--path <path_imagen>`.
 
-```./target/debug/logo_to_ascii.exe --path <path_imagen>```
+```./target/release/logo_to_ascii.exe --path <path_imagen>```
 
-Ese comando imprimirá el texto en la consola. El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
-
-```./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava.png```
+```
+./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png
+```
 
 ![Cruz de Calatrava](./images/cruz.png)
 
@@ -54,9 +54,11 @@ Ese comando imprimirá el texto en la consola. El set por defecto de caracteres 
 > [!IMPORTANT]
 > Los píxeles transparentes nunca se imprimen. En este caso, la imagen tiene el fondo transparente, por lo que tenemos que añadir `-v` para imprimirlos.
 
-```./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -iv```
+```./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -iv```
 
 ![Cruz de Calatrava en negativo](./images/cruz_iv.png)
+
+El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 
 -   Para cambiar el set de caracteres se usa el argumento `--chars <caracteres>`. El set de caracteres debe ir entre `"` o `'` si se quiere usar el espacio.
     Para usar los caracteres de las comillas (`"` y `'`) se deben hacer pruebas dependiendo de la consola que se use:
@@ -80,14 +82,16 @@ Ese comando imprimirá el texto en la consola. El set por defecto de caracteres 
 -   Para añadir caracteres al grupo por defecto se usa `-a <caracteres_a_añadir>`. Por ejemplo, `-a "_/\\"` añadirá los caracteres `_`, `/` y `\`.
 -   Para usar todos los caracteres ASCII imprimibles por pantalla (del 32 al 126 incluidos) se debe añadir `--all`.
 
-```./target/debug/logo_to_ascii.exe --path ./images/Cross_Calatrava --all```
+```
+./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava --all
+```
 
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
 
 -   Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`.
 
 > [!WARNING]
-> Este argumento no adapta los bloques al tamaño de la fuente. Cada carácter se tomará como monoespacio de 8x16, lo que puede deformar el resultado final.
+> `--font` no adapta los bloques al tamaño de la fuente. Cada carácter se tomará como monoespacio de 8x16, lo que puede deformar el resultado final.
 
 -   Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
 
@@ -99,19 +103,25 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 
 -   Para hacer una diferencia entre colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`.
 
-```./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cb8```
+```
+./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cb8
+```
 
 ![Tentáculos](./images/tentaculos.png)
 
 -   Si se combina con `-i` y se tiene el fondo transparente solo se verán los bordes.
 
-```./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -ci```
+```
+./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -ci
+```
 
 ![Tentáculos borde](./images/tentaculos_i.png)
 
 -   Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-iv`
 
-```./target/debug/Logo_to_ASCII.exe --path '.\images\tentacles.png' -civ```
+```
+./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -civ
+```
 
 ![Tentáculos inverso](./images/tentaculos_iv.png)
 
@@ -127,7 +137,9 @@ Por ejemplo:
 
 ![Palmera](./images/palm.jpg)
 
-```./target/debug/Logo_to_ASCII.exe --path '.\images\palm.jpg' -r```
+```
+./target/release/Logo_to_ASCII.exe --path '.\images\palm.jpg' -r
+```
 
 ![Palmera](./images/palmera.png)
 
@@ -146,7 +158,7 @@ La idea surgió de un video en el que se convertía una imagen a ASCII. Sin emba
 
 Este algoritmo opera con píxeles en vez de con bloques.
 
-1. Caracteres:
+**1. Caracteres:**
 
 Primero se procesan los caracteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Se eligen las dimensiones 8x16 para hacer un mapa de bits de cada carácter, que indica la luminosidad de cada píxel.
 
@@ -154,7 +166,7 @@ Al calcular la luminosidad se obtiene un valor de 0 a 1. Es importante restarle 
 
 Además, se cuentan el número de píxeles con luminosidad positiva para una optimización futura.
 
-2. Preprocesado (si lo hay)
+**2. Preprocesado (si lo hay)**
 
 Primero se detectan los bordes: un píxel se marca como borde si la diferencia entre su valor y el de los píxeles situados a su derecha y debajo es más grande que un valor preestablecido.
 
@@ -162,7 +174,7 @@ Estos bordes se pintan luego en la imagen.
 
 Finalmente se pasa la imagen a blanco y negro en caso de que se haya seleccionado.
 
-3. Convertir bloques a carácter
+**3. Convertir bloques a carácter**
 
 Después se procesa la imagen, dividiéndola en bloques de 8x16 (la misma medida que nuestros caracteres) y se calcula la luminosidad de cada uno de los píxeles (restándole también 0.5).
 
@@ -178,11 +190,11 @@ El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un 
 
 ## Preguntas frecuentes
 
--   ¿Cómo imprimir un logo de color negro?
+-   **¿Cómo imprimir un logo de color negro?**
     Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-i` al comando, para imprimir la imagen en negativo. Recordamos que el color transparente nunca se imprime.
     
--  ¿Por qué cuando paso el logo a blanco y negro (`-r`) desaparecen algunos colores?
+-  **¿Por qué cuando paso el logo a blanco y negro (`-r`) desaparecen algunos colores?**
    El paso de una imagen a blanco y negro es un intento de hacer compatible la app con fotos más complejas, por lo que usa una cuenta diferente para calcular la luminosidad de cada píxel. Para que vuelvan a aparecer se debe cambiar el umbral con `-t64`. El umbral por defecto es 127. Con 64 debería valer, pero se puede ajustar si es necesario.
 
--   ¿Por qué cuando cambio la fuente el texto se imprime con la misma fuente?
+-   **¿Por qué cuando cambio la fuente el texto se imprime con la misma fuente?**
     La aplicación solo usa la fuente para comparar cada bloque de la imagen con los caracteres. Se deberá cambiar la fuente de la consola (o donde la quieras poner para que encaje). Es probable que se vea deformado, ya que la aplicación asume que es una fuente monoespacio de 8x16.
