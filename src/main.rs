@@ -36,7 +36,7 @@ fn main() -> io::Result<()> {
 
     let font = abc::get_dict(&args);
 
-    convert_bitmap(&bitmap, &font);
+    convert_bitmap(&bitmap, &font, &args);
 
     Ok(())
 }

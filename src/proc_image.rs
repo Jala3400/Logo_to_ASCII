@@ -6,7 +6,7 @@ use crate::{
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
 
-pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
+pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
     // Get the dimensions of the image
     let height = bitmap.height;
     let width = bitmap.width;
@@ -42,12 +42,12 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
                     if iy < height && ix < width {
                         let pixel = bitmap.data[cords];
                         group.push(pixel);
-                        if pixel > -0.5 {
+                        if pixel > -args.midpoint_brightness {
                             bright_pixels += 1;
                             full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
-                        group.push(-0.5);
+                        group.push(-args.midpoint_brightness);
                     }
                 }
             }
@@ -70,11 +70,11 @@ pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
 
     // Pre-allocate vector with exact capacity
     let mut bitmap = Vec::with_capacity(width * height);
-    let mut max_brightness = -0.5f32;
+    let mut max_brightness = -args.midpoint_brightness;
 
     // Process all pixels in one pass
     bitmap.extend(img.pixels().map(|pixel| {
-        let brightness = calc_custom_brightness(&pixel.2, args.inverse, args.visible);
+        let brightness = calc_custom_brightness(&pixel.2, args);
         max_brightness = max_brightness.max(brightness);
         brightness
     }));
@@ -100,16 +100,16 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
     for chunk in raw_data.chunks_exact(2) {
         let value = if chunk[1] == 0 {
             if args.visible {
-                0.5
+                1.0 - args.midpoint_brightness
             } else {
-                -0.5
+                -args.midpoint_brightness
             }
         } else {
             let threshold_check = chunk[0] > args.threshold;
             if threshold_check == !args.inverse {
-                0.5
+                1.0 - args.midpoint_brightness
             } else {
-                -0.5
+                -args.midpoint_brightness
             }
         };
         bitmap.push(value);
@@ -119,7 +119,7 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
         data: bitmap,
         width,
         height,
-        max_brightness: 0.5,
+        max_brightness: 1.0 - args.midpoint_brightness,
     }
 }
 

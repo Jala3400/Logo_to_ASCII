@@ -1,15 +1,17 @@
+use crate::args::Args;
 use image::Rgba;
 
-pub fn calc_custom_brightness(pixel: &Rgba<u8>, inverse: bool, visible: bool) -> f32 {
+pub fn calc_custom_brightness(pixel: &Rgba<u8>, args: &Args) -> f32 {
     if pixel[3] == 0 {
         // If the pixel is transparent
-        if visible {
-            0.5
+        if args.visible {
+            1.0 - args.midpoint_brightness
         } else {
-            -0.5
+            -args.midpoint_brightness
         }
     } else {
-        (calculate_brightness(&pixel) - 0.5) * if inverse { -1.0 } else { 1.0 }
+        (calculate_brightness(&pixel) - args.midpoint_brightness)
+            * if args.inverse { -1.0 } else { 1.0 }
     }
 }
 

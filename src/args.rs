@@ -20,7 +20,7 @@ pub struct Args {
     pub add_chars: String,
 
     /// Use characters except:
-    #[arg(short='x', long, default_value = "")]
+    #[arg(short = 'x', long, default_value = "")]
     pub except: String,
 
     /// Use all ASCII pintable characters to convert the image
@@ -59,4 +59,8 @@ pub struct Args {
     /// Heigth of the chacacters
     #[arg(short, long, default_value_t = 8)]
     pub width: u32,
+
+    /// Midpoint of the brightness spectrum
+    #[arg(short, long, default_value_t = 0.5)]
+    pub midpoint_brightness: f32,
 }
