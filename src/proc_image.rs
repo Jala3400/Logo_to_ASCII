@@ -7,14 +7,11 @@ use crate::{
 use image::{DynamicImage, GenericImage, GenericImageView};
 
 pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
-    // Get the dimensions of the image
     let height = bitmap.height;
     let width = bitmap.width;
-
     let block_width = font.width;
     let block_height = font.height;
 
-    // Calculate number of groups
     let num_groups_x = (width + block_width - 1) / block_width;
     let num_groups_y = (height + block_height - 1) / block_height;
 
@@ -24,30 +21,28 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
         block_width, block_height, num_groups_x, num_groups_y
     );
 
-    let mut group = Vec::with_capacity(block_height * block_width);
+    let mut group = vec![-args.midpoint_brightness; block_height * block_width];
     let mut bright_pixels;
     let mut full_pixels;
 
-    // Iterate over groups
-    for y in 0..num_groups_y as usize {
-        for x in 0..num_groups_x as usize {
-            group.clear();
+    for y in 0..num_groups_y {
+        for x in 0..num_groups_x {
             bright_pixels = 0;
             full_pixels = 0;
-            for by in 0..block_height as usize {
+            for by in 0..block_height {
                 let iy = y * block_height + by;
-                for bx in 0..block_width as usize {
+                for bx in 0..block_width {
                     let ix = x * block_width + bx;
                     let cords = iy * width + ix;
                     if iy < height && ix < width {
                         let pixel = bitmap.data[cords];
-                        group.push(pixel);
+                        group[by * block_width + bx] = pixel;
                         if pixel > -args.midpoint_brightness {
                             bright_pixels += 1;
                             full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
-                        group.push(-args.midpoint_brightness);
+                        group[by * block_width + bx] = -args.midpoint_brightness;
                     }
                 }
             }

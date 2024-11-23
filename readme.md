@@ -136,6 +136,30 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 
 ![Tentáculos inverso](./images/tentaculos_iv.png)
 
+- Otra combinación interesante es `-cv`
+
+```
+./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cv
+```
+
+![Tentáculos borde oscuro](./images/tentaculos_cv.png)
+
+- Todos estos argumentos también se puede usar con logos normales
+
+```
+./target/release/Logo_to_ASCII.exe --path .\images\Cross_Calatrava.png -cv
+```
+
+![Cruz de Calatrava borde oscuro](./images/cruz_cv.png)
+
+- Y mezclar unos con otros
+
+```
+./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cv -a "@#$&Yg*'´_/\ \"
+```
+
+![Tentáculos borde oscuro con más caracteres](./images/tentaculos_cv_chars.png)
+
 -   Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
 -   Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 -   Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
@@ -159,9 +183,9 @@ Por ejemplo:
 Se recomienda hacer dibujos vectoriales (.svg) y luego pasarlos a imagen.
 
 Para obtener los mejores resultados es recomendable que las imágenes tengan bordes bien definidos y pocos detalles, así como superficies amplias.
-Para facilitar el diseño se pueden hacer dibujos vectoriales con una rejilla de 8x16 y asegurarse de que los bordes siempre coincidan con los bordes y esquinas de un bloque.
+Para facilitar el diseño se pueden hacer dibujos vectoriales con una rejilla de 8x16 y asegurarse de que los bordes del dibujo siempre coincidan con los bordes y esquinas de un bloque.
 
-No se debe intentar meter más detalles más pequeños que uno de estos bloques.
+No se recomienda tener detalles más pequeños que uno de estos bloques.
 
 ## ¿Cómo funciona?
 
