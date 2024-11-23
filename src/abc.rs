@@ -28,17 +28,8 @@ pub fn get_dict(args: &Args) -> FontBitmap {
     let scale = Scale::uniform(height as f32);
     let color = Rgba([255, 255, 255, 255]);
 
-    // Create an array to store characters
-    let mut characters = Vec::with_capacity(args.chars.len());
-
-    // Extract characters from the font
-    print!("Characters: ");
-    for c in args.chars.chars() {
-        // ASCII printable characters
-        print!("{}", c);
-        characters.push(c);
-    }
-    println!("");
+    // Create a vector of characters directly from the input string
+    let characters: Vec<char> = args.chars.chars().collect();
 
     let mut final_font = FontBitmap {
         data: Vec::new(),
@@ -73,6 +64,13 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         };
         final_font.insert_ord(char_info);
     }
+
+    // Print all characters in the final font (ordered)
+    print!("Characters: ");
+    for char_info in &final_font.data {
+        print!("{}", char_info.char);
+    }
+    println!();
 
     final_font
 }
