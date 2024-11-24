@@ -1,7 +1,7 @@
 use crate::types::FontBitmap;
 
 pub fn match_group_with_letter(
-    group: &[[f32; 8]; 16],
+    group: &Vec<f32>,
     font: &FontBitmap,
     bright_blocks: usize,
 ) -> char {
@@ -15,7 +15,8 @@ pub fn match_group_with_letter(
         let mut match_value = 0.0;
         for y in 0..height {
             for x in 0..width {
-                match_value += group[y][x] * letter.data[y * 8 + x];
+                let cords = y * width + x;
+                match_value += group[cords] * letter.data[cords];
             }
         }
 

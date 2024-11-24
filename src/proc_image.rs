@@ -6,46 +6,49 @@ use crate::{
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
 
-pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap) {
-    // Get the dimensions of the image
+pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
     let height = bitmap.height;
     let width = bitmap.width;
+    let block_width = font.width;
+    let block_height = font.height;
 
-    // Calculate number of 8x16 groups
-    let num_groups_x = (width + 7) / 8;
-    let num_groups_y = (height + 15) / 16;
+    let num_groups_x = (width + block_width - 1) / block_width;
+    let num_groups_y = (height + block_height - 1) / block_height;
 
     println!("Image dimensions: {}x{}", width, height);
-    println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
+    println!(
+        "Number of {}x{} groups: {}x{}",
+        block_width, block_height, num_groups_x, num_groups_y
+    );
 
-    let mut group = [[0f32; 8]; 16];
+    let mut group = vec![-args.midpoint_brightness; block_height * block_width];
     let mut bright_pixels;
     let mut full_pixels;
 
-    // Iterate over 8x16 groups
-    for y in 0..num_groups_y as usize {
-        for x in 0..num_groups_x as usize {
+    for y in 0..num_groups_y {
+        for x in 0..num_groups_x {
             bright_pixels = 0;
             full_pixels = 0;
-            for by in 0..16 as usize {
-                let iy = y * 16 + by;
-                for bx in 0..8 as usize {
-                    let ix = x * 8 + bx;
+            for by in 0..block_height {
+                let iy = y * block_height + by;
+                for bx in 0..block_width {
+                    let ix = x * block_width + bx;
+                    let cords = iy * width + ix;
                     if iy < height && ix < width {
-                        let pixel = bitmap.data[iy * width + ix];
-                        group[by][bx] = pixel;
-                        if pixel > -0.5 {
+                        let pixel = bitmap.data[cords];
+                        group[by * block_width + bx] = pixel;
+                        if pixel > -args.midpoint_brightness {
                             bright_pixels += 1;
                             full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
-                        group[by][bx] = -0.5;
+                        group[by * block_width + bx] = -args.midpoint_brightness;
                     }
                 }
             }
             print!(
                 "{}",
-                if full_pixels == 128 {
+                if full_pixels == block_height * block_width {
                     font.data.last().unwrap().char
                 } else {
                     match_group_with_letter(&group, font, bright_pixels)
@@ -62,11 +65,11 @@ pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
 
     // Pre-allocate vector with exact capacity
     let mut bitmap = Vec::with_capacity(width * height);
-    let mut max_brightness = -0.5f32;
+    let mut max_brightness = -args.midpoint_brightness;
 
     // Process all pixels in one pass
     bitmap.extend(img.pixels().map(|pixel| {
-        let brightness = calc_custom_brightness(&pixel.2, args.inverse, args.visible);
+        let brightness = calc_custom_brightness(&pixel.2, args);
         max_brightness = max_brightness.max(brightness);
         brightness
     }));
@@ -92,13 +95,17 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
     for chunk in raw_data.chunks_exact(2) {
         let value = if chunk[1] == 0 {
             if args.visible {
-                0.5
+                1.0 - args.midpoint_brightness
             } else {
-                -0.5
+                -args.midpoint_brightness
             }
         } else {
             let threshold_check = chunk[0] > args.threshold;
-            if threshold_check == !args.inverse { 0.5 } else { -0.5 }
+            if threshold_check == !args.inverse {
+                1.0 - args.midpoint_brightness
+            } else {
+                -args.midpoint_brightness
+            }
         };
         bitmap.push(value);
     }
@@ -107,7 +114,7 @@ pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
         data: bitmap,
         width,
         height,
-        max_brightness: 0.5,
+        max_brightness: 1.0 - args.midpoint_brightness,
     }
 }
 
