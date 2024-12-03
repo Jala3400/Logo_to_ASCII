@@ -1,9 +1,9 @@
 use clap::Parser;
-use image::GenericImageView;
 use logo_to_ascii::{
     abc,
     args::Args,
-    proc_image::{black_and_white, borders_image, convert_bitmap, get_bitmap},
+    image_ops::{black_and_white, borders_image, resize},
+    proc_image::{convert_bitmap, get_bitmap},
 };
 use std::io;
 
@@ -28,44 +28,19 @@ fn main() -> io::Result<()> {
     let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
 
     // Resize the image
-    if args.actual_height > 0 || args.actual_width > 0 {
-        let (width, height) = img.dimensions();
-        println!("Original dimensions {}x{}", width, height);
-
-        if args.actual_width == 0 {
-            let ratio = args.actual_height as f32 / height as f32;
-            args.actual_width = (width as f32 * ratio) as u32;
+    match (
+        args.actual_height,
+        args.actual_width,
+        args.height,
+        args.width,
+    ) {
+        (h, w, _, _) if h > 0 || w > 0 => resize(&mut img, &mut args),
+        (_, _, h, w) if h > 0 || w > 0 => {
+            args.actual_height = w * 8;
+            args.actual_width = h * 16;
+            resize(&mut img, &mut args);
         }
-        if args.actual_height == 0 {
-            let ratio = args.actual_width as f32 / width as f32;
-            args.actual_height = (height as f32 * ratio) as u32;
-        }
-
-        img = img.resize_exact(
-            args.actual_width,
-            args.actual_height,
-            image::imageops::FilterType::Lanczos3,
-        );
-    } else if args.height > 0 || args.width > 0 {
-        let (width, height) = img.dimensions();
-        println!("Original dimensions {}x{}", width, height);
-        args.width = args.width * 8;
-        args.height = args.height * 16;
-
-        if args.width == 0 {
-            let ratio = args.height as f32 / height as f32;
-            args.width = (width as f32 * ratio) as u32;
-        }
-        if args.height == 0 {
-            let ratio = args.width as f32 / width as f32;
-            args.height = (height as f32 * ratio) as u32;
-        }
-
-        img = img.resize_exact(
-            args.width,
-            args.height,
-            image::imageops::FilterType::Lanczos3,
-        );
+        _ => (),
     }
 
     if args.color || args.border != 0 {
