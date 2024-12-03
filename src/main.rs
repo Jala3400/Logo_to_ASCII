@@ -11,36 +11,6 @@ fn main() -> io::Result<()> {
     let mut args: Args = Args::parse();
     args.difference = args.difference % 360;
 
-    // Load the image
-    let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
-
-    if args.height > 0 || args.width > 0 {
-        let actual_width = args.width * 8;
-        let actual_height = args.height * 16;
-        let (width, height) = img.dimensions();
-        if actual_width > 0 && actual_height > 0 {
-            img = img.resize_exact(actual_width, actual_height, image::imageops::FilterType::Lanczos3);
-        } else if actual_width > 0 {
-            let ratio = actual_width as f32 / width as f32;
-            let new_height = (height as f32 * ratio) as u32;
-            img = img.resize(actual_width, new_height, image::imageops::FilterType::Lanczos3);
-        } else {
-            let ratio = actual_height as f32 / height as f32;
-            let new_width = (width as f32 * ratio) as u32;
-            img = img.resize(new_width, actual_height, image::imageops::FilterType::Lanczos3);
-        }
-    }
-
-    if args.color || args.border != 0 {
-        borders_image(&mut img, &args);
-    }
-
-    let bitmap = if args.preprocess {
-        black_and_white(&img, &args)
-    } else {
-        get_bitmap(&img, &args)
-    };
-
     if args.all {
         args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
     } else {
@@ -53,6 +23,60 @@ fn main() -> io::Result<()> {
         .collect();
 
     let font = abc::get_dict(&args);
+
+    // Load the image
+    let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
+
+    // Resize the image
+    if args.actual_height > 0 || args.actual_width > 0 {
+        let (width, height) = img.dimensions();
+        println!("Original dimensions {}x{}", width, height);
+
+        if args.actual_width == 0 {
+            let ratio = args.actual_height as f32 / height as f32;
+            args.actual_width = (width as f32 * ratio) as u32;
+        }
+        if args.actual_height == 0 {
+            let ratio = args.actual_width as f32 / width as f32;
+            args.actual_height = (height as f32 * ratio) as u32;
+        }
+
+        img = img.resize_exact(
+            args.actual_width,
+            args.actual_height,
+            image::imageops::FilterType::Lanczos3,
+        );
+    } else if args.height > 0 || args.width > 0 {
+        let (width, height) = img.dimensions();
+        println!("Original dimensions {}x{}", width, height);
+        args.width = args.width * 8;
+        args.height = args.height * 16;
+
+        if args.width == 0 {
+            let ratio = args.height as f32 / height as f32;
+            args.width = (width as f32 * ratio) as u32;
+        }
+        if args.height == 0 {
+            let ratio = args.width as f32 / width as f32;
+            args.height = (height as f32 * ratio) as u32;
+        }
+
+        img = img.resize_exact(
+            args.width,
+            args.height,
+            image::imageops::FilterType::Lanczos3,
+        );
+    }
+
+    if args.color || args.border != 0 {
+        borders_image(&mut img, &args);
+    }
+
+    let bitmap = if args.preprocess {
+        black_and_white(&img, &args)
+    } else {
+        get_bitmap(&img, &args)
+    };
 
     convert_bitmap(&bitmap, &font, &args);
 
