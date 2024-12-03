@@ -56,9 +56,13 @@ pub struct Args {
     #[arg(short, long, default_value_t = false)]
     pub visible: bool,
 
-    /// Heigth of the chacacters
-    #[arg(short, long, default_value_t = 8)]
-    pub width: u32,
+    /// Number of characters in the width of the end image
+    #[arg(short, long)]
+    pub width: Option<u32>,
+
+    /// Number of characters in the height of the end image
+    #[arg(short, long)]
+    pub height: Option<u32>,
 
     /// Midpoint of the brightness spectrum
     #[arg(short, long, default_value_t = 0.5)]

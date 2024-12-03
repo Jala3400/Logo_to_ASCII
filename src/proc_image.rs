@@ -9,19 +9,14 @@ use image::{DynamicImage, GenericImage, GenericImageView};
 pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
     let height = bitmap.height;
     let width = bitmap.width;
-    let block_width = font.width;
-    let block_height = font.height;
 
-    let num_groups_x = (width + block_width - 1) / block_width;
-    let num_groups_y = (height + block_height - 1) / block_height;
+    let num_groups_x = (width + 7) / 8;
+    let num_groups_y = (height + 15) / 16;
 
     println!("Image dimensions: {}x{}", width, height);
-    println!(
-        "Number of {}x{} groups: {}x{}",
-        block_width, block_height, num_groups_x, num_groups_y
-    );
+    println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
 
-    let mut group = vec![-args.midpoint_brightness; block_height * block_width];
+    let mut group = [0f32; 8 * 16];
     let mut bright_pixels;
     let mut full_pixels;
 
@@ -29,26 +24,27 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
         for x in 0..num_groups_x {
             bright_pixels = 0;
             full_pixels = 0;
-            for by in 0..block_height {
-                let iy = y * block_height + by;
-                for bx in 0..block_width {
-                    let ix = x * block_width + bx;
+            for by in 0..16 {
+                let iy = y * 16 + by;
+                for bx in 0..8 {
+                    let ix = x * 8 + bx;
                     let cords = iy * width + ix;
+                    let cords_block = by * 8 + bx;
                     if iy < height && ix < width {
                         let pixel = bitmap.data[cords];
-                        group[by * block_width + bx] = pixel;
+                        group[cords_block] = pixel;
                         if pixel > -args.midpoint_brightness {
                             bright_pixels += 1;
                             full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
-                        group[by * block_width + bx] = -args.midpoint_brightness;
+                        group[cords_block] = -args.midpoint_brightness;
                     }
                 }
             }
             print!(
                 "{}",
-                if full_pixels == block_height * block_width {
+                if full_pixels == 16 * 8 {
                     font.data.last().unwrap().char
                 } else {
                     match_group_with_letter(&group, font, bright_pixels)

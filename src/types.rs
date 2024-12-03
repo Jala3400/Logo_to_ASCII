@@ -7,13 +7,11 @@ pub struct Bitmap {
 
 pub struct FontBitmap {
     pub data: Vec<CharInfo>, // It is ordered by the min value, from highest to lowest
-    pub width: usize,
-    pub height: usize,
 }
 
 pub struct CharInfo {
     pub char: char,
-    pub data: Vec<f32>,
+    pub data: [f32; 8 * 16],
     pub min: usize,
 }
 
