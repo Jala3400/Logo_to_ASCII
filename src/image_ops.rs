@@ -1,45 +1,8 @@
 use crate::{
     args::Args,
     proc_pixel::{brightness_difference, hue_difference},
-    types::Bitmap,
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
-
-pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
-    let width = img.width() as usize;
-    let height = img.height() as usize;
-    let luma_alpha = img.to_luma_alpha8();
-    let raw_data = luma_alpha.as_raw();
-
-    // Preallocate bitmap with exact capacity
-    let mut bitmap = Vec::with_capacity(width * height);
-
-    // Process pixels in chunks of 2 (luma + alpha)
-    for chunk in raw_data.chunks_exact(2) {
-        let value = if chunk[1] == 0 {
-            if args.visible {
-                1.0 - args.midpoint_brightness
-            } else {
-                -args.midpoint_brightness
-            }
-        } else {
-            let threshold_check = chunk[0] > args.threshold;
-            if threshold_check == !args.inverse {
-                1.0 - args.midpoint_brightness
-            } else {
-                -args.midpoint_brightness
-            }
-        };
-        bitmap.push(value);
-    }
-
-    Bitmap {
-        data: bitmap,
-        width,
-        height,
-        max_brightness: 1.0 - args.midpoint_brightness,
-    }
-}
 
 pub fn borders_image(img: &mut DynamicImage, args: &Args) {
     let borders = if args.color {

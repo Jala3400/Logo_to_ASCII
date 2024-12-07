@@ -75,4 +75,12 @@ pub struct Args {
     /// Midpoint of the brightness spectrum
     #[arg(short, long, default_value_t = 0.5)]
     pub midpoint_brightness: f32,
+
+    /// Offsetx of the width of the image
+    #[arg(long = "ofx", default_value_t = 0)]
+    pub offsetx: usize,
+
+    /// Offsety of the height of the image
+    #[arg(long = "ofy", default_value_t = 0)]
+    pub offsety: usize,
 }
