@@ -27,24 +27,18 @@ fn main() -> io::Result<()> {
     // Load the image
     let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
 
-    // Resize the image
-    match (
-        args.actual_height,
-        args.actual_width,
-        args.height,
-        args.width,
-    ) {
-        (h, w, _, _) if h > 0 || w > 0 => resize(&mut img, &mut args),
-        (_, _, h, w) if h > 0 || w > 0 => {
-            args.actual_height = w * 8;
-            args.actual_width = h * 16;
-            resize(&mut img, &mut args);
-        }
-        _ => (),
-    }
-
     if args.color || args.border != 0 {
         borders_image(&mut img, &args);
+    }
+
+    if args.width > 0 {
+        args.actual_width = args.width * 8;
+    }
+    if args.height > 0 {
+        args.actual_height = args.height * 16;
+    }
+    if args.actual_height > 0 || args.actual_width > 0 {
+        resize(&mut img, &mut args);
     }
 
     let bitmap = if args.preprocess {

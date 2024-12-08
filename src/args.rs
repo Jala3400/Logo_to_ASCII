@@ -65,11 +65,11 @@ pub struct Args {
     pub height: u32,
 
     /// Actual width of the image (0 to default)
-    #[arg(long, default_value_t = 0)]
+    #[arg(long = "aw", default_value_t = 0)]
     pub actual_width: u32,
 
     /// Actual height of the image (0 to default)
-    #[arg(long, default_value_t = 0)]
+    #[arg(long = "ah", default_value_t = 0)]
     pub actual_height: u32,
 
     /// Midpoint of the brightness spectrum
