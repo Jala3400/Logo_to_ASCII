@@ -11,8 +11,8 @@ pub fn get_dict(args: &Args) -> FontBitmap {
     // Load or create an image
     let mut img;
 
-    let width = args.width;
-    let height = args.width * 2;
+    let width = 8usize;
+    let height = width * 2;
 
     // Load a font
     let font: Font<'_>;
@@ -33,13 +33,11 @@ pub fn get_dict(args: &Args) -> FontBitmap {
 
     let mut final_font = FontBitmap {
         data: Vec::new(),
-        width: width as usize,
-        height: height as usize,
     };
 
     for i in 0..characters.len() {
-        let mut character = Vec::new();
-        img = RgbaImage::new(width, height);
+        let mut character: [f32; 8 * 16] = [0.0; 8 * 16];
+        img = RgbaImage::new(width as u32, height as u32);
         let character_string = characters[i].to_string();
         draw_text_mut(&mut img, color, 0, 0, scale, &font, &character_string);
 
@@ -53,7 +51,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
                 if brightness > 0.0 {
                     bright_blocks += 1;
                 }
-                character.push(brightness);
+                character[y as usize * width + x as usize] = brightness;
             }
         }
 

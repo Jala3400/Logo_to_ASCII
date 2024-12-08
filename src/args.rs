@@ -56,11 +56,31 @@ pub struct Args {
     #[arg(short, long, default_value_t = false)]
     pub visible: bool,
 
-    /// Heigth of the chacacters
-    #[arg(short, long, default_value_t = 8)]
+    /// Number of characters in the width of the end image (0 to default)
+    #[arg(short, long, default_value_t = 0)]
     pub width: u32,
+
+    /// Number of characters in the height of the end image (0 to default)
+    #[arg(short, long, default_value_t = 0)]
+    pub height: u32,
+
+    /// Actual width of the image (0 to default)
+    #[arg(long = "aw", default_value_t = 0)]
+    pub actual_width: u32,
+
+    /// Actual height of the image (0 to default)
+    #[arg(long = "ah", default_value_t = 0)]
+    pub actual_height: u32,
 
     /// Midpoint of the brightness spectrum
     #[arg(short, long, default_value_t = 0.5)]
     pub midpoint_brightness: f32,
+
+    /// Offsetx of the width of the image
+    #[arg(long = "ofx", default_value_t = 0)]
+    pub offsetx: usize,
+
+    /// Offsety of the height of the image
+    #[arg(long = "ofy", default_value_t = 0)]
+    pub offsety: usize,
 }

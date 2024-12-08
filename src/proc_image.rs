@@ -1,27 +1,22 @@
 use crate::{
     args::Args,
     proc_block::match_group_with_letter,
-    proc_pixel::{brightness_difference, calc_custom_brightness, hue_difference},
+    proc_pixel::calc_custom_brightness,
     types::{Bitmap, FontBitmap},
 };
-use image::{DynamicImage, GenericImage, GenericImageView};
+use image::{DynamicImage, GenericImageView};
 
 pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
     let height = bitmap.height;
     let width = bitmap.width;
-    let block_width = font.width;
-    let block_height = font.height;
 
-    let num_groups_x = (width + block_width - 1) / block_width;
-    let num_groups_y = (height + block_height - 1) / block_height;
+    let num_groups_x = (width + 7) / 8;
+    let num_groups_y = (height + 15) / 16;
 
     println!("Image dimensions: {}x{}", width, height);
-    println!(
-        "Number of {}x{} groups: {}x{}",
-        block_width, block_height, num_groups_x, num_groups_y
-    );
+    println!("Number of 8x16 groups: {}x{}", num_groups_x, num_groups_y);
 
-    let mut group = vec![-args.midpoint_brightness; block_height * block_width];
+    let mut group = [0f32; 8 * 16];
     let mut bright_pixels;
     let mut full_pixels;
 
@@ -29,26 +24,27 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
         for x in 0..num_groups_x {
             bright_pixels = 0;
             full_pixels = 0;
-            for by in 0..block_height {
-                let iy = y * block_height + by;
-                for bx in 0..block_width {
-                    let ix = x * block_width + bx;
+            for by in 0..16 {
+                let iy = y * 16 + by;
+                for bx in 0..8 {
+                    let ix = x * 8 + bx;
                     let cords = iy * width + ix;
+                    let cords_block = by * 8 + bx;
                     if iy < height && ix < width {
                         let pixel = bitmap.data[cords];
-                        group[by * block_width + bx] = pixel;
+                        group[cords_block] = pixel;
                         if pixel > -args.midpoint_brightness {
                             bright_pixels += 1;
                             full_pixels += (pixel >= bitmap.max_brightness) as usize;
                         }
                     } else {
-                        group[by * block_width + bx] = -args.midpoint_brightness;
+                        group[cords_block] = -args.midpoint_brightness;
                     }
                 }
             }
             print!(
                 "{}",
-                if full_pixels == block_height * block_width {
+                if full_pixels == 16 * 8 {
                     font.data.last().unwrap().char
                 } else {
                     match_group_with_letter(&group, font, bright_pixels)
@@ -59,135 +55,97 @@ pub fn convert_bitmap(bitmap: &Bitmap, font: &FontBitmap, args: &Args) {
     }
 }
 
-pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
-    let width = img.width() as usize;
-    let height = img.height() as usize;
-
-    // Pre-allocate vector with exact capacity
-    let mut bitmap = Vec::with_capacity(width * height);
-    let mut max_brightness = -args.midpoint_brightness;
-
-    // Process all pixels in one pass
-    bitmap.extend(img.pixels().map(|pixel| {
-        let brightness = calc_custom_brightness(&pixel.2, args);
-        max_brightness = max_brightness.max(brightness);
-        brightness
-    }));
-
-    Bitmap {
-        data: bitmap,
-        width,
-        height,
-        max_brightness,
-    }
-}
-
 pub fn black_and_white(img: &DynamicImage, args: &Args) -> Bitmap {
     let width = img.width() as usize;
     let height = img.height() as usize;
     let luma_alpha = img.to_luma_alpha8();
     let raw_data = luma_alpha.as_raw();
 
-    // Preallocate bitmap with exact capacity
-    let mut bitmap = Vec::with_capacity(width * height);
+    // Calculate total size including offset
+    let total_width = width + args.offsetx as usize;
+    let total_height = height + args.offsety as usize;
+    let total_size = total_width * total_height;
 
-    // Process pixels in chunks of 2 (luma + alpha)
-    for chunk in raw_data.chunks_exact(2) {
-        let value = if chunk[1] == 0 {
-            if args.visible {
-                1.0 - args.midpoint_brightness
+    // Preallocate bitmap with total size
+    let mut bitmap = Vec::with_capacity(total_size);
+
+    // Fill offset rows at the top
+    bitmap.extend(
+        std::iter::repeat(-args.midpoint_brightness).take(total_width * args.offsety as usize),
+    );
+
+    // Process each row with offset
+    for y in 0..height {
+        // Add left offset
+        bitmap.extend(std::iter::repeat(-args.midpoint_brightness).take(args.offsetx as usize));
+
+        // Process pixels in chunks of 2 (luma + alpha)
+        let row_start = y * width * 2;
+        let row_end = row_start + width * 2;
+        for chunk in raw_data[row_start..row_end].chunks_exact(2) {
+            let value = if chunk[1] == 0 {
+                if args.visible {
+                    1.0 - args.midpoint_brightness
+                } else {
+                    -args.midpoint_brightness
+                }
             } else {
-                -args.midpoint_brightness
-            }
-        } else {
-            let threshold_check = chunk[0] > args.threshold;
-            if threshold_check == !args.inverse {
-                1.0 - args.midpoint_brightness
-            } else {
-                -args.midpoint_brightness
-            }
-        };
-        bitmap.push(value);
+                let threshold_check = chunk[0] > args.threshold;
+                if threshold_check == !args.inverse {
+                    1.0 - args.midpoint_brightness
+                } else {
+                    -args.midpoint_brightness
+                }
+            };
+            bitmap.push(value);
+        }
     }
 
     Bitmap {
         data: bitmap,
-        width,
-        height,
+        width: width + args.offsetx as usize,
+        height: height + args.offsety as usize,
         max_brightness: 1.0 - args.midpoint_brightness,
     }
 }
 
-pub fn borders_image(img: &mut DynamicImage, args: &Args) {
-    let borders = if args.color {
-        detect_color_borders(&img, args.difference)
+pub fn get_bitmap(img: &DynamicImage, args: &Args) -> Bitmap {
+    let width = img.width() as usize;
+    let height = img.height() as usize;
+    let total_width = width + args.offsetx as usize;
+    let total_height = height + args.offsety as usize;
+
+    let off_value = if args.visible {
+        1.0 - args.midpoint_brightness
     } else {
-        detect_borders(&img, args.difference as f32 / 360.0)
+        -args.midpoint_brightness
     };
-    paint_borders(img, borders, args);
-}
 
-fn detect_borders(img: &image::DynamicImage, threshold: f32) -> Vec<(u32, u32)> {
-    let mut borders = Vec::new();
-    let (width, height) = img.dimensions();
+    // Pre-allocate vector with exact capacity
+    let mut bitmap = Vec::with_capacity(total_width * total_height);
+    let mut max_brightness = -args.midpoint_brightness;
 
-    for y in 0..height - 1 {
-        for x in 0..width - 1 {
-            let current_pixel = img.get_pixel(x, y);
-            let right_pixel = img.get_pixel(x + 1, y);
-            let bottom_pixel = img.get_pixel(x, y + 1);
+    // Fill with background value up to offset
+    bitmap.extend(std::iter::repeat(off_value).take((args.offsety as usize) * total_width));
 
-            if brightness_difference(&current_pixel, &right_pixel) > threshold
-                || brightness_difference(&current_pixel, &bottom_pixel) > threshold
-            {
-                borders.push((x, y));
-            }
-        }
+    // Process image rows with offset
+    for y in 0..height {
+        // Add left offset
+        bitmap.extend(std::iter::repeat(off_value).take(args.offsetx as usize));
+
+        // Add image pixels for this row
+        let row_start = y * width;
+        bitmap.extend(img.pixels().skip(row_start).take(width).map(|pixel| {
+            let brightness = calc_custom_brightness(&pixel.2, args);
+            max_brightness = max_brightness.max(brightness);
+            brightness
+        }));
     }
 
-    borders
-}
-
-fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, u32)> {
-    let mut borders = Vec::new();
-    let (width, height) = img.dimensions();
-
-    for y in 0..height - 1 {
-        for x in 0..width - 1 {
-            let current_pixel = img.get_pixel(x, y);
-            let right_pixel = img.get_pixel(x + 1, y);
-            let bottom_pixel = img.get_pixel(x, y + 1);
-
-            if hue_difference(&current_pixel, &right_pixel) > threshold
-                || hue_difference(&current_pixel, &bottom_pixel) > threshold
-            {
-                borders.push((x, y));
-            }
-        }
-    }
-
-    borders
-}
-
-fn paint_borders(img: &mut image::DynamicImage, borders: Vec<(u32, u32)>, args: &Args) {
-    let thickness = if args.border == 0 { 8 } else { args.border };
-    let half_t = thickness / 2;
-    let width = img.width();
-    let height = img.height();
-    let black_pixel = image::Rgba([0, 0, 0, 255]);
-
-    for (x, y) in borders {
-        // Pre-calculate bounds
-        let x_start = x.saturating_sub(half_t);
-        let y_start = y.saturating_sub(half_t);
-        let x_end = (x + half_t).min(width);
-        let y_end = (y + half_t).min(height);
-
-        // Direct iteration over valid coordinates
-        for ny in y_start..y_end {
-            for nx in x_start..x_end {
-                img.put_pixel(nx, ny, black_pixel);
-            }
-        }
+    Bitmap {
+        data: bitmap,
+        width: total_width,
+        height: total_height,
+        max_brightness,
     }
 }
