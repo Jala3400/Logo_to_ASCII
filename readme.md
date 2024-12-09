@@ -96,18 +96,18 @@ El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -h30 --aw 1440 --all
+./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -w100
 ```
 
-![Cruz de calatrava con 30 caracteres de altura y 1440 píxeles de anchura](./images/cruz_h30_aw1440_all.png)
+![Cruz de calatrava con 100 caracteres de anchura](./images/cruz_w100.png)
 
 -   Si la imagen no queda bien alineada con los caracteres, se puede usar el argumento offset `--ofx <offset_x>` y `--ofy <offset_y>`. Estos valores añaden un offset transparente a la imagen. Se puede ver mejor en las esquinas afiladas.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -h30 --aw 1440 --all --ofy 8 --ofx 4
+./target/release/logo_to_ascii.exe --path .\images\Cross_Calatrava.png --ofx 4 --ofy 8
 ```
 
-![Cruz de calatrava con offset de 8 en y y 4 en x](./images/cruz_h30_aw1440_all_ofy8_ofx4.png)
+![Cruz de calatrava con offset de 4 en x y 8 en y](./images/cruz_ofx4_ofy8.png)
 
 -   Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`.
 
