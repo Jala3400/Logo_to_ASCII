@@ -2,9 +2,8 @@ use crate::{
     args::Args, proc_block::match_group_with_letter, proc_pixel::calc_custom_brightness,
     types::FontBitmap,
 };
-use image::{DynamicImage, GenericImageView};
-
 use enable_ansi_support::enable_ansi_support;
+use image::{DynamicImage, GenericImageView};
 
 pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
     enable_ansi_support().unwrap();

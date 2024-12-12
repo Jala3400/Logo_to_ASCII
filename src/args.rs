@@ -89,6 +89,6 @@ pub struct Args {
     pub text_color: bool,
 
     /// Saturate the image
-    #[arg(short, long, default_value_t = false)]
+    #[arg(short = 's', long, default_value_t = false)]
     pub saturate: bool,
 }

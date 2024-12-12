@@ -104,3 +104,57 @@ pub fn resize(img: &mut DynamicImage, args: &mut Args) {
         image::imageops::FilterType::Lanczos3,
     );
 }
+
+pub fn high_contrast(img: &mut DynamicImage) {
+    let mut r_img = img.to_rgba8();
+    for pixel in r_img.pixels_mut() {
+        let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
+        let max = r.max(g).max(b);
+        let factor = 255.0 / max as f32;
+
+        if (0.299 * r as f32 + 0.587 * g as f32 + 0.114 * b as f32) > 127.0 {
+            pixel[0] = (r as f32 * factor).round() as u8;
+            pixel[1] = (g as f32 * factor).round() as u8;
+            pixel[2] = (b as f32 * factor).round() as u8;
+        } else {
+            pixel[0] = (r as f32 / factor).round() as u8;
+            pixel[1] = (g as f32 / factor).round() as u8;
+            pixel[2] = (b as f32 / factor).round() as u8;
+        }
+    }
+    *img = image::DynamicImage::ImageRgba8(r_img);
+}
+
+pub fn add_offset(img: &mut DynamicImage, args: &Args) {
+    let (img_width, img_height) = img.dimensions();
+    let new_width = img_width + args.offsetx as u32;
+    let new_height = img_height + args.offsety as u32;
+    let pixel_bytes = img.color().bytes_per_pixel() as usize;
+
+    let mut new_bytes = vec![0; (new_width * new_height) as usize * pixel_bytes];
+    let original_bytes = img.as_bytes();
+
+    // Copy original image data with offset
+    for y in 0..img_height {
+        let src_start = (y * img_width) as usize * pixel_bytes;
+        let src_end = src_start + (img_width as usize * pixel_bytes);
+        let dst_start =
+            ((y + args.offsety as u32) * new_width + args.offsetx as u32) as usize * pixel_bytes;
+
+        new_bytes[dst_start..dst_start + (img_width as usize * pixel_bytes)]
+            .copy_from_slice(&original_bytes[src_start..src_end]);
+    }
+
+    *img = image::DynamicImage::ImageRgba8(
+        image::RgbaImage::from_raw(new_width, new_height, new_bytes)
+            .expect("Failed to create offset image"),
+    );
+}
+
+pub fn preprocess(img: &mut DynamicImage, args: &Args) {
+    let mut img_gray = img.to_luma_alpha8();
+    for pixel in img_gray.pixels_mut() {
+        pixel[0] = if pixel[0] > args.threshold { 255 } else { 0 };
+    }
+    *img = image::DynamicImage::ImageLumaA8(img_gray);
+}
