@@ -87,4 +87,8 @@ pub struct Args {
     /// Print the image with colors
     #[arg(short = 'C', long, default_value_t = false)]
     pub text_color: bool,
+
+    /// Saturate the image
+    #[arg(short, long, default_value_t = false)]
+    pub saturate: bool,
 }
