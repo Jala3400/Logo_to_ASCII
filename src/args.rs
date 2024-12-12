@@ -83,4 +83,8 @@ pub struct Args {
     /// Offsety of the height of the image
     #[arg(long = "ofy", default_value_t = 0)]
     pub offsety: usize,
+
+    /// Print the image with colors
+    #[arg(short = 'C', long, default_value_t = false)]
+    pub text_color: bool,
 }
