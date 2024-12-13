@@ -91,4 +91,8 @@ pub struct Args {
     /// Saturate the image
     #[arg(short = 's', long, default_value_t = false)]
     pub saturate: bool,
+
+    /// Output the image to a file
+    #[arg(short, long)]
+    pub output: Option<String>,
 }

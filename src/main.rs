@@ -64,5 +64,18 @@ fn main() -> io::Result<()> {
     treat_transparent(&mut img, &args);
 
     convert_image(&img, &font, &args);
+
+    if let Some(output) = &args.output {
+        let path = std::path::Path::new(output);
+
+        match image::ImageFormat::from_path(path) {
+            Ok(format) => img.save_with_format(output, format),
+            Err(_) => img.save_with_format(output.to_owned() + ".png", image::ImageFormat::Png),
+        }
+        .map_err(|e| {
+            io::Error::new(io::ErrorKind::Other, format!("Failed to save image: {}", e))
+        })?;
+    }
+
     Ok(())
 }
