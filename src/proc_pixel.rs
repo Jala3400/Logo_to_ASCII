@@ -10,8 +10,7 @@ pub fn calc_custom_brightness(pixel: &Rgba<u8>, args: &Args) -> f32 {
             -args.midpoint_brightness
         }
     } else {
-        (calculate_brightness(&pixel) - args.midpoint_brightness)
-            * if args.inverse { -1.0 } else { 1.0 }
+        calculate_brightness(&pixel) - args.midpoint_brightness
     }
 }
 

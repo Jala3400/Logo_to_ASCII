@@ -2,7 +2,9 @@ use clap::Parser;
 use logo_to_ascii::{
     abc,
     args::Args,
-    image_ops::{add_offset, borders_image, preprocess, resize, saturate, treat_transparent},
+    image_ops::{
+        add_offset, borders_image, inverse, preprocess, resize, saturate, treat_transparent,
+    },
     proc_image::convert_image,
 };
 use std::io;
@@ -54,11 +56,11 @@ fn main() -> io::Result<()> {
         preprocess(&mut img, &args);
     }
 
-    treat_transparent(&mut img);
+    if args.inverse {
+        inverse(&mut img);
+    }
 
-    // if args.inverse {
-    //     inverse(&mut img);
-    // }
+    treat_transparent(&mut img);
 
     convert_image(&img, &font, &args);
     Ok(())
