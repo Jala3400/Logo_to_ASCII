@@ -1,6 +1,6 @@
 use crate::{
     args::Args,
-    proc_pixel::{brightness_difference, hue_difference},
+    proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
 };
 use image::{DynamicImage, GenericImage, GenericImageView};
 
@@ -105,14 +105,14 @@ pub fn resize(img: &mut DynamicImage, args: &mut Args) {
     );
 }
 
-pub fn high_contrast(img: &mut DynamicImage) {
+pub fn saturate(img: &mut DynamicImage, args: &Args) {
     let mut r_img = img.to_rgba8();
     for pixel in r_img.pixels_mut() {
         let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
         let max = r.max(g).max(b);
         let factor = 255.0 / max as f32;
 
-        if (0.299 * r as f32 + 0.587 * g as f32 + 0.114 * b as f32) > 127.0 {
+        if calculate_brightness(pixel) > args.midpoint_brightness {
             pixel[0] = (r as f32 * factor).round() as u8;
             pixel[1] = (g as f32 * factor).round() as u8;
             pixel[2] = (b as f32 * factor).round() as u8;

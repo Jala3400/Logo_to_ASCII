@@ -2,7 +2,7 @@ use clap::Parser;
 use logo_to_ascii::{
     abc,
     args::Args,
-    image_ops::{add_offset, borders_image, high_contrast, preprocess, resize},
+    image_ops::{add_offset, borders_image, preprocess, resize, saturate},
     proc_image::convert_image,
 };
 use std::io;
@@ -43,7 +43,7 @@ fn main() -> io::Result<()> {
     }
 
     if args.saturate {
-        high_contrast(&mut img);
+        saturate(&mut img, &args);
     }
 
     if args.color || args.border != 0 {
