@@ -177,3 +177,15 @@ pub fn preprocess(img: &mut DynamicImage, args: &Args) {
 //     }
 //     *img = image::DynamicImage::ImageRgba8(img_rgb);
 // }
+
+pub fn treat_transparent(img: &mut DynamicImage) {
+    let mut img_rgb = img.to_rgba8();
+    for pixel in img_rgb.pixels_mut() {
+        if pixel[3] == 0 {
+            pixel[0] = 255;
+            pixel[1] = 255;
+            pixel[2] = 255;
+        }
+    }
+    *img = image::DynamicImage::ImageRgba8(img_rgb);
+}

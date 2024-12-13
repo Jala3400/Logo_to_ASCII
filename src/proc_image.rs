@@ -47,7 +47,11 @@ pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
                             b += pixel[2] as usize;
                         }
                     } else {
-                        group[cords_block] = -args.midpoint_brightness;
+                        group[cords_block] = if args.visible {
+                            1.0 - args.midpoint_brightness
+                        } else {
+                            -args.midpoint_brightness
+                        }
                     }
                 }
             }
