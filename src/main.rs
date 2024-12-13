@@ -60,7 +60,8 @@ fn main() -> io::Result<()> {
         inverse(&mut img);
     }
 
-    treat_transparent(&mut img);
+    // Always treat transparent pixels, because it makes them visible when printing color
+    treat_transparent(&mut img, &args);
 
     convert_image(&img, &font, &args);
     Ok(())

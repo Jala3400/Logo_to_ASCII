@@ -178,14 +178,21 @@ pub fn inverse(img: &mut DynamicImage) {
     *img = image::DynamicImage::ImageRgba8(img_rgb);
 }
 
-pub fn treat_transparent(img: &mut DynamicImage) {
+pub fn treat_transparent(img: &mut DynamicImage, args: &Args) {
     let mut img_rgb = img.to_rgba8();
     for pixel in img_rgb.pixels_mut() {
         if pixel[3] == 0 {
-            pixel[0] = 255;
-            pixel[1] = 255;
-            pixel[2] = 255;
+            if args.visible {
+                pixel[0] = 255;
+                pixel[1] = 255;
+                pixel[2] = 255;
+            } else {
+                pixel[0] = 0;
+                pixel[1] = 0;
+                pixel[2] = 0;
+            }
         }
+        pixel[3] = 255;
     }
     *img = image::DynamicImage::ImageRgba8(img_rgb);
 }
