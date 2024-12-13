@@ -54,6 +54,10 @@ fn main() -> io::Result<()> {
         preprocess(&mut img, &args);
     }
 
+    // if args.inverse {
+    //     inverse(&mut img);
+    // }
+
     convert_image(&img, &font, &args);
     Ok(())
 }

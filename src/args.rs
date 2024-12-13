@@ -27,7 +27,7 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     pub all: bool,
 
-    /// Inverse the colors of the image (transparent is never printed)
+    /// Inverse the brightness of the image (transparent is never printed)
     #[arg(short, long, default_value_t = false)]
     pub inverse: bool,
 

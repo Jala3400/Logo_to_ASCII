@@ -158,3 +158,22 @@ pub fn preprocess(img: &mut DynamicImage, args: &Args) {
     }
     *img = image::DynamicImage::ImageLumaA8(img_gray);
 }
+
+// pub fn inverse(img: &mut DynamicImage) {
+//     let mut img_rgb = img.to_rgba8();
+//     for pixel in img_rgb.pixels_mut() {
+//         let pixel_brightness = calculate_brightness(&pixel);
+//         let target_brightness = 1.0 - pixel_brightness;
+//         if pixel_brightness == 0.0 {
+//             pixel[0] = 255;
+//             pixel[1] = 255;
+//             pixel[2] = 255;
+//         } else {
+//             let factor = target_brightness / pixel_brightness;
+//             pixel[0] = (pixel[0] as f32 * factor).round() as u8;
+//             pixel[1] = (pixel[1] as f32 * factor).round() as u8;
+//             pixel[2] = (pixel[2] as f32 * factor).round() as u8;
+//         }
+//     }
+//     *img = image::DynamicImage::ImageRgba8(img_rgb);
+// }
