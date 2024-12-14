@@ -1,8 +1,12 @@
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = None, disable_help_flag = true)]
 pub struct Args {
+    /// Print the help message
+    #[arg(long, action = clap::ArgAction::HelpLong)]
+    help: Option<bool>,
+
     /// Path of the image to process
     #[arg(short, long)]
     pub path: String,
