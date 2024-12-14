@@ -18,6 +18,7 @@ pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
 
     let mut group = [0f32; 8 * 16];
     let mut bright_pixels;
+    let mut high_pixels;
     let mut full_pixels;
     let mut r: usize;
     let mut g: usize;
@@ -26,6 +27,7 @@ pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
     for y in 0..num_groups_y {
         for x in 0..num_groups_x {
             bright_pixels = 0;
+            high_pixels = 0;
             full_pixels = 0;
             r = 0;
             g = 0;
@@ -40,11 +42,14 @@ pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
                         group[cords_block] = calc_custom_brightness(&pixel, args);
                         if group[cords_block] > -args.midpoint_brightness {
                             bright_pixels += 1;
-                            full_pixels +=
-                                (group[cords_block] >= 1.0 - args.midpoint_brightness) as usize;
-                            r += pixel[0] as usize;
-                            g += pixel[1] as usize;
-                            b += pixel[2] as usize;
+                            if group[cords_block] >= 0.0 {
+                                r += pixel[0] as usize;
+                                g += pixel[1] as usize;
+                                b += pixel[2] as usize;
+                                high_pixels += 1;
+                                full_pixels +=
+                                    (group[cords_block] >= 1.0 - args.midpoint_brightness) as usize;
+                            }
                         }
                     } else {
                         group[cords_block] = if args.visible {
@@ -58,10 +63,10 @@ pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
 
             print!(
                 "{}{}",
-                if args.text_color && bright_pixels > 0 {
-                    r /= bright_pixels;
-                    g /= bright_pixels;
-                    b /= bright_pixels;
+                if args.text_color && high_pixels > 0 {
+                    r /= high_pixels;
+                    g /= high_pixels;
+                    b /= high_pixels;
                     format!("\x1b[38;2;{};{};{}m", r, g, b)
                 } else {
                     String::new()
