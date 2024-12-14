@@ -41,8 +41,8 @@ pub struct Args {
 
     /// Preprocess the image to black and white.
     /// Makes the transparent pixels black by default.
-    #[arg(short = 'r', long, default_value_t = false)]
-    pub preprocess: bool,
+    #[arg(short = 'r', long = "bw", default_value_t = false)]
+    pub black_and_white: bool,
 
     /// Threshold value for the black and white conversion (from 0 to 255)
     #[arg(short, long, default_value_t = 127)]

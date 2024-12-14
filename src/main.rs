@@ -52,16 +52,16 @@ fn main() -> io::Result<()> {
         borders_image(&mut img, &args);
     }
 
-    if args.preprocess {
-        preprocess(&mut img, &args);
-    }
-
     if args.inverse {
         inverse(&mut img);
     }
 
     // Always treat transparent pixels, because it makes them visible when printing color
     treat_transparent(&mut img, &args);
+
+    if args.black_and_white {
+        preprocess(&mut img, &args);
+    }
 
     convert_image(&img, &font, &args);
 
