@@ -68,11 +68,15 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
 
             print!(
                 "{}{}",
-                if args.text_color && high_pixels > 0 {
-                    r /= high_pixels;
-                    g /= high_pixels;
-                    b /= high_pixels;
-                    format!("\x1b[38;2;{};{};{}m", r, g, b)
+                if args.text_color {
+                    if high_pixels > 0 {
+                        r /= high_pixels;
+                        g /= high_pixels;
+                        b /= high_pixels;
+                        format!("\x1b[38;2;{};{};{}m", r, g, b)
+                    } else {
+                        "\x1b[38;2;0;0;0m".to_string()
+                    }
                 } else {
                     String::new()
                 },
