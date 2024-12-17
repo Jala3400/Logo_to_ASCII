@@ -5,9 +5,11 @@
 
 # Logo to ASCII
 
-Prueba de concepto para convertir un logo en ASCII art (hecho en rust).
+Aplicación que convierte un logo a ASCII art (hecho en rust).
 
 A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosidad media de cada bloque, sino que elige el carácter que mejor se aproxima a su forma.
+
+Funciona mejor con imágenes de pocos colores y bordes bien definidos.
 
 ## Índice
 
@@ -27,9 +29,18 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 ## Instalación
 
 1. Descarga rust desde https://www.rust-lang.org/tools/installs:
-    1. Al terminar la instalación escribe `rustc --version` en la consola para comprobar que todo ha salido bien.
-2. Descarga este repositorio.
-3. Compila el repositorio: En la consola de comandos ejecuta `cargo build --release`.
+   Al terminar la instalación escribe el siguiente comando en la consola para comprobar que todo ha salido bien:
+    ```
+    rustc --version
+    ```
+2. Descarga este repositorio con:
+    ```
+    git clone https://github.com/Jala3400/Logo_to_ASCII
+    ```
+3. Compila el repositorio: En la consola de comandos ejecuta
+    ```
+    cargo build --release
+    ```
 
 ## Tutorial
 
@@ -41,24 +52,22 @@ El caso más básico consiste en tratar logos de un solo color. Usaremos la sigu
 
 Para convertirla, ejecutamos el programa desde la consola. Le indicamos la imagen con el argumento `--path <path_imagen>`.
 
-`./target/release/logo_to_ascii.exe --path <path_imagen>`
-
 ```
 ./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png
 ```
 
 ![Cruz de Calatrava](./images/cruz.png)
 
--   Para imprimir la imagen en negativo (imprimiendo donde está el color negro) se debe añadir `-i` al comando.
+-   Para imprimir la imagen en negativo se debe añadir `-n` al comando.
 
 > [!IMPORTANT]
 > Los píxeles transparentes nunca se imprimen. En este caso, la imagen tiene el fondo transparente, por lo que tenemos que añadir `-v` para imprimirlos.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -iv
+./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -nv
 ```
 
-![Cruz de Calatrava en negativo](./images/cruz_iv.png)
+![Cruz de Calatrava en negativo](./images/cruz_nv.png)
 
 El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 
@@ -112,7 +121,8 @@ El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 
 -   Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`.
 
-> [!WARNING] > `--font` no adapta los bloques al tamaño de la fuente. Cada carácter se tomará como monoespacio de proporciones 1x2, lo que puede deformar el resultado final.
+> [!WARNING]
+> `--font` no adapta los bloques al tamaño de la fuente. Cada carácter se tomará como monoespacio de proporciones 1x2, lo que puede deformar el resultado final.
 
 -   Para cambiar el punto medio de la luminosidad se usa `-m <punto_medio>`. Por defecto es 0.5. Se pone un valor más bajo se imprimirán colores más oscuros.
 -   Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
@@ -123,7 +133,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 
 ![Tentáculos](./images/tentacles.png)
 
--   Para hacer una diferencia entre colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`.
+-   Para dibujar un borde entre los colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`. Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 
 ```
 ./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -c
@@ -131,21 +141,21 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 
 ![Tentáculos](./images/tentaculos.png)
 
--   Si se combina con `-i` y se tiene el fondo transparente solo se verán los bordes.
+-   Si se combina con `-n` y se tiene el fondo transparente solo se verán los bordes.
 
 ```
-./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -ci
+./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cn
 ```
 
-![Tentáculos borde](./images/tentaculos_i.png)
+![Tentáculos borde](./images/tentaculos_n.png)
 
--   Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-iv`
+-   Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-nv`
 
 ```
-./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -civ
+./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cnv
 ```
 
-![Tentáculos inverso](./images/tentaculos_iv.png)
+![Tentáculos inverso](./images/tentaculos_nv.png)
 
 -   Otra combinación interesante es `-cv`
 
@@ -156,13 +166,12 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 ![Tentáculos borde oscuro](./images/tentaculos_cv.png)
 
 -   Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
--   Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 -   Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
 
 ### Imprimir colores
 
 -   Para imprimir colores se usa el argumento `-C`.
--   Añadir `-s` saturará cada píxel brillante al máximo.
+-   Añadir `-s` saturará cada píxel al máximo (solo los que serían visibles).
 
 Las imágenes situadas al inicio del documento son:
 
@@ -194,7 +203,7 @@ Las imágenes situadas al inicio del documento son:
 
 ![Tentáculos borde oscuro con más caracteres](./images/tentaculos_cCv_chars.png)
 
--   Para guardar la imagen final se puede usar `-o <nombre_imagen>`. Hay que tener cuidado si se hace después añadir caracteres. En algunas terminales (por lo menos windows 10), si se acaba en ` \"` (para añadir también el carácter `"`) lo que se ponga después se tomará como caracteres a añadir.
+-   Antes de convertir la imagen a caracteres, la aplicación cambia la imagen. Para guardar la imagen final se usa `-o <nombre_imagen>`.
 
 ```
 ./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cCv -o final_tentacles_cCv.png
@@ -204,11 +213,15 @@ Las imágenes situadas al inicio del documento son:
 
 ### Imagen con muchos detalles
 
-Si estás pensando en pasar a ASCII una foto con muchos detalles, lo mejor es que dejes de hacerlo. Los caracteres ASCII no tienen suficiente detalle como para que se vea bien la foto. Lo mejor que se puede hacer es cambiar el punto medio de la luminosidad (por ejemplo, a 0.7) con `-m 0.7` o pasar la imagen a blanco y negro con `-r` y cambiar el threshold con `-t 0.7`.
+Si estás pensando en pasar a ASCII una foto con muchos detalles, lo mejor es que dejes de hacerlo.
+
+Los caracteres ASCII no tienen suficiente detalle como para que se vea bien la foto. Esta aplicación está pensada para superficies amplias y bordes definidos.
+
+Dicho esto, lo mejor que se puede hacer es cambiar el punto medio de la luminosidad (por ejemplo, a 0.7) con `-m 0.7` o pasar la imagen a blanco y negro con `-r` y cambiar el threshold a `-t 0.7`.
 
 Por ejemplo:
 
-![Palmera](./images/palm.jpg)
+![Palmera](./images/palm_rt7.jpg)
 
 ```
 ./target/release/Logo_to_ASCII.exe --path .\images\palm.jpg -rt 0.7
@@ -216,22 +229,24 @@ Por ejemplo:
 
 ![Palmera](./images/palmera.png)
 
-La aplicación no está diseñada para esto, pero si se quiere pasar la imagen y que se vean todos los colores se puede usar `-m 0`.
+Otra opción es añadir `-m 0` y `-C`, lo que imprimirá todos los caracteres con colores.
 
 ```
  ./target/release/Logo_to_ASCII.exe --path .\images\palm.jpg -m 0 -C
 ```
 
-![Palmera con colores](./images/palmera_m7_C.png)
+![Palmera con colores](./images/palmera_m0_C.png)
 
 ## Consejos para crear imágenes
 
-Se recomienda hacer dibujos vectoriales (.svg) y luego pasarlos a imagen.
+La aplicación dibuja con caracteres. Estos no tienen capacidad para mostrar detalles, pero tienen forma.
 
-Para obtener los mejores resultados es recomendable que las imágenes tengan bordes bien definidos y pocos detalles, así como superficies amplias.
-Para facilitar el diseño se pueden hacer dibujos vectoriales con una rejilla de 8x16 y asegurarse de que los bordes del dibujo siempre coincidan con los bordes y esquinas de un bloque.
+No se recomienda tener detalles más pequeños que uno de estos bloques, a no ser que la forma coincida con la de un carácter en específico.
 
-No se recomienda tener detalles más pequeños que uno de estos bloques.
+Haz dibujos vectoriales (.svg) y luego convertirlos a imagen.
+Dibuja bordes definidos y superficies amplias.
+
+Para facilitar el diseño se puede usar una rejilla de 8x16 y asegurarse de que los bordes del dibujo siempre coincidan con los bordes y esquinas de un bloque.
 
 ## ¿Cómo funciona?
 
@@ -241,7 +256,7 @@ Este algoritmo opera con píxeles en vez de con bloques.
 
 1. **Caracteres:**
 
-Primero se procesan los caracteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Una vez elegida una anchura (por defecto 8x16) se hace un mapa de bits de cada carácter, que indica la luminosidad de cada píxel.
+Primero se procesan los caracteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Una vez elegido un tamaño (por defecto 8x16) se hace un mapa de bits de cada carácter, que contiene la luminosidad de cada píxel.
 
 Al calcular la luminosidad se obtiene un valor de 0 a 1. Es importante restarle 0.5 para obtener valores negativos y positivos.
 
@@ -266,19 +281,19 @@ Para no tener que crear las imágenes a la perfección, la aplicación permite h
     -   `--aw <anchura>`: Anchura en píxeles
     -   `--ah <altura>`: Altura en píxeles
 
--   Offset:
+-   Añadir offset a la imagen:
 
     -   `--ofx <offset_x>`: Offset in x
     -   `--ofy <offset_y>`: Offset in y
 
--   Saturar los píxeles individualmente: `-s`
--   Calcular los bordes de la imagen:
+-   Saturar cada uno de los píxeles: `-s`
+-   Dibujar bordes entre colores:
 
     -   `-b <anchura_borde>`: Anchura de los bordes. Si se da sin `-c` se calculan los bordes por luminosidad.
-    -   `-c`: Calcula los bordes por color. Si no se da b se pone por defecto a 8.
+    -   `-c`: Calcula los bordes por color. Si no se da `-b` se pone por defecto a 8.
     -   `-d <diferencia_minima>`: Diferencia mínima para detectar un borde.
 
--   Invertir la imagen: `-i` Invierte la luminosidad, no los colores.
+-   Hacer el negativo de la imagen (invertir la luminosidad): `-n`
 
 -   Ver pixeles transparentes: `-v`
 -   Pasar la imagen a blanco y negro:
@@ -286,7 +301,7 @@ Para no tener que crear las imágenes a la perfección, la aplicación permite h
     -   `-r`: Pasa la imagen a blanco y negro.
     -   `-t <threshold>`: Valor mínimo para que un pixel se pase a blanco.
 
-3. **Convertir bloques a carácter**
+1. **Convertir bloques a carácter**
 
 Después se divide la imagen en bloques con las mismas medidas que los caracteres. Cada bloque se compara con todos los caracteres (se pueden saltar varios en ciertos casos, ver optimización).
 
@@ -298,6 +313,8 @@ En este apartado se da la opción de cambiar el punto medio en la luminosidad co
 
 En este paso también se cuentan el número de píxeles iluminados del bloque. Un carácter solo se considera para impresión si la mitad de sus píxeles con luminosidad positiva son al menos el número de los píxeles iluminados del bloque.
 
+La frase es complicada de entender, pero, en resumen, si un carácter tiene 10 píxeles con luminosidad > 0, un carácter solo se considerará si tiene al menos 5 píxeles iluminados. Si tuviera menos de 5, no habría escenario en el que ese carácter se eligiera antes que el espacio. En caso de no haber espacio, se elige el carácter con menos píxeles iluminados.
+
 Además, si todos los píxeles están completamente iluminados se puede imprimir directamente el carácter más luminoso.
 
 El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un número positivo, y al multiplicar dos números negativos también. Esto premia las coincidencias de píxeles (y no píxeles) y penaliza las diferencias.
@@ -305,7 +322,10 @@ El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un 
 ## Preguntas frecuentes
 
 -   **¿Cómo imprimir un logo de color negro?**
-    Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-i` al comando, para imprimir la imagen en negativo. Recordamos que los pixeles transparente nunca se imprime.
+    Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-n` al comando, para imprimir la imagen en negativo. Recordamos que los pixeles transparentes nunca se imprimen.
 
 -   **¿Por qué cuando cambio la fuente el texto se imprime con la misma fuente?**
     La aplicación solo usa la fuente para comparar cada bloque de la imagen con los caracteres. Se deberá cambiar la fuente de la consola (o donde la quieras poner para que encaje). Es probable que se vea deformado, ya que la aplicación asume que es una fuente monoespacio con proporción 1x2.
+
+-   **No lee algunos de los argumentos**
+    En algunos casos, al añadir caracteres (por lo menos en la powershell de windows 10), si se acaba en ` \"` (para añadir el carácter `"`) lo que se ponga después se tomará como caracteres a añadir. La solución es poner los argumentos antes que el argumento de los caracteres.
