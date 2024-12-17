@@ -1,8 +1,12 @@
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about, long_about = None, disable_help_flag = true)]
 pub struct Args {
+    /// Print the help message
+    #[arg(long, action = clap::ArgAction::HelpLong)]
+    help: Option<bool>,
+
     /// Path of the image to process
     #[arg(short, long)]
     pub path: String,
@@ -27,9 +31,9 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     pub all: bool,
 
-    /// Inverse the colors of the image (transparent is never printed)
+    /// Inverse the brightness of the image (transparent is never printed)
     #[arg(short, long, default_value_t = false)]
-    pub inverse: bool,
+    pub negative: bool,
 
     /// Separates colors (change thickenss with `-b`)
     #[arg(short, long, default_value_t = false)]
@@ -41,12 +45,12 @@ pub struct Args {
 
     /// Preprocess the image to black and white.
     /// Makes the transparent pixels black by default.
-    #[arg(short = 'r', long, default_value_t = false)]
-    pub preprocess: bool,
+    #[arg(short = 'r', long = "bw", default_value_t = false)]
+    pub black_and_white: bool,
 
     /// Threshold value for the black and white conversion (from 0 to 255)
-    #[arg(short, long, default_value_t = 127)]
-    pub threshold: u8,
+    #[arg(short, long, default_value_t = 0.5)]
+    pub threshold: f32,
 
     /// Threshold for the color difference (from 0 to 360)
     #[arg(short, long, default_value_t = 30)]
@@ -83,4 +87,16 @@ pub struct Args {
     /// Offsety of the height of the image
     #[arg(long = "ofy", default_value_t = 0)]
     pub offsety: usize,
+
+    /// Print the image with colors
+    #[arg(short = 'C', long, default_value_t = false)]
+    pub text_color: bool,
+
+    /// Saturate the image
+    #[arg(short = 's', long, default_value_t = false)]
+    pub saturate: bool,
+
+    /// Output the image to a file
+    #[arg(short, long)]
+    pub output: Option<String>,
 }

@@ -1,10 +1,11 @@
 [package]
 name = "logo_to_ascii"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.16", features = ["derive"] }
+enable-ansi-support = "0.2.1"
 image = "0.24.6"
 imageproc = "0.23.0"
 rusttype = "0.9.3"

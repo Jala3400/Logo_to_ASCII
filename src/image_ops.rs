@@ -1,10 +1,10 @@
 use crate::{
     args::Args,
-    proc_pixel::{brightness_difference, hue_difference},
+    proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
 };
-use image::{DynamicImage, GenericImage, GenericImageView};
+use image::{EncodableLayout, RgbaImage};
 
-pub fn borders_image(img: &mut DynamicImage, args: &Args) {
+pub fn borders_image(img: &mut RgbaImage, args: &Args) {
     let borders = if args.color {
         detect_color_borders(&img, args.difference)
     } else {
@@ -13,7 +13,7 @@ pub fn borders_image(img: &mut DynamicImage, args: &Args) {
     paint_borders(img, borders, args);
 }
 
-fn detect_borders(img: &image::DynamicImage, threshold: f32) -> Vec<(u32, u32)> {
+fn detect_borders(img: &image::RgbaImage, threshold: f32) -> Vec<(u32, u32)> {
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
 
@@ -34,7 +34,7 @@ fn detect_borders(img: &image::DynamicImage, threshold: f32) -> Vec<(u32, u32)> 
     borders
 }
 
-fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, u32)> {
+fn detect_color_borders(img: &image::RgbaImage, threshold: u16) -> Vec<(u32, u32)> {
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
 
@@ -55,7 +55,7 @@ fn detect_color_borders(img: &image::DynamicImage, threshold: u16) -> Vec<(u32, 
     borders
 }
 
-fn paint_borders(img: &mut image::DynamicImage, borders: Vec<(u32, u32)>, args: &Args) {
+fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, args: &Args) {
     let thickness = if args.border == 0 { 8 } else { args.border };
     let half_t = thickness / 2;
     let width = img.width();
@@ -78,7 +78,7 @@ fn paint_borders(img: &mut image::DynamicImage, borders: Vec<(u32, u32)>, args: 
     }
 }
 
-pub fn resize(img: &mut DynamicImage, args: &mut Args) {
+pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     let (orig_width, orig_height) = img.dimensions();
     println!("Original dimensions {}x{}", orig_width, orig_height);
 
@@ -98,9 +98,112 @@ pub fn resize(img: &mut DynamicImage, args: &mut Args) {
     args.actual_width = target_width;
     args.actual_height = target_height;
 
-    *img = img.resize_exact(
+    *img = image::imageops::resize(
+        img,
         target_width,
         target_height,
         image::imageops::FilterType::Lanczos3,
     );
+}
+
+pub fn saturate(img: &mut RgbaImage, args: &Args) {
+    for pixel in img.pixels_mut() {
+        let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
+        let max = r.max(g).max(b);
+        let factor = 255.0 / max as f32;
+
+        if calculate_brightness(pixel) > args.midpoint_brightness {
+            pixel[0] = (r as f32 * factor).round() as u8;
+            pixel[1] = (g as f32 * factor).round() as u8;
+            pixel[2] = (b as f32 * factor).round() as u8;
+        } else {
+            pixel[0] = (r as f32 / factor).round() as u8;
+            pixel[1] = (g as f32 / factor).round() as u8;
+            pixel[2] = (b as f32 / factor).round() as u8;
+        }
+    }
+}
+
+pub fn add_offset(img: &mut RgbaImage, args: &Args) {
+    let (img_width, img_height) = img.dimensions();
+    let new_width = img_width + args.offsetx as u32;
+    let new_height = img_height + args.offsety as u32;
+    let pixel_bytes = 4;
+
+    let mut new_bytes = vec![0; (new_width * new_height) as usize * pixel_bytes];
+    let original_bytes = img.as_bytes();
+
+    // Copy original image data with offset
+    for y in 0..img_height {
+        let src_start = (y * img_width) as usize * pixel_bytes;
+        let src_end = src_start + (img_width as usize * pixel_bytes);
+        let dst_start =
+            ((y + args.offsety as u32) * new_width + args.offsetx as u32) as usize * pixel_bytes;
+
+        new_bytes[dst_start..dst_start + (img_width as usize * pixel_bytes)]
+            .copy_from_slice(&original_bytes[src_start..src_end]);
+    }
+
+    *img = image::RgbaImage::from_raw(new_width, new_height, new_bytes)
+        .expect("Failed to create offset image");
+}
+
+pub fn preprocess(img: &mut RgbaImage, args: &Args) {
+    for pixel in img.pixels_mut() {
+        let pixel_brightness = calculate_brightness(&pixel);
+        pixel[0] = if pixel_brightness > args.threshold {
+            255
+        } else {
+            0
+        };
+        pixel[1] = if pixel_brightness > args.threshold {
+            255
+        } else {
+            0
+        };
+        pixel[2] = if pixel_brightness > args.threshold {
+            255
+        } else {
+            0
+        };
+        pixel[3] = if pixel_brightness > args.threshold {
+            255
+        } else {
+            0
+        };
+    }
+}
+
+pub fn negative(img: &mut RgbaImage) {
+    for pixel in img.pixels_mut() {
+        let pixel_brightness = calculate_brightness(&pixel);
+        let target_brightness = 1.0 - pixel_brightness;
+        if pixel_brightness == 0.0 {
+            pixel[0] = 255;
+            pixel[1] = 255;
+            pixel[2] = 255;
+        } else {
+            let factor = (target_brightness / pixel_brightness).powf(2.0);
+            pixel[0] = (pixel[0] as f32 * factor).round() as u8;
+            pixel[1] = (pixel[1] as f32 * factor).round() as u8;
+            pixel[2] = (pixel[2] as f32 * factor).round() as u8;
+        }
+    }
+}
+
+pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
+    for pixel in img.pixels_mut() {
+        if pixel[3] == 0 {
+            if args.visible {
+                pixel[0] = 255;
+                pixel[1] = 255;
+                pixel[2] = 255;
+            } else {
+                pixel[0] = 0;
+                pixel[1] = 0;
+                pixel[2] = 0;
+            }
+        }
+        pixel[3] = 255;
+    }
 }
