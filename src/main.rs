@@ -14,7 +14,9 @@ fn main() -> io::Result<()> {
     args.difference = args.difference % 360;
 
     // Load the image
-    let mut img = image::open(&args.path).unwrap_or_else(|e| panic!("Failed to open image: {}", e));
+    let mut img = image::open(&args.path)
+        .unwrap_or_else(|e| panic!("Failed to open image: {}", e))
+        .to_rgba8();
 
     if args.all {
         args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();

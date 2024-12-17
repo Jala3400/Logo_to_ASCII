@@ -49,8 +49,8 @@ pub struct Args {
     pub black_and_white: bool,
 
     /// Threshold value for the black and white conversion (from 0 to 255)
-    #[arg(short, long, default_value_t = 127)]
-    pub threshold: u8,
+    #[arg(short, long, default_value_t = 0.5)]
+    pub threshold: f32,
 
     /// Threshold for the color difference (from 0 to 360)
     #[arg(short, long, default_value_t = 30)]

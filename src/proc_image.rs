@@ -3,9 +3,9 @@ use crate::{
     types::FontBitmap,
 };
 use enable_ansi_support::enable_ansi_support;
-use image::{DynamicImage, GenericImageView};
+use image::RgbaImage;
 
-pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
+pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
     enable_ansi_support().unwrap();
     let height = img.height() as usize;
     let width = img.width() as usize;
@@ -48,11 +48,16 @@ pub fn convert_image(img: &DynamicImage, font: &FontBitmap, args: &Args) {
                                 b += pixel[2] as usize;
                                 high_pixels += 1;
                                 full_pixels +=
-                                    (group[cords_block] >= 1.0 - args.midpoint_brightness) as usize;
+                                    (group[cords_block] == 1.0 - args.midpoint_brightness) as usize;
                             }
                         }
                     } else {
                         group[cords_block] = if args.visible {
+                            r += 255;
+                            g += 255;
+                            b += 255;
+                            high_pixels += 1;
+                            full_pixels += 1;
                             1.0 - args.midpoint_brightness
                         } else {
                             -args.midpoint_brightness
