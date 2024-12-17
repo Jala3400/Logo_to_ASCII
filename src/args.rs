@@ -33,7 +33,7 @@ pub struct Args {
 
     /// Inverse the brightness of the image (transparent is never printed)
     #[arg(short, long, default_value_t = false)]
-    pub inverse: bool,
+    pub negative: bool,
 
     /// Separates colors (change thickenss with `-b`)
     #[arg(short, long, default_value_t = false)]

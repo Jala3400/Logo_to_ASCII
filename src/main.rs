@@ -3,7 +3,7 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, inverse, preprocess, resize, saturate, treat_transparent,
+        add_offset, borders_image, negative, preprocess, resize, saturate, treat_transparent,
     },
     proc_image::convert_image,
 };
@@ -54,8 +54,8 @@ fn main() -> io::Result<()> {
         borders_image(&mut img, &args);
     }
 
-    if args.inverse {
-        inverse(&mut img);
+    if args.negative {
+        negative(&mut img);
     }
 
     // Always treat transparent pixels, because it makes them visible when printing color

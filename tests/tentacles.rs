@@ -49,14 +49,14 @@ q88888888888.     88888888.           ·qqqqq888'
 }
 
 #[test]
-fn tentacles_ci() {
+fn tentacles_cn() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
         .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
-        .arg("-i")
+        .arg("-n")
         .output()
         .expect("Failed to execute command");
 
@@ -97,14 +97,14 @@ p               d8p         88            q8
 }
 
 #[test]
-fn tentacles_civ() {
+fn tentacles_cnv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
         .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
-        .arg("-i")
+        .arg("-n")
         .arg("-v")
         .output()
         .expect("Failed to execute command");

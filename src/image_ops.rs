@@ -174,7 +174,7 @@ pub fn preprocess(img: &mut RgbaImage, args: &Args) {
     }
 }
 
-pub fn inverse(img: &mut RgbaImage) {
+pub fn negative(img: &mut RgbaImage) {
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
         let target_brightness = 1.0 - pixel_brightness;

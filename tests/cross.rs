@@ -51,13 +51,13 @@ Number of characters: 60x30
 }
 
 #[test]
-fn cross_iv() {
+fn cross_nv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
         .arg("--path")
         .arg("./images/Cross_Calatrava.png")
-        .arg("-i")
+        .arg("-n")
         .arg("-v")
         .output()
         .expect("Failed to execute command");
