@@ -20,9 +20,9 @@ fn main() -> io::Result<()> {
 
     if args.all {
         args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
-    } else {
-        args.chars.push_str(&args.add_chars);
     }
+
+    args.chars.push_str(&args.add_chars);
 
     args.chars = args
         .chars
