@@ -4,19 +4,25 @@ use crate::{
 };
 use image::{EncodableLayout, RgbaImage};
 
+// Detects the borders of an image and paints them black
 pub fn borders_image(img: &mut RgbaImage, args: &Args) {
+    // Get the borders (difference color or brightness)
     let borders = if args.color {
         detect_color_borders(&img, args.difference)
     } else {
         detect_borders(&img, args.difference as f32 / 360.0)
     };
+
+    // Paint the borders
     paint_borders(img, borders, args);
 }
 
+// Detects the borders of an image using brightness
 fn detect_borders(img: &image::RgbaImage, threshold: f32) -> Vec<(u32, u32)> {
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
 
+    // Compares a pixel to the one on its right and below
     for y in 0..height - 1 {
         for x in 0..width - 1 {
             let current_pixel = img.get_pixel(x, y);
@@ -34,10 +40,12 @@ fn detect_borders(img: &image::RgbaImage, threshold: f32) -> Vec<(u32, u32)> {
     borders
 }
 
+// Detects the borders of an image using color
 fn detect_color_borders(img: &image::RgbaImage, threshold: u16) -> Vec<(u32, u32)> {
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
 
+    // Compares a pixel to the one on its right and below
     for y in 0..height - 1 {
         for x in 0..width - 1 {
             let current_pixel = img.get_pixel(x, y);
@@ -55,7 +63,9 @@ fn detect_color_borders(img: &image::RgbaImage, threshold: u16) -> Vec<(u32, u32
     borders
 }
 
+// Paints the borders of an image black
 fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, args: &Args) {
+    // Precalculate needed values
     let thickness = if args.border == 0 { 8 } else { args.border };
     let half_t = thickness / 2;
     let width = img.width();
@@ -78,6 +88,7 @@ fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, args: &Ar
     }
 }
 
+// Resizes an image
 pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     let (orig_width, orig_height) = img.dimensions();
     println!("Original dimensions {}x{}", orig_width, orig_height);
@@ -98,6 +109,7 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     args.actual_width = target_width;
     args.actual_height = target_height;
 
+    // Resize the image
     *img = image::imageops::resize(
         img,
         target_width,
@@ -106,12 +118,14 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     );
 }
 
+// Saturates an image
 pub fn saturate(img: &mut RgbaImage, args: &Args) {
     for pixel in img.pixels_mut() {
         let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
         let max = r.max(g).max(b);
         let factor = 255.0 / max as f32;
 
+        // Only saturate if the pixel is bright enough
         if calculate_brightness(pixel) > args.midpoint_brightness {
             pixel[0] = (r as f32 * factor).round() as u8;
             pixel[1] = (g as f32 * factor).round() as u8;
@@ -124,7 +138,9 @@ pub fn saturate(img: &mut RgbaImage, args: &Args) {
     }
 }
 
+// Adds an offset to an image
 pub fn add_offset(img: &mut RgbaImage, args: &Args) {
+    // Calculate dimensions
     let (img_width, img_height) = img.dimensions();
     let new_width = img_width + args.offsetx as u32;
     let new_height = img_height + args.offsety as u32;
@@ -148,7 +164,9 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
         .expect("Failed to create offset image");
 }
 
+// Preprocesses an image to black and white
 pub fn preprocess(img: &mut RgbaImage, args: &Args) {
+    // Convert the image to black and white applying a threshold
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
         pixel[0] = if pixel_brightness > args.threshold {
@@ -174,6 +192,7 @@ pub fn preprocess(img: &mut RgbaImage, args: &Args) {
     }
 }
 
+// Applies the negative effect to an image
 pub fn negative(img: &mut RgbaImage) {
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
@@ -183,6 +202,7 @@ pub fn negative(img: &mut RgbaImage) {
             pixel[1] = 255;
             pixel[2] = 255;
         } else {
+            // Apply the negative effect (it is squared to make it more visible)
             let factor = (target_brightness / pixel_brightness).powf(2.0);
             pixel[0] = (pixel[0] as f32 * factor).round() as u8;
             pixel[1] = (pixel[1] as f32 * factor).round() as u8;
@@ -191,6 +211,7 @@ pub fn negative(img: &mut RgbaImage) {
     }
 }
 
+// Make transparent pixels visible
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
     for pixel in img.pixels_mut() {
         if pixel[3] == 0 {

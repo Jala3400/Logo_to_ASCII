@@ -7,10 +7,12 @@ use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 
+/// Returns a FontBitmap with the characters and their brightness values
 pub fn get_dict(args: &Args) -> FontBitmap {
     // Load or create an image
     let mut img;
 
+    // The size of a character is 1x2 pixels
     let width = 8usize;
     let height = width * 2;
 
@@ -31,11 +33,11 @@ pub fn get_dict(args: &Args) -> FontBitmap {
     // Create a vector of characters directly from the input string
     let characters: Vec<char> = args.chars.chars().collect();
 
-    let mut final_font = FontBitmap {
-        data: Vec::new(),
-    };
+    let mut final_font = FontBitmap { data: Vec::new() };
 
+    // Create a character for each character in the input string
     for i in 0..characters.len() {
+        // Create an image and then print the character on it
         let mut character: [f32; 8 * 16] = [0.0; 8 * 16];
         img = RgbaImage::new(width as u32, height as u32);
         let character_string = characters[i].to_string();
@@ -55,6 +57,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             }
         }
 
+        // Add the character in the final font
         let char_info = CharInfo {
             char: characters[i],
             data: character,
