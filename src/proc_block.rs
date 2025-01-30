@@ -1,5 +1,6 @@
 use crate::types::FontBitmap;
 
+// Matches a block of pixels with a character
 pub fn match_group_with_letter(
     group: &[f32; 8 * 16],
     font: &FontBitmap,
@@ -8,15 +9,18 @@ pub fn match_group_with_letter(
     let mut best_match = font.data[0].char;
     let mut best_match_value = f32::MIN;
 
+    // Only take the possible characters
     for letter in font.data.iter().take_while(|l| l.min < bright_blocks) {
         let mut match_value = 0.0;
         for y in 0..16 {
             for x in 0..8 {
                 let cords = y * 8 + x;
+                // Add the value of the pixel to the match value (the block brightness multiplied by the character's brightness in a given position)
                 match_value += group[cords] * letter.data[cords];
             }
         }
 
+        // If the match value is greater than the best match value, update the best match
         if match_value > best_match_value {
             best_match_value = match_value;
             best_match = letter.char;
