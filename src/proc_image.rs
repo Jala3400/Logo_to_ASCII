@@ -6,7 +6,7 @@ use enable_ansi_support::enable_ansi_support;
 use image::RgbaImage;
 
 // Converts an image to ASCII art
-pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
+pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
     // Enable colors
     enable_ansi_support().unwrap();
 
@@ -17,8 +17,13 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
     let num_groups_x = (width + 7) / 8;
     let num_groups_y = (height + 15) / 16;
 
-    println!("Image dimensions: {}x{}", width, height);
-    println!("Number of characters: {}x{}", num_groups_x, num_groups_y);
+    if args.verbose {
+        println!("Image dimensions: {}x{}", width, height);
+        println!("Number of characters: {}x{}", num_groups_x, num_groups_y);
+    }
+
+    let string_capacity = num_groups_x * num_groups_y * if args.color { 22 } else { 1 };
+    let mut result = String::with_capacity(string_capacity);
 
     let mut group = [0f32; 8 * 16];
     let mut bright_pixels;
@@ -75,9 +80,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
                 }
             }
 
-            print!(
-                "{}{}",
-                if args.text_color {
+            // If the color flag is set, print the color of the character
+            if args.text_color {
+                result.push_str(&format!(
+                    "{}",
                     if high_pixels > 0 {
                         r /= high_pixels;
                         g /= high_pixels;
@@ -86,17 +92,19 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
                     } else {
                         "\x1b[38;2;0;0;0m".to_string()
                     }
-                } else {
-                    String::new()
-                },
-                if full_pixels == 16 * 8 {
-                    font.data.last().unwrap().char
-                } else {
-                    match_group_with_letter(&group, font, bright_pixels)
-                }
-            );
+                ));
+            }
+
+            // Append the character
+            result.push(if full_pixels == 16 * 8 {
+                font.data.last().unwrap().char
+            } else {
+                match_group_with_letter(&group, font, bright_pixels)
+            });
         }
-        println!();
+        result.push('\n');
     }
-    print!("\x1b[0m");
+    result.push_str("\x1b[0m");
+
+    result
 }

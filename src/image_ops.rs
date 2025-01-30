@@ -91,7 +91,9 @@ fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, args: &Ar
 // Resizes an image
 pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     let (orig_width, orig_height) = img.dimensions();
-    println!("Original dimensions {}x{}", orig_width, orig_height);
+    if args.verbose {
+        println!("Original dimensions {}x{}", orig_width, orig_height);
+    }
 
     // Calculate dimensions once upfront
     let (target_width, target_height) = match (args.actual_width, args.actual_height) {

@@ -99,4 +99,8 @@ pub struct Args {
     /// Output the image to a file
     #[arg(short, long)]
     pub output: Option<String>,
+
+    /// Print information about the image
+    #[arg(long, default_value_t = false)]
+    pub verbose: bool,
 }

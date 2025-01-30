@@ -67,11 +67,13 @@ pub fn get_dict(args: &Args) -> FontBitmap {
     }
 
     // Print all characters in the final font (ordered)
-    print!("Characters: ");
-    for char_info in &final_font.data {
-        print!("{}", char_info.char);
+    if args.verbose {
+        print!("Characters: ");
+        for char_info in &final_font.data {
+            print!("{}", char_info.char);
+        }
+        println!();
     }
-    println!();
 
     final_font
 }
