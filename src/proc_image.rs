@@ -6,7 +6,7 @@ use enable_ansi_support::enable_ansi_support;
 use image::RgbaImage;
 
 // Converts an image to ASCII art
-pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
+pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
     // Enable colors
     enable_ansi_support().unwrap();
 
@@ -21,6 +21,9 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
         println!("Image dimensions: {}x{}", width, height);
         println!("Number of characters: {}x{}", num_groups_x, num_groups_y);
     }
+
+    let string_capacity = num_groups_x * num_groups_y * if args.color { 22 } else { 1 };
+    let mut result = String::with_capacity(string_capacity);
 
     let mut group = [0f32; 8 * 16];
     let mut bright_pixels;
@@ -77,7 +80,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
                 }
             }
 
-            print!(
+            result.push_str(&format!(
                 "{}{}",
                 if args.text_color {
                     if high_pixels > 0 {
@@ -96,9 +99,11 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
                 } else {
                     match_group_with_letter(&group, font, bright_pixels)
                 }
-            );
+            ));
         }
-        println!();
+        result.push('\n');
     }
-    print!("\x1b[0m");
+    result.push_str("\x1b[0m");
+
+    result
 }
