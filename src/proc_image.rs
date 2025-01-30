@@ -17,8 +17,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
     let num_groups_x = (width + 7) / 8;
     let num_groups_y = (height + 15) / 16;
 
-    println!("Image dimensions: {}x{}", width, height);
-    println!("Number of characters: {}x{}", num_groups_x, num_groups_y);
+    if args.verbose {
+        println!("Image dimensions: {}x{}", width, height);
+        println!("Number of characters: {}x{}", num_groups_x, num_groups_y);
+    }
 
     let mut group = [0f32; 8 * 16];
     let mut bright_pixels;
