@@ -11,40 +11,42 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 
 Funciona mejor con imágenes de pocos colores y bordes bien definidos.
 
-## Índice
+# Índice
 
 - [Logo to ASCII](#logo-to-ascii)
-  - [Índice](#índice)
-  - [Instalación](#instalación)
-  - [Tutorial](#tutorial)
-    - [Logo simple](#logo-simple)
-    - [Logo con colores](#logo-con-colores)
-    - [Imprimir colores](#imprimir-colores)
-    - [Todo junto](#todo-junto)
-    - [Imagen con muchos detalles](#imagen-con-muchos-detalles)
-  - [Consejos para crear imágenes](#consejos-para-crear-imágenes)
-  - [¿Cómo funciona?](#cómo-funciona)
-  - [Preguntas frecuentes](#preguntas-frecuentes)
+- [Índice](#índice)
+- [Instalación](#instalación)
+- [Tutorial](#tutorial)
+  - [Logo simple](#logo-simple)
+  - [Logo con colores](#logo-con-colores)
+  - [Imprimir colores](#imprimir-colores)
+  - [Todo junto](#todo-junto)
+  - [Imagen con muchos detalles](#imagen-con-muchos-detalles)
+- [Consejos para crear imágenes](#consejos-para-crear-imágenes)
+- [¿Cómo funciona?](#cómo-funciona)
+- [Preguntas frecuentes](#preguntas-frecuentes)
 
-## Instalación
+# Instalación
 
-1. Descarga rust desde https://www.rust-lang.org/tools/installs:
-   Al terminar la instalación escribe el siguiente comando en la consola para comprobar que todo ha salido bien:
-    ```
-    rustc --version
-    ```
-2. Descarga este repositorio con:
+-   Prerrequisitos:
+
+    -   [Rust](https://www.rust-lang.org/tools/install)
+    -   [Git](https://git-scm.com/downloads)
+
+-   Pasos:
+
+1. Descarga este repositorio con:
     ```
     git clone https://github.com/Jala3400/Logo_to_ASCII
     ```
-3. Compila el repositorio: En la consola de comandos ejecuta
+2. Compila el repositorio: En la consola de comandos ejecuta
     ```
     cargo build --release
     ```
 
-## Tutorial
+# Tutorial
 
-### Logo simple
+## Logo simple
 
 El caso más básico consiste en tratar logos de un solo color. Usaremos la siguiente imagen:
 
@@ -127,7 +129,7 @@ El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 -   Para cambiar el punto medio de la luminosidad se usa `-m <punto_medio>`. Por defecto es 0.5. Se pone un valor más bajo se imprimirán colores más oscuros.
 -   Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
 
-### Logo con colores
+## Logo con colores
 
 Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen:
 
@@ -168,7 +170,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 -   Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
 -   Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
 
-### Imprimir colores
+## Imprimir colores
 
 -   Para imprimir colores se usa el argumento `-C`.
 -   Añadir `-s` saturará cada píxel al máximo (solo los que serían visibles).
@@ -187,7 +189,7 @@ Las imágenes situadas al inicio del documento son:
 
 ![Tentáculos con colores](./images/tentaculos_cC.png)
 
-### Todo junto
+## Todo junto
 
 -   Todos estos argumentos también se puede mezclar unos con otros
 
@@ -211,7 +213,7 @@ Las imágenes situadas al inicio del documento son:
 
 ![Imagen final tentáculos](./images/final_tentacles_cCv_chars.png)
 
-### Imagen con muchos detalles
+## Imagen con muchos detalles
 
 Si estás pensando en pasar a ASCII una foto con muchos detalles, lo mejor es que dejes de hacerlo.
 
@@ -237,7 +239,7 @@ Otra opción es añadir `-m 0` y `-C`, lo que imprimirá todos los caracteres co
 
 ![Palmera con colores](./images/palmera_m0_C.png)
 
-## Consejos para crear imágenes
+# Consejos para crear imágenes
 
 La aplicación dibuja con caracteres. Estos no tienen capacidad para mostrar detalles, pero tienen forma.
 
@@ -248,7 +250,7 @@ Dibuja bordes definidos y superficies amplias.
 
 Para facilitar el diseño se puede usar una rejilla de 8x16 y asegurarse de que los bordes del dibujo siempre coincidan con los bordes y esquinas de un bloque.
 
-## ¿Cómo funciona?
+# ¿Cómo funciona?
 
 La idea surgió de un video en el que se convertía una imagen a ASCII. Sin embargo, se perdía mucha información y los caracteres no tenían la forma que debían.
 
@@ -301,7 +303,7 @@ Para no tener que crear las imágenes a la perfección, la aplicación permite h
     -   `-r`: Pasa la imagen a blanco y negro.
     -   `-t <threshold>`: Valor mínimo para que un pixel se pase a blanco.
 
-1. **Convertir bloques a carácter**
+3. **Convertir bloques a carácter**
 
 Después se divide la imagen en bloques con las mismas medidas que los caracteres. Cada bloque se compara con todos los caracteres (se pueden saltar varios en ciertos casos, ver optimización).
 
@@ -319,7 +321,7 @@ Además, si todos los píxeles están completamente iluminados se puede imprimir
 
 El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un número positivo, y al multiplicar dos números negativos también. Esto premia las coincidencias de píxeles (y no píxeles) y penaliza las diferencias.
 
-## Preguntas frecuentes
+# Preguntas frecuentes
 
 -   **¿Cómo imprimir un logo de color negro?**
     Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-n` al comando, para imprimir la imagen en negativo. Recordamos que los pixeles transparentes nunca se imprimen.
