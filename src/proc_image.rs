@@ -5,8 +5,12 @@ use crate::{
 use enable_ansi_support::enable_ansi_support;
 use image::RgbaImage;
 
+// Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
+    // Enable colors
     enable_ansi_support().unwrap();
+
+    // Precalculate needed values
     let height = img.height() as usize;
     let width = img.width() as usize;
 
@@ -24,6 +28,8 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
     let mut g: usize;
     let mut b: usize;
 
+    // Iterate over the groups of pixels
+    // Print each character
     for y in 0..num_groups_y {
         for x in 0..num_groups_x {
             bright_pixels = 0;
@@ -32,6 +38,8 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
             r = 0;
             g = 0;
             b = 0;
+
+            // For each pixel in the group generate the brightness value and store the color
             for by in 0..16 {
                 let iy = y * 16 + by;
                 for bx in 0..8 {
@@ -52,6 +60,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) {
                             }
                         }
                     } else {
+                        // If the pixel is outside of the image, it is considered transparent
                         group[cords_block] = if args.visible {
                             r += 255;
                             g += 255;
