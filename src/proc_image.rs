@@ -80,9 +80,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
                 }
             }
 
-            result.push_str(&format!(
-                "{}{}",
-                if args.text_color {
+            // If the color flag is set, print the color of the character
+            if args.text_color {
+                result.push_str(&format!(
+                    "{}",
                     if high_pixels > 0 {
                         r /= high_pixels;
                         g /= high_pixels;
@@ -91,15 +92,15 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
                     } else {
                         "\x1b[38;2;0;0;0m".to_string()
                     }
-                } else {
-                    String::new()
-                },
-                if full_pixels == 16 * 8 {
-                    font.data.last().unwrap().char
-                } else {
-                    match_group_with_letter(&group, font, bright_pixels)
-                }
-            ));
+                ));
+            }
+
+            // Append the character
+            result.push(if full_pixels == 16 * 8 {
+                font.data.last().unwrap().char
+            } else {
+                match_group_with_letter(&group, font, bright_pixels)
+            });
         }
         result.push('\n');
     }
