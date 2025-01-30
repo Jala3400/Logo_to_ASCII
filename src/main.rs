@@ -10,6 +10,7 @@ use logo_to_ascii::{
 use std::io;
 
 fn main() -> io::Result<()> {
+    // Parse the command line arguments
     let mut args: Args = Args::parse();
     args.difference = args.difference % 360;
 
@@ -18,20 +19,25 @@ fn main() -> io::Result<()> {
         .unwrap_or_else(|e| panic!("Failed to open image: {}", e))
         .to_rgba8();
 
+    // If the flag indicates it, use all ASCII characters
     if args.all {
         args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
     }
 
+    // Add the additional characters
     args.chars.push_str(&args.add_chars);
 
+    // Remove the excluded characters
     args.chars = args
         .chars
         .chars()
         .filter(|c| !args.except.contains(*c))
         .collect();
 
+    // Get the font
     let font = abc::get_dict(&args);
 
+    // Resize the image
     if args.width > 0 {
         args.actual_width = args.width * 8;
     }
@@ -42,18 +48,22 @@ fn main() -> io::Result<()> {
         resize(&mut img, &mut args);
     }
 
+    // Apply the offset
     if args.offsetx != 0 || args.offsety != 0 {
         add_offset(&mut img, &args);
     }
 
+    // Saturate the image
     if args.saturate {
         saturate(&mut img, &args);
     }
 
+    // Add borders
     if args.color || args.border != 0 {
         borders_image(&mut img, &args);
     }
 
+    // Apply the negative effect
     if args.negative {
         negative(&mut img);
     }
@@ -61,12 +71,15 @@ fn main() -> io::Result<()> {
     // Always treat transparent pixels, because it makes them visible when printing color
     treat_transparent(&mut img, &args);
 
+    // Apply the black and white filter
     if args.black_and_white {
         preprocess(&mut img, &args);
     }
 
+    // Convert the image to ASCII
     convert_image(&img, &font, &args);
 
+    // Save the image
     if let Some(output) = &args.output {
         let path = std::path::Path::new(output);
 
