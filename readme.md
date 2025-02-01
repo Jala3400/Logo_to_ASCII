@@ -52,10 +52,10 @@ El caso más básico consiste en tratar logos de un solo color. Usaremos la sigu
 
 ![Cruz de calatrava](./images/Cross_Calatrava.png)
 
-Para convertirla, ejecutamos el programa desde la consola. Le indicamos la imagen con el argumento `--path <path_imagen>`.
+Para convertirla, ejecutamos el programa desde la consola. El primer argumento debe ser la ruta de la imagen.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png
+./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png
 ```
 
 ![Cruz de Calatrava](./images/cruz.png)
@@ -66,7 +66,7 @@ Para convertirla, ejecutamos el programa desde la consola. Le indicamos la image
 > Los píxeles transparentes nunca se imprimen. En este caso, la imagen tiene el fondo transparente, por lo que tenemos que añadir `-v` para imprimirlos.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -nv
+./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png -nv
 ```
 
 ![Cruz de Calatrava en negativo](./images/cruz_nv.png)
@@ -97,7 +97,7 @@ El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 -   Para eliminar caracteres de ser usados, se puede usar `-x <caracteres_a_eliminar>`.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png --all
+./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png --all
 ```
 
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
@@ -108,7 +108,7 @@ El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
 ```
-./target/release/logo_to_ascii.exe --path ./images/Cross_Calatrava.png -w100
+./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png -w100
 ```
 
 ![Cruz de calatrava con 100 caracteres de anchura](./images/cruz_w100.png)
@@ -116,7 +116,7 @@ El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
 -   Si la imagen no queda bien alineada con los caracteres, se puede usar el argumento offset `--ofx <offset_x>` y `--ofy <offset_y>`. Estos valores añaden un offset transparente a la imagen. Se puede ver mejor en las esquinas afiladas.
 
 ```
-./target/release/logo_to_ascii.exe --path .\images\Cross_Calatrava.png --ofx 4 --ofy 8
+./target/release/logo_to_ascii.exe .\images\Cross_Calatrava.png --ofx 4 --ofy 8
 ```
 
 ![Cruz de calatrava con offset de 4 en x y 8 en y](./images/cruz_ofx4_ofy8.png)
@@ -138,7 +138,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 -   Para dibujar un borde entre los colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`. Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 
 ```
-./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -c
+./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -c
 ```
 
 ![Tentáculos](./images/tentaculos.png)
@@ -146,7 +146,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 -   Si se combina con `-n` y se tiene el fondo transparente solo se verán los bordes.
 
 ```
-./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cn
+./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -cn
 ```
 
 ![Tentáculos borde](./images/tentaculos_n.png)
@@ -154,7 +154,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 -   Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-nv`
 
 ```
-./target/release/Logo_to_ASCII.exe --path '.\images\tentacles.png' -cnv
+./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -cnv
 ```
 
 ![Tentáculos inverso](./images/tentaculos_nv.png)
@@ -162,7 +162,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 -   Otra combinación interesante es `-cv`
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cv
+./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cv
 ```
 
 ![Tentáculos borde oscuro](./images/tentaculos_cv.png)
@@ -178,13 +178,13 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 Las imágenes situadas al inicio del documento son:
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\Cross_Calatrava.png -C
+./target/release/Logo_to_ASCII.exe .\images\Cross_Calatrava.png -C
 ```
 
 ![Cruz de Calatrava con coles](./images/cruz_C.png)
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cC
+./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cC
 ```
 
 ![Tentáculos con colores](./images/tentaculos_cC.png)
@@ -194,13 +194,13 @@ Las imágenes situadas al inicio del documento son:
 -   Todos estos argumentos también se puede mezclar unos con otros
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\Cross_Calatrava.png -cCv
+./target/release/Logo_to_ASCII.exe .\images\Cross_Calatrava.png -cCv
 ```
 
 ![Cruz de Calatrava borde oscuro](./images/cruz_cCv.png)
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cCv -a "@#$&Yg*'´_/\ \"
+./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cCv -a "@#$&Yg*'´_/\ \"
 ```
 
 ![Tentáculos borde oscuro con más caracteres](./images/tentaculos_cCv_chars.png)
@@ -208,7 +208,7 @@ Las imágenes situadas al inicio del documento son:
 -   Antes de convertir la imagen a caracteres, la aplicación cambia la imagen. Para guardar la imagen final se usa `-o <nombre_imagen>`.
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\tentacles.png -cCv -o final_tentacles_cCv.png
+./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cCv -o final_tentacles_cCv.png
 ```
 
 ![Imagen final tentáculos](./images/final_tentacles_cCv_chars.png)
@@ -226,7 +226,7 @@ Por ejemplo:
 ![Palmera](./images/palm_rt7.jpg)
 
 ```
-./target/release/Logo_to_ASCII.exe --path .\images\palm.jpg -rt 0.7
+./target/release/Logo_to_ASCII.exe .\images\palm.jpg -rt 0.7
 ```
 
 ![Palmera](./images/palmera.png)
@@ -234,7 +234,7 @@ Por ejemplo:
 Otra opción es añadir `-m 0` y `-C`, lo que imprimirá todos los caracteres con colores.
 
 ```
- ./target/release/Logo_to_ASCII.exe --path .\images\palm.jpg -m 0 -C
+ ./target/release/Logo_to_ASCII.exe .\images\palm.jpg -m 0 -C
 ```
 
 ![Palmera con colores](./images/palmera_m0_C.png)
