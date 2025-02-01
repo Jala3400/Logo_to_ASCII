@@ -8,7 +8,7 @@ pub struct Args {
     help: Option<bool>,
 
     /// Path of the image to process
-    #[arg(short, long)]
+    #[arg()]
     pub path: String,
 
     /// Path of the font to use (optional)

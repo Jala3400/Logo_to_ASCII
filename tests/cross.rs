@@ -5,8 +5,8 @@ fn cross() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/Cross_Calatrava.png")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -55,10 +55,10 @@ fn cross_nv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/Cross_Calatrava.png")
         .arg("-n")
         .arg("-v")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -107,9 +107,9 @@ fn cross_all() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/Cross_Calatrava.png")
         .arg("--all")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -158,10 +158,10 @@ fn cross_w100() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/Cross_Calatrava.png")
         .arg("--width")
         .arg("100")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -230,12 +230,12 @@ fn cross_ofx4_ofy8() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/Cross_Calatrava.png")
         .arg("--ofx")
         .arg("4")
         .arg("--ofy")
         .arg("8")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 

@@ -5,9 +5,9 @@ fn tentacles_c() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -53,10 +53,10 @@ fn tentacles_cn() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("-n")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -101,11 +101,11 @@ fn tentacles_cnv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("-n")
         .arg("-v")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -146,14 +146,14 @@ p               d8p         88            q888888888
 }
 
 #[test]
-fn tentacles_cv(){
+fn tentacles_cv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("-v")
+        .arg("--verbose")
         .output()
         .expect("Failed to execute command");
 
@@ -191,5 +191,4 @@ p 8888888888888888  888888888. 88888888888 888888888
 88p '888888888888' 88888888888 '88888888888 '8888888
 [0m"#;
     assert_eq!(stdout.trim(), expected.trim());
-
 }
