@@ -5,7 +5,6 @@ fn tentacles_c() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("--verbose")
@@ -54,7 +53,6 @@ fn tentacles_cn() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("-n")
@@ -103,7 +101,6 @@ fn tentacles_cnv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("-n")
@@ -153,7 +150,6 @@ fn tentacles_cv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("--path")
         .arg("./images/tentacles.png")
         .arg("-c")
         .arg("-v")
@@ -196,4 +192,3 @@ p 8888888888888888  888888888. 88888888888 888888888
 [0m"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
-
