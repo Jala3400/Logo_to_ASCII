@@ -7,7 +7,7 @@ use image::{EncodableLayout, RgbaImage};
 // Detects the borders of an image and paints them black
 pub fn borders_image(img: &mut RgbaImage, args: &Args) {
     // Get the borders (difference color or brightness)
-    let borders = if args.color {
+    let borders = if args.color_borders {
         detect_color_borders(&img, args.difference)
     } else {
         detect_borders(&img, args.difference as f32 / 360.0)

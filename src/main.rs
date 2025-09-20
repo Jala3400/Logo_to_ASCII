@@ -59,7 +59,7 @@ fn main() -> io::Result<()> {
     }
 
     // Add borders
-    if args.color || args.border != 0 {
+    if args.color_borders || args.border != 0 {
         borders_image(&mut img, &args);
     }
 

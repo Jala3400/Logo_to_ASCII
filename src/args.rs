@@ -38,7 +38,7 @@ pub struct Args {
 
     /// Separates colors (change thickenss with `-b`)
     #[arg(short, long, default_value_t = false)]
-    pub color: bool,
+    pub color_borders: bool,
 
     /// Detect borders measuring brightness (when not used with color) (0 to disable)
     #[arg(short, long, default_value_t = 0)]
@@ -91,7 +91,7 @@ pub struct Args {
 
     /// Print the image with colors
     #[arg(short = 'C', long, default_value_t = false)]
-    pub text_color: bool,
+    pub print_color: bool,
 
     /// Saturate the image
     #[arg(short = 's', long, default_value_t = false)]

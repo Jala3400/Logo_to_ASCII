@@ -8,7 +8,7 @@ use image::RgbaImage;
 // Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
     // Enable colors
-    if args.text_color {
+    if args.print_color {
         enable_ansi_support().unwrap();
     }
 
@@ -24,7 +24,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         println!("Number of characters: {}x{}", num_blocks_x, num_blocks_y);
     }
 
-    let string_capacity = num_blocks_x * num_blocks_y * if args.text_color { 22 } else { 1 };
+    let string_capacity = num_blocks_x * num_blocks_y * if args.print_color { 22 } else { 1 };
     let mut result = String::with_capacity(string_capacity);
 
     let mut block = [0f32; 8 * 16];
@@ -83,7 +83,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             }
 
             // If the color flag is set, print the color of the character
-            if args.text_color {
+            if args.print_color {
                 result.push_str(&format!(
                     "{}",
                     if high_pixels > 0 {
