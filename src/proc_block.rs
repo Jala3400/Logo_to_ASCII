@@ -19,7 +19,7 @@ fn max_mult(block: &[f32; 128], font: &FontBitmap, bright_blocks: usize) -> char
     let mut best_match_value = f32::MIN;
 
     // Only take the possible characters
-    for letter in font.data.iter().take_while(|l| l.min < bright_blocks) {
+    for letter in font.data.iter().take_while(|l| l.min <= bright_blocks) {
         let mut match_value = 0.0;
         for i in 0..128 {
             // Add the value of the pixel to the match value (the block brightness multiplied by the character's brightness in a given position)
