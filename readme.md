@@ -3,7 +3,7 @@
 <img src="./images/tentaculos_cC.png" height="400"/>
 </div>
 
-# Logo to ASCII
+## Logo to ASCII
 
 Aplicación que convierte un logo a ASCII art (hecho en rust).
 
@@ -11,7 +11,7 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 
 Funciona mejor con imágenes de pocos colores y bordes bien definidos.
 
-# Índice
+## Índice
 
 - [Logo to ASCII](#logo-to-ascii)
 - [Índice](#índice)
@@ -24,9 +24,12 @@ Funciona mejor con imágenes de pocos colores y bordes bien definidos.
   - [Imagen con muchos detalles](#imagen-con-muchos-detalles)
 - [Consejos para crear imágenes](#consejos-para-crear-imágenes)
 - [¿Cómo funciona?](#cómo-funciona)
+  - [1. Caracteres:](#1-caracteres)
+  - [2. Preprocesado (si lo hay)](#2-preprocesado-si-lo-hay)
+  - [3. Convertir bloques a carácter](#3-convertir-bloques-a-carácter)
 - [Preguntas frecuentes](#preguntas-frecuentes)
 
-# Instalación
+## Instalación
 
 - Prerrequisitos:
 
@@ -47,9 +50,9 @@ Funciona mejor con imágenes de pocos colores y bordes bien definidos.
     cargo build --release
     ```
 
-# Tutorial
+## Tutorial
 
-## Logo simple
+### Logo simple
 
 El caso más básico consiste en tratar logos de un solo color. Usaremos la siguiente imagen:
 
@@ -132,7 +135,7 @@ El set por defecto de caracteres es `8dbqp'·.` (incluyendo el espacio).
 - Para cambiar el punto medio de la luminosidad se usa `-m <punto_medio>`. Por defecto es 0.5. Se pone un valor más bajo se imprimirán colores más oscuros.
 - Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
 
-## Logo con colores
+### Logo con colores
 
 Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen:
 
@@ -173,7 +176,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 - Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
 - Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
 
-## Imprimir colores
+### Imprimir colores
 
 - Para imprimir colores se usa el argumento `-C`.
 - Añadir `-s` saturará cada píxel al máximo (solo los que serían visibles).
@@ -192,7 +195,7 @@ Las imágenes situadas al inicio del documento son:
 
 ![Tentáculos con colores](./images/tentaculos_cC.png)
 
-## Todo junto
+### Todo junto
 
 - Todos estos argumentos también se puede mezclar unos con otros
 
@@ -216,7 +219,7 @@ Las imágenes situadas al inicio del documento son:
 
 ![Imagen final tentáculos](./images/final_tentacles_cCv_chars.png)
 
-## Imagen con muchos detalles
+### Imagen con muchos detalles
 
 Si estás pensando en pasar a ASCII una foto con muchos detalles, lo mejor es que dejes de hacerlo.
 
@@ -242,7 +245,7 @@ Otra opción es añadir `-m 0` y `-C`, lo que imprimirá todos los caracteres co
 
 ![Palmera con colores](./images/palmera_m0_C.png)
 
-# Consejos para crear imágenes
+## Consejos para crear imágenes
 
 La aplicación dibuja con caracteres. Estos no tienen capacidad para mostrar detalles, pero tienen forma.
 
@@ -253,13 +256,13 @@ Dibuja bordes definidos y superficies amplias.
 
 Para facilitar el diseño se puede usar una rejilla de 8x16 y asegurarse de que los bordes del dibujo siempre coincidan con los bordes y esquinas de un bloque.
 
-# ¿Cómo funciona?
+## ¿Cómo funciona?
 
 La idea surgió de un video en el que se convertía una imagen a ASCII. Sin embargo, se perdía mucha información y los caracteres no tenían la forma que debían.
 
 Este algoritmo opera con píxeles en vez de con bloques.
 
-1. **Caracteres:**
+### 1. Caracteres:
 
 Primero se procesan los caracteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Una vez elegido un tamaño (por defecto 8x16) se hace un mapa de bits de cada carácter, que contiene la luminosidad de cada píxel.
 
@@ -275,7 +278,7 @@ Hay varias operaciones que permiten cambiar los caracteres:
 - `-x <caracteres>`: Elimina caracteres del set por defecto.
 - `--font <path_fuente>.ttf`: Cambia la fuente con la que se comparan los caracteres.
 
-2. **Preprocesado (si lo hay)**
+### 2. Preprocesado (si lo hay)
 
 Para no tener que crear las imágenes a la perfección, la aplicación permite hacer ciertas operaciones. Son, en orden de ejecución:
 
@@ -306,13 +309,15 @@ Para no tener que crear las imágenes a la perfección, la aplicación permite h
   - `-r`: Pasa la imagen a blanco y negro.
   - `-t <threshold>`: Valor mínimo para que un pixel se pase a blanco.
 
-3. **Convertir bloques a carácter**
+### 3. Convertir bloques a carácter
 
-Después se divide la imagen en bloques con las mismas medidas que los caracteres. Cada bloque se compara con todos los caracteres (se pueden saltar varios en ciertos casos, ver optimización).
+Después se divide la imagen en bloques con las mismas medidas que los caracteres y se comparan con todos los caracteres.
 
-Por cada carácter, se multiplica la luminosidad de cada píxel con su homólogo en el bloque, y se suman todos los valores ([0][0] \* [0][0] + [0][1] \* [0][1] + ... + [n][m] \* [n][m]). Al final, se imprime el carácter con la puntuación más alta.
+Por cada carácter, se multiplica la luminosidad de cada píxel con la de su homólogo en el bloque, y se suman todos los valores (`[0][0] * [0][0] + [0][1] * [0][1] + ... + [n][m] * [n][m]`). Al final, se imprime el carácter con la puntuación más alta.
 
 En este apartado se da la opción de cambiar el punto medio en la luminosidad con `-m <punto_medio>`. Este argumento es por defecto 0.5 e indica lo que se le resta a la luminosidad de cada pixel (que está entre 0 y 1).
+
+También se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq>`. `max_mult` es el nombre del algoritmo por defecto.
 
 **Optimización:**
 
@@ -324,7 +329,7 @@ Además, si todos los píxeles están completamente iluminados se puede imprimir
 
 El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un número positivo, y al multiplicar dos números negativos también. Esto premia las coincidencias de píxeles (y no píxeles) y penaliza las diferencias.
 
-# Preguntas frecuentes
+## Preguntas frecuentes
 
 - **¿Cómo imprimir un logo de color negro?**
     Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-n` al comando, para imprimir la imagen en negativo. Recordamos que los pixeles transparentes nunca se imprimen.
