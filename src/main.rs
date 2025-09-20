@@ -3,7 +3,7 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, negative, preprocess, resize, saturate, treat_transparent,
+        add_offset, borders_image, negative, bw_filter, resize, saturate, treat_transparent,
     },
     proc_image::convert_image,
 };
@@ -73,7 +73,7 @@ fn main() -> io::Result<()> {
 
     // Apply the black and white filter
     if args.black_and_white {
-        preprocess(&mut img, &args);
+        bw_filter(&mut img, &args);
     }
 
     // Convert the image to ASCII

@@ -167,7 +167,7 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
 }
 
 // Preprocesses an image to black and white
-pub fn preprocess(img: &mut RgbaImage, args: &Args) {
+pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
     // Convert the image to black and white applying a threshold
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
