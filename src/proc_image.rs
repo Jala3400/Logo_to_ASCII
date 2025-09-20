@@ -101,7 +101,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             result.push(if full_pixels == 16 * 8 {
                 font.data.last().unwrap().char
             } else {
-                match_group_with_letter(&group, font, bright_pixels)
+                match_group_with_letter(&group, font, bright_pixels, &args.algorithm)
             });
         }
         result.push('\n');

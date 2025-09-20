@@ -1,3 +1,4 @@
+use crate::types::Algorithm;
 use clap::Parser;
 
 #[derive(Parser)]
@@ -95,6 +96,10 @@ pub struct Args {
     /// Saturate the image
     #[arg(short = 's', long, default_value_t = false)]
     pub saturate: bool,
+
+    /// Algorithm used to match blocks to characters
+    #[arg(long = "algo", value_enum, default_value_t = Algorithm::MaxMult)]
+    pub algorithm: Algorithm,
 
     /// Output the image to a file
     #[arg(short, long)]

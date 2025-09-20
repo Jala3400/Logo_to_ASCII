@@ -1,3 +1,5 @@
+use clap::ValueEnum;
+
 /// A structure representing a bitmap image with brightness values.
 ///
 /// # Fields
@@ -56,4 +58,24 @@ pub struct CharInfo {
     pub char: char,
     pub data: [f32; 8 * 16],
     pub min: usize,
+}
+
+/// Algorithm enumeration for ASCII art generation methods.
+///
+/// This enum defines different algorithms that can be used to convert
+/// bitmap images to ASCII art by matching pixel patterns with character bitmaps.
+///
+/// # Variants
+///
+/// * `MaxMult` - Uses maximum multiplication algorithm for character matching
+/// * `MinDiff` - Uses minimum difference algorithm to find the best character match
+/// * `MinDiffSq` - Uses minimum squared difference algorithm for more precise character matching
+#[derive(Debug, Clone, ValueEnum)]
+pub enum Algorithm {
+    #[value(name = "max_mult")]
+    MaxMult,
+    #[value(name = "min_diff")]
+    MinDiff,
+    #[value(name = "min_diff_sq")]
+    MinDiffSq,
 }
