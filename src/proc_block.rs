@@ -43,7 +43,7 @@ fn min_diff(group: &[f32; 8 * 16], font: &FontBitmap) -> char {
     for letter in &font.data {
         let mut match_value = 0.0;
         for i in 0..128 {
-            match_value += ((group[i] + 0.5) - (letter.data[i] + 0.5)).abs();
+            match_value += (group[i] - letter.data[i]).abs();
         }
 
         if match_value < less_diffrence {
@@ -62,7 +62,7 @@ fn min_diff_sq(group: &[f32; 8 * 16], font: &FontBitmap) -> char {
     for letter in &font.data {
         let mut match_value = 0.0;
         for i in 0..128 {
-            let diff = (group[i] + 0.5) - (letter.data[i] + 0.5);
+            let diff = group[i] - letter.data[i];
             match_value += diff * diff;
         }
 
