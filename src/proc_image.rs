@@ -24,7 +24,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         println!("Number of characters: {}x{}", num_blocks_x, num_blocks_y);
     }
 
-    let string_capacity = num_blocks_x * num_blocks_y * if args.color { 22 } else { 1 };
+    let string_capacity = num_blocks_x * num_blocks_y * if args.text_color { 22 } else { 1 };
     let mut result = String::with_capacity(string_capacity);
 
     let mut block = [0f32; 8 * 16];
