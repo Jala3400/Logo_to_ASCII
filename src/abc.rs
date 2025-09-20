@@ -23,7 +23,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
         font = Font::try_from_vec(font_data).expect("Failed to load font");
     } else {
-        font = Font::try_from_bytes(include_bytes!("C:/Windows/Fonts/Consola.ttf")).unwrap();
+        font = Font::try_from_bytes(include_bytes!("../fonts/UbuntuMono-Regular.ttf")).unwrap();
     }
 
     // Define text properties
