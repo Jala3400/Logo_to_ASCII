@@ -8,7 +8,9 @@ use image::RgbaImage;
 // Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
     // Enable colors
-    enable_ansi_support().unwrap();
+    if args.text_color {
+        enable_ansi_support().unwrap();
+    }
 
     // Precalculate needed values
     let height = img.height() as usize;
