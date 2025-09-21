@@ -1,5 +1,5 @@
 use crate::{
-    args::Args, proc_block::match_block_with_letter, proc_pixel::calc_custom_brightness,
+    args::Args, proc_block::match_block_with_char, proc_pixel::calc_custom_brightness,
     types::FontBitmap,
 };
 use enable_ansi_support::enable_ansi_support;
@@ -101,7 +101,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             result.push(if full_pixels == 16 * 8 {
                 font.data.last().unwrap().char
             } else {
-                match_block_with_letter(&block, font, bright_pixels, &args.algorithm)
+                match_block_with_char(&block, font, bright_pixels, &args.algorithm)
             });
         }
         result.push('\n');
