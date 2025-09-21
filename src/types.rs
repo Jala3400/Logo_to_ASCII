@@ -54,6 +54,7 @@ impl FontBitmap {
 /// * char - The character itself
 /// * data - The bitmap of the character, represented as an array of 8x16 elements
 /// * min - The minimum brightness threshold for this character, calculated as half of the total bright blocks
+///  * avg_brightness - The average brightness of the character, used for gradient-based algorithms. Ranges from 0 to 1.
 pub struct CharInfo {
     pub char: char,
     pub data: [f32; 8 * 16],
