@@ -78,7 +78,7 @@ Para convertirla, ejecutamos el programa desde la consola. El primer argumento d
 
 ![Cruz de Calatrava en negativo](./images/cruz_nv.png)
 
-El set por defecto de caracteres es `8dbqp'·.` (incluyendo el espacio).
+El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 
 - Para cambiar el set de caracteres se usa el argumento `--chars <caracteres>`. El set de caracteres debe ir entre `"` o `'` si se quiere usar el espacio.
     Para usar los caracteres de las comillas (`"` y `'`) se deben hacer pruebas dependiendo de la consola que se use:
@@ -351,7 +351,7 @@ El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la d
 
 **Optimización:**
 
-Solo se aplica a `max_mult`
+Solo se aplica a `max_mult` cuando el primer carácter es el espacio.
 
 En este paso también se cuentan el número de píxeles iluminados del bloque. Un carácter solo se considera para impresión si la mitad de sus píxeles con luminosidad positiva son al menos el número de los píxeles iluminados del bloque.
 
