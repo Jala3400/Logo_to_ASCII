@@ -317,7 +317,9 @@ Por cada carácter, se multiplica la luminosidad de cada píxel con la de su hom
 
 En este apartado se da la opción de cambiar el punto medio en la luminosidad con `-m <punto_medio>`. Este argumento es por defecto 0.5 e indica lo que se le resta a la luminosidad de cada pixel (que está entre 0 y 1).
 
-También se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq>`. `max_mult` es el nombre del algoritmo por defecto.
+También se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq|gradient>`. `max_mult` es el nombre del algoritmo por defecto.
+
+`min_diff` y `min_diff_sq` siguen el principio de operar con cada pixel y `gradient` calcula la luminosidad media del bloque.
 
 **Optimización:**
 
