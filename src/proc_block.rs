@@ -4,25 +4,25 @@ use crate::types::{Algorithm, FontBitmap};
 pub fn match_block_with_char(
     block: &[f32; 8 * 16],
     font: &FontBitmap,
-    bright_blocks: usize,
+    bright_pixels: usize,
     algorithm: &Algorithm,
 ) -> char {
     match algorithm {
-        Algorithm::MaxMult => max_mult(block, font, bright_blocks),
+        Algorithm::MaxMult => max_mult(block, font, bright_pixels),
         Algorithm::MinDiff => min_diff(block, font),
         Algorithm::MinDiffSq => min_diff_sq(block, font),
         Algorithm::Gradient => gradient(block, font),
     }
 }
 
-fn max_mult(block: &[f32; 128], font: &FontBitmap, bright_blocks: usize) -> char {
+fn max_mult(block: &[f32; 128], font: &FontBitmap, bright_pixels: usize) -> char {
     let mut best_match = font.data[0].char;
     let mut best_match_value = f32::MIN;
 
     // Only take the possible characters if the first char is space
     // If the first char is not space, there can be edge cases
     let chars_to_check = if font.data[0].char == ' ' {
-        &font.data[..font.data.partition_point(|l| l.min <= bright_blocks)]
+        &font.data[..font.data.partition_point(|l| l.min <= bright_pixels)]
     } else {
         &font.data[..]
     };
