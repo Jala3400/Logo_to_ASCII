@@ -83,7 +83,8 @@ fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
         return '·';
     };
 
-    // Add 0.5 to convert from [-0.5, 0.5] to [0, 1]
+    // Add 0.5 to convert from [-0.5, 0.5] to [0, 1] while allowing to adjust
+    // the brightness with arg.midpoint_brightness
     let avg_block_brightness: f32 = block.iter().sum::<f32>() / 128.0 + 0.5;
 
     let mut best_match = font.data[0].char;
@@ -102,5 +103,3 @@ fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
 
     best_match
 }
-
-/* Para calcular la puntuación de si algo está cerca, se puede usar la intensidad dividida entre la distancia */
