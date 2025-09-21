@@ -71,6 +71,7 @@ pub struct CharInfo {
 /// * `MaxMult` - Uses maximum multiplication algorithm for character matching
 /// * `MinDiff` - Uses minimum difference algorithm to find the best character match
 /// * `MinDiffSq` - Uses minimum squared difference algorithm for more precise character matching
+/// * `Gradient` - Uses the average brightness of the block to find the closest character match
 #[derive(Debug, Clone, ValueEnum)]
 pub enum Algorithm {
     #[value(name = "max_mult")]
@@ -79,4 +80,6 @@ pub enum Algorithm {
     MinDiff,
     #[value(name = "min_diff_sq")]
     MinDiffSq,
+    #[value(name = "gradient")]
+    Gradient,
 }

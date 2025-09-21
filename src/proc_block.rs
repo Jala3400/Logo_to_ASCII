@@ -11,6 +11,7 @@ pub fn match_block_with_letter(
         Algorithm::MaxMult => max_mult(block, font, bright_blocks),
         Algorithm::MinDiff => min_diff(block, font),
         Algorithm::MinDiffSq => min_diff_sq(block, font),
+        Algorithm::Gradient => gradient(block, font),
     }
 }
 
@@ -74,3 +75,32 @@ fn min_diff_sq(block: &[f32; 128], font: &FontBitmap) -> char {
 
     best_match
 }
+
+fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
+    let max_char_brightness = if let Some(last_char) = font.data.last() {
+        last_char.avg_brightness
+    } else {
+        return '·';
+    };
+
+    // Add 0.5 to convert from [-0.5, 0.5] to [0, 1]
+    let avg_block_brightness: f32 = block.iter().sum::<f32>() / 128.0 + 0.5;
+
+    let mut best_match = font.data[0].char;
+    let mut best_score = f32::MIN;
+
+    for letter in &font.data {
+        // Divide by the max brightness to get a value between 0 and 1
+        let score =
+            1.0 - (avg_block_brightness - letter.avg_brightness / max_char_brightness).abs();
+
+        if score > best_score {
+            best_score = score;
+            best_match = letter.char;
+        }
+    }
+
+    best_match
+}
+
+/* Para calcular la puntuación de si algo está cerca, se puede usar la intensidad dividida entre la distancia */
