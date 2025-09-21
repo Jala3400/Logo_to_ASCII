@@ -97,6 +97,10 @@ pub struct Args {
     #[arg(short = 's', long, default_value_t = false)]
     pub saturate: bool,
 
+    /// Grayscale and brighten the image
+    #[arg(short = 'g', long, default_value_t = false)]
+    pub grayscale: bool,
+
     /// Algorithm used to match blocks to characters
     #[arg(long = "algo", value_enum, default_value_t = Algorithm::MaxMult)]
     pub algorithm: Algorithm,

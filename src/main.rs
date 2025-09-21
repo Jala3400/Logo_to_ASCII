@@ -3,7 +3,8 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, bw_filter, negative, resize, saturate, treat_transparent,
+        add_offset, borders_image, bw_filter, grayscale, negative, resize, saturate,
+        treat_transparent,
     },
     proc_image::convert_image,
 };
@@ -77,6 +78,11 @@ fn main() -> io::Result<()> {
 
     // Always treat transparent pixels, because it makes them visible when printing color
     treat_transparent(&mut img, &args);
+
+    // Grayscale and brighten the image
+    if args.grayscale {
+        grayscale(&mut img);
+    }
 
     // Apply the black and white filter
     if args.black_and_white {

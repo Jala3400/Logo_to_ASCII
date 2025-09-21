@@ -166,6 +166,34 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
         .expect("Failed to create offset image");
 }
 
+pub fn grayscale(img: &mut RgbaImage) {
+    // Convert to grayscale
+    for pixel in img.pixels_mut() {
+        let gray = calculate_brightness(pixel);
+        let gray_value = (gray * 255.0).round() as u8;
+        pixel[0] = gray_value;
+        pixel[1] = gray_value;
+        pixel[2] = gray_value;
+    }
+
+    // Find the brightest pixel
+    // Only need to check one channel since it's grayscale
+    let mut max_brightness = 0u8;
+    for pixel in img.pixels() {
+        max_brightness = max_brightness.max(pixel[0]);
+    }
+
+    // Brighten the image evenly based on the brightest pixel
+    if max_brightness > 0 {
+        let factor = 255.0 / max_brightness as f32;
+        for pixel in img.pixels_mut() {
+            pixel[0] = (pixel[0] as f32 * factor).round() as u8;
+            pixel[1] = (pixel[1] as f32 * factor).round() as u8;
+            pixel[2] = (pixel[2] as f32 * factor).round() as u8;
+        }
+    }
+}
+
 // Preprocesses an image to black and white
 pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
     // Convert the image to black and white applying a threshold
