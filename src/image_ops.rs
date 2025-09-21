@@ -176,20 +176,24 @@ pub fn grayscale(img: &mut RgbaImage) {
         pixel[2] = gray_value;
     }
 
-    // Find the brightest pixel
+    // Find the brightest and darkest pixels
     // Only need to check one channel since it's grayscale
     let mut max_brightness = 0u8;
+    let mut min_brightness = 255u8;
     for pixel in img.pixels() {
         max_brightness = max_brightness.max(pixel[0]);
+        min_brightness = min_brightness.min(pixel[0]);
     }
 
-    // Brighten the image evenly based on the brightest pixel
-    if max_brightness > 0 {
-        let factor = 255.0 / max_brightness as f32;
+    // Normalize the image based on the brightness range
+    if max_brightness > min_brightness {
+        let range = max_brightness - min_brightness;
+        let factor = 255.0 / range as f32;
         for pixel in img.pixels_mut() {
-            pixel[0] = (pixel[0] as f32 * factor).round() as u8;
-            pixel[1] = (pixel[1] as f32 * factor).round() as u8;
-            pixel[2] = (pixel[2] as f32 * factor).round() as u8;
+            let normalized = ((pixel[0] - min_brightness) as f32 * factor).round() as u8;
+            pixel[0] = normalized;
+            pixel[1] = normalized;
+            pixel[2] = normalized;
         }
     }
 }
