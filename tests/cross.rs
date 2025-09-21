@@ -13,7 +13,7 @@ fn cross() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 480x480
 Number of characters: 60x30
                              ..                             
@@ -65,7 +65,7 @@ fn cross_nv() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 480x480
 Number of characters: 60x30
 88888888888888888888888888888bd88888888888888888888888888888
@@ -116,7 +116,7 @@ fn cross_all() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  `._:-~,'";=r^>!<?+vjc\1/*)(}{ziC7|xtoUTsnlfLywuea][YXJVFD52SNIG3$qpmkhZPKA964dbR0gBME8WO&H#Q%@
+Characters:  `.-',:_~";!^r+><=*?|\L/icl)(Tv7ztJsY1x{Inuf}][CFjo23ya5SVeZ4wPhmkXGE$69qpAKbdUOgHD8RMW0&#%QNB@
 Image dimensions: 480x480
 Number of characters: 60x30
                              ,.                             
@@ -168,7 +168,7 @@ fn cross_w100() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Original dimensions 480x480
 Image dimensions: 800x800
 Number of characters: 100x50
@@ -243,7 +243,7 @@ fn cross_ofx4_ofy8() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 484x488
 Number of characters: 61x31
                               .                              
