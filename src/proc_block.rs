@@ -77,11 +77,8 @@ fn min_diff_sq(block: &[f32; 128], font: &FontBitmap) -> char {
 }
 
 fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
-    let max_char_brightness = if let Some(last_char) = font.data.last() {
-        last_char.avg_brightness
-    } else {
-        return '·';
-    };
+    let max_char_brightness = font.data[font.data.len() - 1].avg_brightness;
+    let min_char_brightness = font.data[0].avg_brightness;
 
     // Add 0.5 to convert from [-0.5, 0.5] to [0, 1] while allowing to adjust
     // the brightness with arg.midpoint_brightness
@@ -91,9 +88,10 @@ fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
     let mut best_score = f32::MIN;
 
     for char in &font.data {
-        // Divide by the max brightness to get a value between 0 and 1
-        let score =
-            1.0 - (avg_block_brightness - char.avg_brightness / max_char_brightness).abs();
+        // Normalize char brightnesses to [0, 1] range
+        let normalized_char_brightness = (char.avg_brightness - min_char_brightness)
+            / (max_char_brightness - min_char_brightness);
+        let score = 1.0 - (avg_block_brightness - normalized_char_brightness).abs();
 
         if score > best_score {
             best_score = score;

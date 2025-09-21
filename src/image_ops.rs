@@ -166,31 +166,52 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
         .expect("Failed to create offset image");
 }
 
+pub fn grayscale(img: &mut RgbaImage) {
+    // Convert to grayscale
+    for pixel in img.pixels_mut() {
+        let gray = calculate_brightness(pixel);
+        let gray_value = (gray * 255.0).round() as u8;
+        pixel[0] = gray_value;
+        pixel[1] = gray_value;
+        pixel[2] = gray_value;
+    }
+
+    // Find the brightest and darkest pixels
+    // Only need to check one channel since it's grayscale
+    let mut max_brightness = 0u8;
+    let mut min_brightness = 255u8;
+    for pixel in img.pixels() {
+        max_brightness = max_brightness.max(pixel[0]);
+        min_brightness = min_brightness.min(pixel[0]);
+    }
+
+    // Normalize the image based on the brightness range
+    if max_brightness > min_brightness {
+        let range = max_brightness - min_brightness;
+        let factor = 255.0 / range as f32;
+        for pixel in img.pixels_mut() {
+            let normalized = ((pixel[0] - min_brightness) as f32 * factor).round() as u8;
+            pixel[0] = normalized;
+            pixel[1] = normalized;
+            pixel[2] = normalized;
+        }
+    }
+}
+
 // Preprocesses an image to black and white
 pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
     // Convert the image to black and white applying a threshold
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
-        pixel[0] = if pixel_brightness > args.threshold {
+        let value = if pixel_brightness > args.threshold {
             255
         } else {
             0
         };
-        pixel[1] = if pixel_brightness > args.threshold {
-            255
-        } else {
-            0
-        };
-        pixel[2] = if pixel_brightness > args.threshold {
-            255
-        } else {
-            0
-        };
-        pixel[3] = if pixel_brightness > args.threshold {
-            255
-        } else {
-            0
-        };
+        pixel[0] = value;
+        pixel[1] = value;
+        pixel[2] = value;
+        pixel[3] = 255; // Keep alpha fully opaque
     }
 }
 
