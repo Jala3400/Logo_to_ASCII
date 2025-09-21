@@ -171,26 +171,15 @@ pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
     // Convert the image to black and white applying a threshold
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
-        pixel[0] = if pixel_brightness > args.threshold {
+        let value = if pixel_brightness > args.threshold {
             255
         } else {
             0
         };
-        pixel[1] = if pixel_brightness > args.threshold {
-            255
-        } else {
-            0
-        };
-        pixel[2] = if pixel_brightness > args.threshold {
-            255
-        } else {
-            0
-        };
-        pixel[3] = if pixel_brightness > args.threshold {
-            255
-        } else {
-            0
-        };
+        pixel[0] = value;
+        pixel[1] = value;
+        pixel[2] = value;
+        pixel[3] = 255; // Keep alpha fully opaque
     }
 }
 
