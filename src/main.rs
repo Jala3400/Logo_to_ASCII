@@ -3,7 +3,7 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, negative, bw_filter, resize, saturate, treat_transparent,
+        add_offset, borders_image, bw_filter, negative, resize, saturate, treat_transparent,
     },
     proc_image::convert_image,
 };
@@ -33,6 +33,13 @@ fn main() -> io::Result<()> {
         .chars()
         .filter(|c| !args.except.contains(*c))
         .collect();
+
+    if args.chars.is_empty() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "No characters to use. Please provide valid characters.",
+        ));
+    }
 
     // Get the font
     let font = abc::get_dict(&args);
