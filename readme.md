@@ -20,11 +20,12 @@ Funciona mejor con imágenes de pocos colores y bordes bien definidos.
   - [Logo simple](#logo-simple)
   - [Logo con colores](#logo-con-colores)
   - [Imprimir colores](#imprimir-colores)
+  - [Otros algoritmos](#otros-algoritmos)
   - [Todo junto](#todo-junto)
   - [Imagen con muchos detalles](#imagen-con-muchos-detalles)
 - [Consejos para crear imágenes](#consejos-para-crear-imágenes)
 - [¿Cómo funciona?](#cómo-funciona)
-  - [1. Caracteres:](#1-caracteres)
+  - [1. Caracteres](#1-caracteres)
   - [2. Preprocesado (si lo hay)](#2-preprocesado-si-lo-hay)
   - [3. Convertir bloques a carácter](#3-convertir-bloques-a-carácter)
 - [Preguntas frecuentes](#preguntas-frecuentes)
@@ -195,6 +196,30 @@ Las imágenes situadas al inicio del documento son:
 
 ![Tentáculos con colores](./images/tentaculos_cC.png)
 
+### Otros algoritmos
+
+Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_mult`) se pueden usar otros especificando el argumento `--algo <max_mult|min_diff|min_diff_sq|gradient>`
+
+Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+
+El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
+
+Una opción para arreglar esto es el argumento `-g`, que convierte la imagen a escala de grises y luego la ilumina de forma que el punto más luminoso sea blanco. En los ejemplos de abajo se usa una imagen que va de blanco a negro, por lo que no es necesario usar `-g`.
+
+```bash
+./target/release/logo_to_ascii.exe .\images\gradient.jpg -w 80 --algo gradient -a aeou
+```
+
+![Degradado normal](./images/gradient_aeou.png)
+
+Al añadir una @ y eliminar el espacio, ahora los bloques más oscuros los ocupa el siguiente carácter más oscuro y los más claros el más claro.
+
+```bash
+./target/release/logo_to_ascii.exe .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " "
+```
+
+![Degradado ajustado](./images/gradient_aeou@.png)
+
 ### Todo junto
 
 - Todos estos argumentos también se puede mezclar unos con otros
@@ -262,7 +287,7 @@ La idea surgió de un video en el que se convertía una imagen a ASCII. Sin emba
 
 Este algoritmo opera con píxeles en vez de con bloques.
 
-### 1. Caracteres:
+### 1. Caracteres
 
 Primero se procesan los caracteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Una vez elegido un tamaño (por defecto 8x16) se hace un mapa de bits de cada carácter, que contiene la luminosidad de cada píxel.
 
@@ -280,7 +305,7 @@ Hay varias operaciones que permiten cambiar los caracteres:
 
 ### 2. Preprocesado (si lo hay)
 
-Para no tener que crear las imágenes a la perfección, la aplicación permite hacer ciertas operaciones. Son, en orden de ejecución:
+Antes de convertir la imagen a texto, la aplicación permite hacer ciertas operaciones. Son, en orden de ejecución:
 
 - Cambiar el tamaño de la imagen:
 
@@ -298,12 +323,13 @@ Para no tener que crear las imágenes a la perfección, la aplicación permite h
 - Dibujar bordes entre colores:
 
   - `-b <anchura_borde>`: Anchura de los bordes. Si se da sin `-c` se calculan los bordes por luminosidad.
-  - `-c`: Calcula los bordes por color. Si no se da `-b` se pone por defecto a 8.
+  - `-c`: Calcula los bordes por color. Si no se da `-b` se usa una anchura de 8px.
   - `-d <diferencia_minima>`: Diferencia mínima para detectar un borde.
 
 - Hacer el negativo de la imagen (invertir la luminosidad): `-n`
 
 - Ver pixeles transparentes: `-v`
+- Escala de grises: `-g`
 - Pasar la imagen a blanco y negro:
 
   - `-r`: Pasa la imagen a blanco y negro.
@@ -317,11 +343,15 @@ Por cada carácter, se multiplica la luminosidad de cada píxel con la de su hom
 
 En este apartado se da la opción de cambiar el punto medio en la luminosidad con `-m <punto_medio>`. Este argumento es por defecto 0.5 e indica lo que se le resta a la luminosidad de cada pixel (que está entre 0 y 1).
 
-También se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq|gradient>`. `max_mult` es el nombre del algoritmo por defecto.
+Por otra parte, se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq|gradient>`. `max_mult` es el nombre del algoritmo por defecto.
 
-`min_diff` y `min_diff_sq` siguen el principio de operar con cada pixel y `gradient` calcula la luminosidad media del bloque.
+Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+
+El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
 
 **Optimización:**
+
+Solo se aplica a `max_mult`
 
 En este paso también se cuentan el número de píxeles iluminados del bloque. Un carácter solo se considera para impresión si la mitad de sus píxeles con luminosidad positiva son al menos el número de los píxeles iluminados del bloque.
 
