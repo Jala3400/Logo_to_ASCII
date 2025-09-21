@@ -40,7 +40,7 @@ pub struct FontBitmap {
 impl FontBitmap {
     pub fn insert_ord(&mut self, char_info: CharInfo) {
         let mut i = 0;
-        while i < self.data.len() && self.data[i].min < char_info.min {
+        while i < self.data.len() && self.data[i].avg_brightness < char_info.avg_brightness {
             i += 1;
         }
         self.data.insert(i, char_info);
@@ -58,6 +58,7 @@ pub struct CharInfo {
     pub char: char,
     pub data: [f32; 8 * 16],
     pub min: usize,
+    pub avg_brightness: f32,
 }
 
 /// Algorithm enumeration for ASCII art generation methods.
@@ -70,6 +71,7 @@ pub struct CharInfo {
 /// * `MaxMult` - Uses maximum multiplication algorithm for character matching
 /// * `MinDiff` - Uses minimum difference algorithm to find the best character match
 /// * `MinDiffSq` - Uses minimum squared difference algorithm for more precise character matching
+/// * `Gradient` - Uses the average brightness of the block to find the closest character match
 #[derive(Debug, Clone, ValueEnum)]
 pub enum Algorithm {
     #[value(name = "max_mult")]
@@ -78,4 +80,6 @@ pub enum Algorithm {
     MinDiff,
     #[value(name = "min_diff_sq")]
     MinDiffSq,
+    #[value(name = "gradient")]
+    Gradient,
 }

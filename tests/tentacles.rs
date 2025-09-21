@@ -14,7 +14,7 @@ fn tentacles_c() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 416x432
 Number of characters: 52x27
                 .                                   
@@ -63,7 +63,7 @@ fn tentacles_cn() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 416x432
 Number of characters: 52x27
             .pp888qp.                 q88           
@@ -113,7 +113,7 @@ fn tentacles_cnv() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 416x432
 Number of characters: 52x27
 8888888888888888888888888888888888888888888888888888
@@ -162,7 +162,7 @@ fn tentacles_cv() {
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
     let expected = r#"
-Characters:  .·'pqbd8
+Characters:  .·'qpbd8
 Image dimensions: 416x432
 Number of characters: 52x27
 8888888888888'' .  '888888888888888888'  88888888888
