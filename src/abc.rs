@@ -44,16 +44,18 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         draw_text_mut(&mut img, color, 0, 0, scale, &font, &character_string);
 
         let mut bright_blocks = 0;
+        let mut avg_brightness = 0.0;
 
         // Get the color of each pixel from the image
         for y in 0..img.height() {
             for x in 0..img.width() {
                 let pixel = img.get_pixel(x, y);
-                let brightness = calculate_brightness(pixel) - 0.5;
+                let brightness = calculate_brightness(pixel);
+                avg_brightness += brightness;
                 if brightness > 0.0 {
                     bright_blocks += 1;
                 }
-                character[y as usize * width + x as usize] = brightness;
+                character[y as usize * width + x as usize] = brightness - 0.5;
             }
         }
 
@@ -62,6 +64,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             char: characters[i],
             data: character,
             min: bright_blocks / 2,
+            avg_brightness: avg_brightness / 128.0,
         };
         final_font.insert_ord(char_info);
     }

@@ -40,7 +40,7 @@ pub struct FontBitmap {
 impl FontBitmap {
     pub fn insert_ord(&mut self, char_info: CharInfo) {
         let mut i = 0;
-        while i < self.data.len() && self.data[i].min < char_info.min {
+        while i < self.data.len() && self.data[i].avg_brightness < char_info.avg_brightness {
             i += 1;
         }
         self.data.insert(i, char_info);
@@ -58,6 +58,7 @@ pub struct CharInfo {
     pub char: char,
     pub data: [f32; 8 * 16],
     pub min: usize,
+    pub avg_brightness: f32,
 }
 
 /// Algorithm enumeration for ASCII art generation methods.
