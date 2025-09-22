@@ -1,3 +1,5 @@
+use clap::ValueEnum;
+
 /// A structure representing a bitmap image with brightness values.
 ///
 /// # Fields
@@ -38,7 +40,7 @@ pub struct FontBitmap {
 impl FontBitmap {
     pub fn insert_ord(&mut self, char_info: CharInfo) {
         let mut i = 0;
-        while i < self.data.len() && self.data[i].min < char_info.min {
+        while i < self.data.len() && self.data[i].avg_brightness < char_info.avg_brightness {
             i += 1;
         }
         self.data.insert(i, char_info);
@@ -52,8 +54,33 @@ impl FontBitmap {
 /// * char - The character itself
 /// * data - The bitmap of the character, represented as an array of 8x16 elements
 /// * min - The minimum brightness threshold for this character, calculated as half of the total bright blocks
+///  * avg_brightness - The average brightness of the character, used for gradient-based algorithms. Ranges from 0 to 1.
 pub struct CharInfo {
     pub char: char,
     pub data: [f32; 8 * 16],
     pub min: usize,
+    pub avg_brightness: f32,
+}
+
+/// Algorithm enumeration for ASCII art generation methods.
+///
+/// This enum defines different algorithms that can be used to convert
+/// bitmap images to ASCII art by matching pixel patterns with character bitmaps.
+///
+/// # Variants
+///
+/// * `MaxMult` - Uses maximum multiplication algorithm for character matching
+/// * `MinDiff` - Uses minimum difference algorithm to find the best character match
+/// * `MinDiffSq` - Uses minimum squared difference algorithm for more precise character matching
+/// * `Gradient` - Uses the average brightness of the block to find the closest character match
+#[derive(Debug, Clone, ValueEnum)]
+pub enum Algorithm {
+    #[value(name = "max_mult")]
+    MaxMult,
+    #[value(name = "min_diff")]
+    MinDiff,
+    #[value(name = "min_diff_sq")]
+    MinDiffSq,
+    #[value(name = "gradient")]
+    Gradient,
 }

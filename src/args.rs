@@ -1,3 +1,4 @@
+use crate::types::Algorithm;
 use clap::Parser;
 
 #[derive(Parser)]
@@ -37,7 +38,7 @@ pub struct Args {
 
     /// Separates colors (change thickenss with `-b`)
     #[arg(short, long, default_value_t = false)]
-    pub color: bool,
+    pub color_borders: bool,
 
     /// Detect borders measuring brightness (when not used with color) (0 to disable)
     #[arg(short, long, default_value_t = 0)]
@@ -52,7 +53,7 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0.5)]
     pub threshold: f32,
 
-    /// Threshold for the color difference (from 0 to 360)
+    /// Threshold for the color difference (from 0 to 360) (if used for brightness, it will be divided by 360 automatically)
     #[arg(short, long, default_value_t = 30)]
     pub difference: u16,
 
@@ -90,11 +91,19 @@ pub struct Args {
 
     /// Print the image with colors
     #[arg(short = 'C', long, default_value_t = false)]
-    pub text_color: bool,
+    pub print_color: bool,
 
     /// Saturate the image
     #[arg(short = 's', long, default_value_t = false)]
     pub saturate: bool,
+
+    /// Grayscale and brighten the image
+    #[arg(short = 'g', long, default_value_t = false)]
+    pub grayscale: bool,
+
+    /// Algorithm used to match blocks to characters
+    #[arg(long = "algo", value_enum, default_value_t = Algorithm::MaxMult)]
+    pub algorithm: Algorithm,
 
     /// Output the image to a file
     #[arg(short, long)]

@@ -1,9 +1,9 @@
 <div>
-<img src="./images/cruz_C.png" height="400"/> 
-<img src="./images/tentaculos_cC.png" height="400"/> 
+<img src="./images/cruz_C.png" height="400"/>
+<img src="./images/tentaculos_cC.png" height="400"/>
 </div>
 
-# Logo to ASCII
+## Logo to ASCII
 
 Aplicación que convierte un logo a ASCII art (hecho en rust).
 
@@ -11,7 +11,7 @@ A diferencia de otros conversores de imágenes a ASCII, este no usa la luminosid
 
 Funciona mejor con imágenes de pocos colores y bordes bien definidos.
 
-# Índice
+## Índice
 
 - [Logo to ASCII](#logo-to-ascii)
 - [Índice](#índice)
@@ -20,33 +20,40 @@ Funciona mejor con imágenes de pocos colores y bordes bien definidos.
   - [Logo simple](#logo-simple)
   - [Logo con colores](#logo-con-colores)
   - [Imprimir colores](#imprimir-colores)
+  - [Otros algoritmos](#otros-algoritmos)
   - [Todo junto](#todo-junto)
   - [Imagen con muchos detalles](#imagen-con-muchos-detalles)
 - [Consejos para crear imágenes](#consejos-para-crear-imágenes)
 - [¿Cómo funciona?](#cómo-funciona)
+  - [1. Caracteres](#1-caracteres)
+  - [2. Preprocesado (si lo hay)](#2-preprocesado-si-lo-hay)
+  - [3. Convertir bloques a carácter](#3-convertir-bloques-a-carácter)
 - [Preguntas frecuentes](#preguntas-frecuentes)
 
-# Instalación
+## Instalación
 
--   Prerrequisitos:
+- Prerrequisitos:
 
-    -   [Rust](https://www.rust-lang.org/tools/install)
-    -   [Git](https://git-scm.com/downloads)
+  - [Rust](https://www.rust-lang.org/tools/install)
+  - [Git](https://git-scm.com/downloads)
 
--   Pasos:
+- Pasos:
 
 1. Descarga este repositorio con:
-    ```
+
+    ```bash
     git clone https://github.com/Jala3400/Logo_to_ASCII
     ```
+
 2. Compila el repositorio: En la consola de comandos ejecuta
-    ```
+
+    ```bash
     cargo build --release
     ```
 
-# Tutorial
+## Tutorial
 
-## Logo simple
+### Logo simple
 
 El caso más básico consiste en tratar logos de un solo color. Usaremos la siguiente imagen:
 
@@ -54,166 +61,190 @@ El caso más básico consiste en tratar logos de un solo color. Usaremos la sigu
 
 Para convertirla, ejecutamos el programa desde la consola. El primer argumento debe ser la ruta de la imagen.
 
-```
+```bash
 ./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png
 ```
 
 ![Cruz de Calatrava](./images/cruz.png)
 
--   Para imprimir la imagen en negativo se debe añadir `-n` al comando.
+- Para imprimir la imagen en negativo se debe añadir `-n` al comando.
 
 > [!IMPORTANT]
 > Los píxeles transparentes nunca se imprimen. En este caso, la imagen tiene el fondo transparente, por lo que tenemos que añadir `-v` para imprimirlos.
 
-```
+```bash
 ./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png -nv
 ```
 
 ![Cruz de Calatrava en negativo](./images/cruz_nv.png)
 
-El set por defecto de caracteres es `8dbqp'·. ` (incluyendo el espacio).
+El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 
--   Para cambiar el set de caracteres se usa el argumento `--chars <caracteres>`. El set de caracteres debe ir entre `"` o `'` si se quiere usar el espacio.
+- Para cambiar el set de caracteres se usa el argumento `--chars <caracteres>`. El set de caracteres debe ir entre `"` o `'` si se quiere usar el espacio.
     Para usar los caracteres de las comillas (`"` y `'`) se deben hacer pruebas dependiendo de la consola que se use:
 
 <details>
 <summary>Linux</summary>
 
--   Se puede usar la barra invertida sin ningún problema: `--chars "chars'\""` usará `chars"'`.
+- Se puede usar la barra invertida sin ningún problema: `--chars "chars'\""` usará `chars"'`.
 
 </details>
 
 <details>
 <summary>Windows</summary>
 
--   Powershell: `--chars "chars' \"` usará `chars' "`. Siempre tiene que haber un espacio antes de `\`. Si no, tomará `\` como carácter.
--   CMD: `--chars "chars'\"` usará `chars'"`.
+- Powershell: `--chars "chars' \"` usará `chars' "`. Siempre tiene que haber un espacio antes de `\`. Si no, tomará `\` como carácter.
+- CMD: `--chars "chars'\"` usará `chars'"`.
 
 </details>
 <br>
 
--   Para añadir caracteres al grupo por defecto se usa `-a <caracteres_a_añadir>`. Por ejemplo, `-a "_/\\"` añadirá los caracteres `_`, `/` y `\`.
--   Para usar todos los caracteres ASCII imprimibles por pantalla (del 32 al 126 incluidos) se debe añadir `--all`.
--   Para eliminar caracteres de ser usados, se puede usar `-x <caracteres_a_eliminar>`.
+- Para añadir caracteres al grupo por defecto se usa `-a <caracteres_a_añadir>`. Por ejemplo, `-a "_/\\"` añadirá los caracteres `_`, `/` y `\`.
+- Para usar todos los caracteres ASCII imprimibles por pantalla (del 32 al 126 incluidos) se debe añadir `--all`.
+- Para eliminar caracteres de ser usados, se puede usar `-x <caracteres_a_eliminar>`.
 
-```
+```bash
 ./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png --all
 ```
 
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
 
--   En caso de que se quiera cambiar el tamaño de la imagen, se usarán los argumentos `-w <anchura>` y `-h <altura>`. Estos indicarán el número de caracteres que habrá en horizontal o en vertical en el texto final. **Si se cambia solo uno de los argumentos se mantendrá la proporción de la imagen.**
--   Además están las opciones `--aw <anchura>` y `--ah <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
+- En caso de que se quiera cambiar el tamaño de la imagen, se usarán los argumentos `-w <anchura>` y `-h <altura>`. Estos indicarán el número de caracteres que habrá en horizontal o en vertical en el texto final. **Si se cambia solo uno de los argumentos se mantendrá la proporción de la imagen.**
+- Además están las opciones `--aw <anchura>` y `--ah <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
     Estos argumentos se pueden mezclar, pero tendrá más prioridad el tamaño en caracteres.
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
-```
+```bash
 ./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png -w100
 ```
 
 ![Cruz de calatrava con 100 caracteres de anchura](./images/cruz_w100.png)
 
--   Si la imagen no queda bien alineada con los caracteres, se puede usar el argumento offset `--ofx <offset_x>` y `--ofy <offset_y>`. Estos valores añaden un offset transparente a la imagen. Se puede ver mejor en las esquinas afiladas.
+- Si la imagen no queda bien alineada con los caracteres, se puede usar el argumento offset `--ofx <offset_x>` y `--ofy <offset_y>`. Estos valores añaden un offset transparente a la imagen. Se puede ver mejor en las esquinas afiladas.
 
-```
+```bash
 ./target/release/logo_to_ascii.exe .\images\Cross_Calatrava.png --ofx 4 --ofy 8
 ```
 
 ![Cruz de calatrava con offset de 4 en x y 8 en y](./images/cruz_ofx4_ofy8.png)
 
--   Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`.
+- Para cambiar la fuente con la que se hace la comparación se puede usar el argumento `--font <path_fuente>.ttf`.
 
 > [!WARNING]
 > `--font` no adapta los bloques al tamaño de la fuente. Cada carácter se tomará como monoespacio de proporciones 1x2, lo que puede deformar el resultado final.
 
--   Para cambiar el punto medio de la luminosidad se usa `-m <punto_medio>`. Por defecto es 0.5. Se pone un valor más bajo se imprimirán colores más oscuros.
--   Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
+- Para cambiar el punto medio de la luminosidad se usa `-m <punto_medio>`. Por defecto es 0.5. Se pone un valor más bajo se imprimirán colores más oscuros.
+- Para guardar el texto en un documento de texto se puede añadir `> <path_archivo>.txt` al final del comando.
 
-## Logo con colores
+### Logo con colores
 
 Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen:
 
 ![Tentáculos](./images/tentacles.png)
 
--   Para dibujar un borde entre los colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`. Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
+- Para dibujar un borde entre los colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`. Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -c
 ```
 
 ![Tentáculos](./images/tentaculos.png)
 
--   Si se combina con `-n` y se tiene el fondo transparente solo se verán los bordes.
+- Si se combina con `-n` y se tiene el fondo transparente solo se verán los bordes.
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -cn
 ```
 
 ![Tentáculos borde](./images/tentaculos_n.png)
 
--   Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-nv`
+- Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-nv`
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -cnv
 ```
 
 ![Tentáculos inverso](./images/tentaculos_nv.png)
 
--   Otra combinación interesante es `-cv`
+- Otra combinación interesante es `-cv`
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cv
 ```
 
 ![Tentáculos borde oscuro](./images/tentaculos_cv.png)
 
--   Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
--   Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
+- Si se usa `-b <anchura>` sin `-c` se detectarán los bordes midiendo la luminosidad. No es recomendable, porque algunos colores (como el amarillo) tienen una luminosidad muy parecida a la del blanco, por lo que no se detecta la diferencia.
+- Para pasar la imagen a blanco y negro se añade `-r`. Para cambiar el umbral se usa `-t <luminosidad_minima>`.
 
-## Imprimir colores
+### Imprimir colores
 
--   Para imprimir colores se usa el argumento `-C`.
--   Añadir `-s` saturará cada píxel al máximo (solo los que serían visibles).
+- Para imprimir colores se usa el argumento `-C`.
+- Añadir `-s` saturará cada píxel al máximo (solo los que serían visibles).
 
 Las imágenes situadas al inicio del documento son:
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\Cross_Calatrava.png -C
 ```
 
 ![Cruz de Calatrava con coles](./images/cruz_C.png)
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cC
 ```
 
 ![Tentáculos con colores](./images/tentaculos_cC.png)
 
-## Todo junto
+### Otros algoritmos
 
--   Todos estos argumentos también se puede mezclar unos con otros
+Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_mult`) se pueden usar otros especificando el argumento `--algo <max_mult|min_diff|min_diff_sq|gradient>`
 
+Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+
+El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
+
+Una opción para arreglar esto es el argumento `-g`, que convierte la imagen a escala de grises y luego la ilumina de forma que el punto más luminoso sea blanco. En los ejemplos de abajo se usa una imagen que va de blanco a negro, por lo que no es necesario usar `-g`.
+
+```bash
+./target/release/logo_to_ascii.exe .\images\gradient.jpg -w 80 --algo gradient -a aeou
 ```
+
+![Degradado normal](./images/gradient_aeou.png)
+
+Al añadir una @ y eliminar el espacio, ahora los bloques más oscuros los ocupa el siguiente carácter más oscuro y los más claros el más claro.
+
+```bash
+./target/release/logo_to_ascii.exe .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " "
+```
+
+![Degradado ajustado](./images/gradient_aeou@.png)
+
+### Todo junto
+
+- Todos estos argumentos también se puede mezclar unos con otros
+
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\Cross_Calatrava.png -cCv
 ```
 
 ![Cruz de Calatrava borde oscuro](./images/cruz_cCv.png)
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cCv -a "@#$&Yg*'´_/\ \"
 ```
 
 ![Tentáculos borde oscuro con más caracteres](./images/tentaculos_cCv_chars.png)
 
--   Antes de convertir la imagen a caracteres, la aplicación cambia la imagen. Para guardar la imagen final se usa `-o <nombre_imagen>`.
+- Antes de convertir la imagen a caracteres, la aplicación cambia la imagen. Para guardar la imagen final se usa `-o <nombre_imagen>`.
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cCv -o final_tentacles_cCv.png
 ```
 
 ![Imagen final tentáculos](./images/final_tentacles_cCv_chars.png)
 
-## Imagen con muchos detalles
+### Imagen con muchos detalles
 
 Si estás pensando en pasar a ASCII una foto con muchos detalles, lo mejor es que dejes de hacerlo.
 
@@ -225,7 +256,7 @@ Por ejemplo:
 
 ![Palmera](./images/palm_rt7.jpg)
 
-```
+```bash
 ./target/release/Logo_to_ASCII.exe .\images\palm.jpg -rt 0.7
 ```
 
@@ -233,13 +264,13 @@ Por ejemplo:
 
 Otra opción es añadir `-m 0` y `-C`, lo que imprimirá todos los caracteres con colores.
 
-```
+```bash
  ./target/release/Logo_to_ASCII.exe .\images\palm.jpg -m 0 -C
 ```
 
 ![Palmera con colores](./images/palmera_m0_C.png)
 
-# Consejos para crear imágenes
+## Consejos para crear imágenes
 
 La aplicación dibuja con caracteres. Estos no tienen capacidad para mostrar detalles, pero tienen forma.
 
@@ -250,13 +281,13 @@ Dibuja bordes definidos y superficies amplias.
 
 Para facilitar el diseño se puede usar una rejilla de 8x16 y asegurarse de que los bordes del dibujo siempre coincidan con los bordes y esquinas de un bloque.
 
-# ¿Cómo funciona?
+## ¿Cómo funciona?
 
 La idea surgió de un video en el que se convertía una imagen a ASCII. Sin embargo, se perdía mucha información y los caracteres no tenían la forma que debían.
 
 Este algoritmo opera con píxeles en vez de con bloques.
 
-1. **Caracteres:**
+### 1. Caracteres
 
 Primero se procesan los caracteres. En la consola tienen una proporción de 2 de alto por 1 de ancho. Una vez elegido un tamaño (por defecto 8x16) se hace un mapa de bits de cada carácter, que contiene la luminosidad de cada píxel.
 
@@ -266,52 +297,61 @@ Además, se cuentan el número de píxeles con luminosidad positiva para una opt
 
 Hay varias operaciones que permiten cambiar los caracteres:
 
--   `--chars <caracteres>`: Cambia el set de caracteres por defecto. Se pueden usar comillas simples o dobles para incluir espacios.
--   `--all`: Cambia el set por defecto a todos los caracteres ASCII imprimibles (con prioridad sobre chars).
--   `-a <caracteres>`: Añade caracteres al set por defecto.
--   `-x <caracteres>`: Elimina caracteres del set por defecto.
--   `--font <path_fuente>.ttf`: Cambia la fuente con la que se comparan los caracteres.
+- `--chars <caracteres>`: Cambia el set de caracteres por defecto. Se pueden usar comillas simples o dobles para incluir espacios.
+- `--all`: Cambia el set por defecto a todos los caracteres ASCII imprimibles (con prioridad sobre chars).
+- `-a <caracteres>`: Añade caracteres al set por defecto.
+- `-x <caracteres>`: Elimina caracteres del set por defecto.
+- `--font <path_fuente>.ttf`: Cambia la fuente con la que se comparan los caracteres.
 
-2. **Preprocesado (si lo hay)**
+### 2. Preprocesado (si lo hay)
 
-Para no tener que crear las imágenes a la perfección, la aplicación permite hacer ciertas operaciones. Son, en orden de ejecución:
+Antes de convertir la imagen a texto, la aplicación permite hacer ciertas operaciones. Son, en orden de ejecución:
 
--   Cambiar el tamaño de la imagen:
+- Cambiar el tamaño de la imagen:
 
-    -   `-w <caracteres_anchura>`: Anchura en caracteres
-    -   `-h <caracteres_altura>`: Altura en caracteres
-    -   `--aw <anchura>`: Anchura en píxeles
-    -   `--ah <altura>`: Altura en píxeles
+  - `-w <caracteres_anchura>`: Anchura en caracteres
+  - `-h <caracteres_altura>`: Altura en caracteres
+  - `--aw <anchura>`: Anchura en píxeles
+  - `--ah <altura>`: Altura en píxeles
 
--   Añadir offset a la imagen:
+- Añadir offset a la imagen:
 
-    -   `--ofx <offset_x>`: Offset in x
-    -   `--ofy <offset_y>`: Offset in y
+  - `--ofx <offset_x>`: Offset in x
+  - `--ofy <offset_y>`: Offset in y
 
--   Saturar cada uno de los píxeles: `-s`
--   Dibujar bordes entre colores:
+- Saturar cada uno de los píxeles: `-s`
+- Dibujar bordes entre colores:
 
-    -   `-b <anchura_borde>`: Anchura de los bordes. Si se da sin `-c` se calculan los bordes por luminosidad.
-    -   `-c`: Calcula los bordes por color. Si no se da `-b` se pone por defecto a 8.
-    -   `-d <diferencia_minima>`: Diferencia mínima para detectar un borde.
+  - `-b <anchura_borde>`: Anchura de los bordes. Si se da sin `-c` se calculan los bordes por luminosidad.
+  - `-c`: Calcula los bordes por color. Si no se da `-b` se usa una anchura de 8px.
+  - `-d <diferencia_minima>`: Diferencia mínima para detectar un borde.
 
--   Hacer el negativo de la imagen (invertir la luminosidad): `-n`
+- Hacer el negativo de la imagen (invertir la luminosidad): `-n`
 
--   Ver pixeles transparentes: `-v`
--   Pasar la imagen a blanco y negro:
+- Ver pixeles transparentes: `-v`
+- Escala de grises: `-g`
+- Pasar la imagen a blanco y negro:
 
-    -   `-r`: Pasa la imagen a blanco y negro.
-    -   `-t <threshold>`: Valor mínimo para que un pixel se pase a blanco.
+  - `-r`: Pasa la imagen a blanco y negro.
+  - `-t <threshold>`: Valor mínimo para que un pixel se pase a blanco.
 
-3. **Convertir bloques a carácter**
+### 3. Convertir bloques a carácter
 
-Después se divide la imagen en bloques con las mismas medidas que los caracteres. Cada bloque se compara con todos los caracteres (se pueden saltar varios en ciertos casos, ver optimización).
+Después se divide la imagen en bloques con las mismas medidas que los caracteres y se comparan con todos los caracteres.
 
-Por cada carácter, se multiplica la luminosidad de cada píxel con su homólogo en el bloque, y se suman todos los valores ([0][0] \* [0][0] + [0][1] \* [0][1] + ... + [n][m] \* [n][m]). Al final, se imprime el carácter con la puntuación más alta.
+Por cada carácter, se multiplica la luminosidad de cada píxel con la de su homólogo en el bloque, y se suman todos los valores (`[0][0] * [0][0] + [0][1] * [0][1] + ... + [n][m] * [n][m]`). Al final, se imprime el carácter con la puntuación más alta.
 
 En este apartado se da la opción de cambiar el punto medio en la luminosidad con `-m <punto_medio>`. Este argumento es por defecto 0.5 e indica lo que se le resta a la luminosidad de cada pixel (que está entre 0 y 1).
 
+Por otra parte, se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq|gradient>`. `max_mult` es el nombre del algoritmo por defecto.
+
+Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+
+El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
+
 **Optimización:**
+
+Solo se aplica a `max_mult` cuando el primer carácter es el espacio.
 
 En este paso también se cuentan el número de píxeles iluminados del bloque. Un carácter solo se considera para impresión si la mitad de sus píxeles con luminosidad positiva son al menos el número de los píxeles iluminados del bloque.
 
@@ -321,13 +361,13 @@ Además, si todos los píxeles están completamente iluminados se puede imprimir
 
 El algoritmo funciona porque al multiplicar dos valores positivos se obtiene un número positivo, y al multiplicar dos números negativos también. Esto premia las coincidencias de píxeles (y no píxeles) y penaliza las diferencias.
 
-# Preguntas frecuentes
+## Preguntas frecuentes
 
--   **¿Cómo imprimir un logo de color negro?**
+- **¿Cómo imprimir un logo de color negro?**
     Solo es un problema cuando el fondo es transparente. En ese caso basta con añadir `-n` al comando, para imprimir la imagen en negativo. Recordamos que los pixeles transparentes nunca se imprimen.
 
--   **¿Por qué cuando cambio la fuente el texto se imprime con la misma fuente?**
+- **¿Por qué cuando cambio la fuente el texto se imprime con la misma fuente?**
     La aplicación solo usa la fuente para comparar cada bloque de la imagen con los caracteres. Se deberá cambiar la fuente de la consola (o donde la quieras poner para que encaje). Es probable que se vea deformado, ya que la aplicación asume que es una fuente monoespacio con proporción 1x2.
 
--   **No lee algunos de los argumentos**
-    En algunos casos, al añadir caracteres (por lo menos en la powershell de windows 10), si se acaba en ` \"` (para añadir el carácter `"`) lo que se ponga después se tomará como caracteres a añadir. La solución es poner los argumentos antes que el argumento de los caracteres.
+- **No lee algunos de los argumentos**
+    En algunos casos, al añadir caracteres (por lo menos en la powershell de windows 10), si se acaba en `\"` (para añadir el carácter `"`) lo que se ponga después se tomará como caracteres a añadir. La solución es poner los argumentos antes que el argumento de los caracteres.

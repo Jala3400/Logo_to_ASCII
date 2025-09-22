@@ -23,7 +23,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
         font = Font::try_from_vec(font_data).expect("Failed to load font");
     } else {
-        font = Font::try_from_bytes(include_bytes!("C:/Windows/Fonts/Consola.ttf")).unwrap();
+        font = Font::try_from_bytes(include_bytes!("../fonts/UbuntuMono-Regular.ttf")).unwrap();
     }
 
     // Define text properties
@@ -43,17 +43,20 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         let character_string = characters[i].to_string();
         draw_text_mut(&mut img, color, 0, 0, scale, &font, &character_string);
 
-        let mut bright_blocks = 0;
+        let mut bright_pixels = 0;
+        let mut avg_brightness = 0.0;
 
         // Get the color of each pixel from the image
         for y in 0..img.height() {
             for x in 0..img.width() {
                 let pixel = img.get_pixel(x, y);
-                let brightness = calculate_brightness(pixel) - 0.5;
-                if brightness > 0.0 {
-                    bright_blocks += 1;
+                let brightness = calculate_brightness(pixel);
+                avg_brightness += brightness;
+                let custom_brightness = brightness - 0.5;
+                if custom_brightness > 0.0 {
+                    bright_pixels += 1;
                 }
-                character[y as usize * width + x as usize] = brightness;
+                character[y as usize * width + x as usize] = custom_brightness;
             }
         }
 
@@ -61,7 +64,8 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         let char_info = CharInfo {
             char: characters[i],
             data: character,
-            min: bright_blocks / 2,
+            min: bright_pixels / 2,
+            avg_brightness: avg_brightness / 128.0,
         };
         final_font.insert_ord(char_info);
     }

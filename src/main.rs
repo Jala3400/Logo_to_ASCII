@@ -3,7 +3,8 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, negative, preprocess, resize, saturate, treat_transparent,
+        add_offset, borders_image, bw_filter, grayscale, negative, resize, saturate,
+        treat_transparent,
     },
     proc_image::convert_image,
 };
@@ -34,6 +35,13 @@ fn main() -> io::Result<()> {
         .filter(|c| !args.except.contains(*c))
         .collect();
 
+    if args.chars.is_empty() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "No characters to use. Please provide valid characters.",
+        ));
+    }
+
     // Get the font
     let font = abc::get_dict(&args);
 
@@ -59,7 +67,7 @@ fn main() -> io::Result<()> {
     }
 
     // Add borders
-    if args.color || args.border != 0 {
+    if args.color_borders || args.border != 0 {
         borders_image(&mut img, &args);
     }
 
@@ -71,9 +79,14 @@ fn main() -> io::Result<()> {
     // Always treat transparent pixels, because it makes them visible when printing color
     treat_transparent(&mut img, &args);
 
+    // Grayscale and brighten the image
+    if args.grayscale {
+        grayscale(&mut img);
+    }
+
     // Apply the black and white filter
     if args.black_and_white {
-        preprocess(&mut img, &args);
+        bw_filter(&mut img, &args);
     }
 
     // Convert the image to ASCII
