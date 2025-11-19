@@ -12,6 +12,8 @@ pub fn match_block_with_char(
         Algorithm::MinDiff => min_diff(block, font),
         Algorithm::MinDiffSq => min_diff_sq(block, font),
         Algorithm::Gradient => gradient(block, font),
+        Algorithm::Correlation => correlation(block, font),
+        Algorithm::Ncc => ncc(block, font),
     }
 }
 
@@ -102,6 +104,81 @@ fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
 
         if score > best_score {
             best_score = score;
+            best_match = char.char;
+        }
+    }
+
+    best_match
+}
+
+fn correlation(block: &[f32; 128], font: &FontBitmap) -> char {
+    let mut best_match = font.data[0].char;
+    let mut best_correlation = f32::MIN;
+
+    // Calculate mean and standard deviation of the block
+    let block_mean: f32 = block.iter().sum::<f32>() / 128.0;
+    let block_std = (block.iter()
+        .map(|&x| (x - block_mean).powi(2))
+        .sum::<f32>() / 128.0)
+        .sqrt();
+
+    // Skip if block has no variance (all pixels same value)
+    if block_std == 0.0 {
+        return font.data[0].char;
+    }
+
+    for char in &font.data {
+        // Skip if character has no variance
+        if char.std == 0.0 {
+            continue;
+        }
+
+        // Calculate Pearson correlation coefficient
+        let mut correlation_sum = 0.0;
+        for i in 0..128 {
+            correlation_sum += (block[i] - block_mean) * (char.data[i] - char.mean);
+        }
+        let correlation = correlation_sum / (128.0 * block_std * char.std);
+
+        if correlation > best_correlation {
+            best_correlation = correlation;
+            best_match = char.char;
+        }
+    }
+
+    best_match
+}
+
+fn ncc(block: &[f32; 128], font: &FontBitmap) -> char {
+    let mut best_match = font.data[0].char;
+    let mut best_ncc = f32::MIN;
+
+    // Calculate the norm (magnitude) of the block
+    let block_norm = block.iter()
+        .map(|&x| x * x)
+        .sum::<f32>()
+        .sqrt();
+
+    // Skip if block has zero magnitude
+    if block_norm == 0.0 {
+        return font.data[0].char;
+    }
+
+    for char in &font.data {
+        // Skip if character has zero magnitude
+        if char.norm == 0.0 {
+            continue;
+        }
+
+        // Calculate normalized cross-correlation: Σ(block * char) / (||block|| * ||char||)
+        let mut dot_product = 0.0;
+        for i in 0..128 {
+            dot_product += block[i] * char.data[i];
+        }
+        let ncc_value = dot_product / (block_norm * char.norm);
+
+        if ncc_value > best_ncc {
+            best_ncc = ncc_value;
             best_match = char.char;
         }
     }

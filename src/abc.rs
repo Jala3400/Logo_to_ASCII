@@ -45,8 +45,10 @@ pub fn get_dict(args: &Args) -> FontBitmap {
 
         let mut bright_pixels = 0;
         let mut avg_brightness = 0.0;
+        let mut sum = 0.0;
+        let mut sum_squares = 0.0;
 
-        // Get the color of each pixel from the image
+        // Get the brightness of each pixel from the image and calculate statistics in one pass
         for y in 0..img.height() {
             for x in 0..img.width() {
                 let pixel = img.get_pixel(x, y);
@@ -57,8 +59,16 @@ pub fn get_dict(args: &Args) -> FontBitmap {
                     bright_pixels += 1;
                 }
                 character[y as usize * width + x as usize] = custom_brightness;
+                sum += custom_brightness;
+                sum_squares += custom_brightness * custom_brightness;
             }
         }
+
+        // Calculate statistics from accumulated sums
+        let mean = sum / 128.0;
+        let variance = (sum_squares / 128.0) - (mean * mean);
+        let std = variance.sqrt();
+        let norm = sum_squares.sqrt();
 
         // Add the character in the final font
         let char_info = CharInfo {
@@ -66,6 +76,9 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             data: character,
             min: bright_pixels / 2,
             avg_brightness: avg_brightness / 128.0,
+            norm,
+            mean,
+            std,
         };
         final_font.insert_ord(char_info);
     }

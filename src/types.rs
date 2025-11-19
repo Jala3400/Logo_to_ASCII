@@ -54,12 +54,18 @@ impl FontBitmap {
 /// * char - The character itself
 /// * data - The bitmap of the character, represented as an array of 8x16 elements
 /// * min - The minimum brightness threshold for this character, calculated as half of the total bright blocks
-///  * avg_brightness - The average brightness of the character, used for gradient-based algorithms. Ranges from 0 to 1.
+/// * avg_brightness - The average brightness of the character, used for gradient-based algorithms. Ranges from 0 to 1.
+/// * norm - The L2 norm (magnitude) of the character data, used for NCC algorithm
+/// * mean - The mean brightness of the character data, used for correlation algorithm
+/// * std - The standard deviation of the character data, used for correlation algorithm
 pub struct CharInfo {
     pub char: char,
     pub data: [f32; 8 * 16],
     pub min: usize,
     pub avg_brightness: f32,
+    pub norm: f32,
+    pub mean: f32,
+    pub std: f32,
 }
 
 /// Algorithm enumeration for ASCII art generation methods.
@@ -73,6 +79,8 @@ pub struct CharInfo {
 /// * `MinDiff` - Uses minimum difference algorithm to find the best character match
 /// * `MinDiffSq` - Uses minimum squared difference algorithm for more precise character matching
 /// * `Gradient` - Uses the average brightness of the block to find the closest character match
+/// * `Correlation` - Uses Pearson correlation coefficient to find the most correlated character pattern
+/// * `Ncc` - Uses Normalized Cross-Correlation to match both pattern structure and brightness level
 #[derive(Debug, Clone, ValueEnum)]
 pub enum Algorithm {
     #[value(name = "max_mult")]
@@ -83,4 +91,8 @@ pub enum Algorithm {
     MinDiffSq,
     #[value(name = "gradient")]
     Gradient,
+    #[value(name = "correlation")]
+    Correlation,
+    #[value(name = "ncc")]
+    Ncc,
 }
