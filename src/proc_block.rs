@@ -17,6 +17,8 @@ pub fn match_block_with_char(
     }
 }
 
+/// Maximum Multiplication algorithm for matching a block of pixels with a character
+/// Custom algorithm that multiplies the brightness values of the block and the character
 fn max_mult(block: &[f32; 128], font: &FontBitmap, bright_pixels: usize) -> char {
     let mut best_match = font.data[0].char;
     let mut best_match_value = f32::MIN;
@@ -46,6 +48,8 @@ fn max_mult(block: &[f32; 128], font: &FontBitmap, bright_pixels: usize) -> char
     best_match
 }
 
+/// Minimum Difference algorithm for matching a block of pixels with a character
+/// Takes into account the absolute differences between pixel brightness values
 fn min_diff(block: &[f32; 128], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut less_diffrence = f32::MAX;
@@ -65,6 +69,8 @@ fn min_diff(block: &[f32; 128], font: &FontBitmap) -> char {
     best_match
 }
 
+/// Minimum Squared Difference algorithm for matching a block of pixels with a character
+/// Takes into account the squared differences between pixel brightness values
 fn min_diff_sq(block: &[f32; 128], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut less_diffrence = f32::MAX;
@@ -85,6 +91,8 @@ fn min_diff_sq(block: &[f32; 128], font: &FontBitmap) -> char {
     best_match
 }
 
+/// Gradient algorithm for matching a block of pixels with a character
+/// Takes into account only the average brightness of the block
 fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
     let max_char_brightness = font.data[font.data.len() - 1].avg_brightness;
     let min_char_brightness = font.data[0].avg_brightness;
@@ -111,6 +119,9 @@ fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
     best_match
 }
 
+/// Correlation algorithm for matching a block of pixels with a character
+/// Takes into account only the pattern structure, not the brightness level
+/// TODO: check correctness
 fn correlation(block: &[f32; 128], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut best_correlation = f32::MIN;
@@ -149,6 +160,9 @@ fn correlation(block: &[f32; 128], font: &FontBitmap) -> char {
     best_match
 }
 
+/// Normalized Cross-Correlation (NCC) algorithm for matching a block of pixels with a character
+/// Different from correlation as it takes into account the brightness level, not only the pattern structure
+/// TODO: check correctness
 fn ncc(block: &[f32; 128], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut best_ncc = f32::MIN;
