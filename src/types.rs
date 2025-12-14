@@ -91,7 +91,7 @@ pub enum Algorithm {
     MinDiffSq,
     #[value(name = "gradient")]
     Gradient,
-    #[value(name = "correlation")]
+    #[value(name = "corr")]
     Correlation,
     #[value(name = "ncc")]
     Ncc,
