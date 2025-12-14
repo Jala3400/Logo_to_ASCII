@@ -110,7 +110,7 @@ El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
 
 - En caso de que se quiera cambiar el tamaño de la imagen, se usarán los argumentos `-w <anchura>` y `-h <altura>`. Estos indicarán el número de caracteres que habrá en horizontal o en vertical en el texto final. **Si se cambia solo uno de los argumentos se mantendrá la proporción de la imagen.**
-- Además están las opciones `--aw <anchura>` y `--ah <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
+- Además están las opciones `--pw <anchura>` y `--ph <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
     Estos argumentos se pueden mezclar, pero tendrá más prioridad el tamaño en caracteres.
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
@@ -198,9 +198,18 @@ Las imágenes situadas al inicio del documento son:
 
 ### Otros algoritmos
 
-Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_mult`) se pueden usar otros especificando el argumento `--algo <max_mult|min_diff|min_diff_sq|gradient>`
+Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_prod`) se pueden usar otros especificando el argumento `--algo`. Las opciones son:
 
-Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+- `max_prod`
+- `min_diff`
+- `min_diff_sq`
+- `gradient`
+- `corr`
+- `ncc`
+
+Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_prod` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+
+También están `corr` y `ncc`, que miden la correlación y la correlación cruzada normalizada respectivamente. La correlación tiene en cuenta cómo se parecen las variaciones de un bloque y de otro, mientras que la cnn también tiene en cuenta la magnitud de las dimensiones.
 
 El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
 
@@ -343,15 +352,15 @@ Por cada carácter, se multiplica la luminosidad de cada píxel con la de su hom
 
 En este apartado se da la opción de cambiar el punto medio en la luminosidad con `-m <punto_medio>`. Este argumento es por defecto 0.5 e indica lo que se le resta a la luminosidad de cada pixel (que está entre 0 y 1).
 
-Por otra parte, se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_mult|min_diff|min_diff_sq|gradient>`. `max_mult` es el nombre del algoritmo por defecto.
+Por otra parte, se da la opción de usar un algoritmo diferente para establecer el carácter que encaja mejor, como el de la diferencia mínima, usando `--algo <max_prod|min_diff|min_diff_sq|gradient|corr|ncc>`. `max_prod` es el nombre del algoritmo por defecto.
 
-Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
+Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_prod` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
 
 El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
 
 **Optimización:**
 
-Solo se aplica a `max_mult` cuando el primer carácter es el espacio.
+Solo se aplica a `max_prod` cuando el primer carácter es el espacio.
 
 En este paso también se cuentan el número de píxeles iluminados del bloque. Un carácter solo se considera para impresión si la mitad de sus píxeles con luminosidad positiva son al menos el número de los píxeles iluminados del bloque.
 

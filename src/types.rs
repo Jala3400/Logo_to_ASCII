@@ -75,7 +75,7 @@ pub struct CharInfo {
 ///
 /// # Variants
 ///
-/// * `MaxMult` - Uses maximum multiplication algorithm for character matching
+/// * `MaxProd` - Uses maximum product algorithm for character matching
 /// * `MinDiff` - Uses minimum difference algorithm to find the best character match
 /// * `MinDiffSq` - Uses minimum squared difference algorithm for more precise character matching
 /// * `Gradient` - Uses the average brightness of the block to find the closest character match
@@ -83,8 +83,8 @@ pub struct CharInfo {
 /// * `Ncc` - Uses Normalized Cross-Correlation to match both pattern structure and brightness level
 #[derive(Debug, Clone, ValueEnum)]
 pub enum Algorithm {
-    #[value(name = "max_mult")]
-    MaxMult,
+    #[value(name = "max_prod")]
+    MaxProd,
     #[value(name = "min_diff")]
     MinDiff,
     #[value(name = "min_diff_sq")]
