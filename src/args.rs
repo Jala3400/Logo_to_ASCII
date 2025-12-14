@@ -1,8 +1,20 @@
 use crate::types::Algorithm;
+use clap::builder::styling::AnsiColor;
+use clap::builder::Styles;
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None, disable_help_flag = true)]
+#[command(
+    author,
+    version,
+    about,
+    long_about = None,
+    disable_help_flag = true,
+    styles = Styles::styled()
+        .header(AnsiColor::BrightGreen.on_default())
+        .literal(AnsiColor::BrightCyan.on_default())
+        .placeholder(AnsiColor::Cyan.on_default())
+)]
 pub struct Args {
     // Help
     /// Print the help message
