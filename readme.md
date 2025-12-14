@@ -209,7 +209,7 @@ Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_p
 
 Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_prod` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
 
-También están `corr` y `ncc`, que miden la correlación y la correlación cruzada normalizada respectivamente. La correlación tiene en cuenta cómo se parecen las variaciones de un bloque y de otro, mientras que la cnn también tiene en cuenta la magnitud de las dimensiones.
+También están `corr` y `ncc`, que miden la correlación y la correlación cruzada normalizada respectivamente. La correlación tiene en cuenta cómo se parecen las variaciones de un bloque y de otro, mientras que la cnn también considera la magnitud de los bloques.
 
 El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la de la imagen. Esto quiere decir que si añades o eliminas caracteres cambian los rangos asignados a cada uno. Sin embargo, si pones la misma imagen más oscura, los carácteres más brillantes no aparecerán.
 
