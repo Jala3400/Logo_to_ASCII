@@ -110,7 +110,7 @@ El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
 
 - En caso de que se quiera cambiar el tamaño de la imagen, se usarán los argumentos `-w <anchura>` y `-h <altura>`. Estos indicarán el número de caracteres que habrá en horizontal o en vertical en el texto final. **Si se cambia solo uno de los argumentos se mantendrá la proporción de la imagen.**
-- Además están las opciones `--aw <anchura>` y `--ah <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
+- Además están las opciones `--pw <anchura>` y `--ph <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
     Estos argumentos se pueden mezclar, pero tendrá más prioridad el tamaño en caracteres.
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
@@ -198,7 +198,14 @@ Las imágenes situadas al inicio del documento son:
 
 ### Otros algoritmos
 
-Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_mult`) se pueden usar otros especificando el argumento `--algo <max_mult|min_diff|min_diff_sq|gradient>`
+Además de usar el algoritmo usado en apartados anteriores (llamado aquí `max_mult`) se pueden usar otros especificando el argumento `--algo`. Las opciones son:
+
+- `max_mult`
+- `min_diff`
+- `min_diff_sq`
+- `gradient`
+- `corr`
+- `ncc`
 
 Los algoritmos `min_diff` y `min_diff_sq` siguen el principio de operar pixel por pixel, por lo que los resultados serán parecidos a `max_mult` pero menos definidos, mientras que `gradient` calcula la luminosidad media del bloque.
 

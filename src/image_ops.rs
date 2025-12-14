@@ -96,7 +96,7 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     }
 
     // Calculate dimensions once upfront
-    let (target_width, target_height) = match (args.actual_width, args.actual_height) {
+    let (target_width, target_height) = match (args.pixel_width, args.pixel_height) {
         (0, h) => {
             let ratio = h as f32 / orig_height as f32;
             (((orig_width as f32) * ratio) as u32, h)
@@ -108,8 +108,8 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
         (w, h) => (w, h),
     };
 
-    args.actual_width = target_width;
-    args.actual_height = target_height;
+    args.pixel_width = target_width;
+    args.pixel_height = target_height;
 
     // Resize the image
     *img = image::imageops::resize(
