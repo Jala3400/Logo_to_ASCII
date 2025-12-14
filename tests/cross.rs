@@ -159,7 +159,7 @@ fn cross_w100() {
         .arg("run")
         .arg("--")
         .arg("./images/Cross_Calatrava.png")
-        .arg("--width")
+        .arg("--cw")
         .arg("100")
         .arg("--verbose")
         .output()
