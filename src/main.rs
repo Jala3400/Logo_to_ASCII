@@ -46,13 +46,13 @@ fn main() -> io::Result<()> {
     let font = abc::get_dict(&args);
 
     // Resize the image
-    if args.char_width > 0 {
-        args.pixel_width = args.char_width * 8;
+    if args.width_in_chars > 0 {
+        args.width_in_pixels = args.width_in_chars * 8;
     }
-    if args.char_height > 0 {
-        args.pixel_height = args.char_height * 16;
+    if args.height_in_chars > 0 {
+        args.height_in_pixels = args.height_in_chars * 16;
     }
-    if args.pixel_height > 0 || args.pixel_width > 0 {
+    if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
         resize(&mut img, &mut args);
     }
 

@@ -110,36 +110,36 @@ pub struct Args {
     /// Number of characters in the width of the end image (0 to default)
     #[arg(
         short = 'w',
-        long = "cw",
+        long = "wc",
         default_value_t = 0,
         help_heading = "Dimensions and Offsets"
     )]
-    pub char_width: u32,
+    pub width_in_chars: u32,
 
     /// Number of characters in the height of the end image (0 to default)
     #[arg(
         short = 'h',
-        long = "ch",
+        long = "hc",
         default_value_t = 0,
         help_heading = "Dimensions and Offsets"
     )]
-    pub char_height: u32,
+    pub height_in_chars: u32,
 
     /// Actual width of the image (0 to default)
     #[arg(
-        long = "pw",
+        long = "wp",
         default_value_t = 0,
         help_heading = "Dimensions and Offsets"
     )]
-    pub pixel_width: u32,
+    pub width_in_pixels: u32,
 
     /// Actual height of the image (0 to default)
     #[arg(
-        long = "ph",
+        long = "hp",
         default_value_t = 0,
         help_heading = "Dimensions and Offsets"
     )]
-    pub pixel_height: u32,
+    pub height_in_pixels: u32,
 
     /// Offsetx of the width of the image
     #[arg(

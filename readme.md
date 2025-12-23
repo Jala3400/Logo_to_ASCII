@@ -110,7 +110,7 @@ El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
 
 - En caso de que se quiera cambiar el tamaño de la imagen, se usarán los argumentos `-w <anchura>` y `-h <altura>`. Estos indicarán el número de caracteres que habrá en horizontal o en vertical en el texto final. **Si se cambia solo uno de los argumentos se mantendrá la proporción de la imagen.**
-- Además están las opciones `--pw <anchura>` y `--ph <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
+- Además están las opciones `--wp <anchura>` y `--hp <altura>` que te permiten cambiar el tamaño de la imagen en píxeles. De la misma forma, si solo se indica un argumento, se mantendrá la proporción de la imagen.
     Estos argumentos se pueden mezclar, pero tendrá más prioridad el tamaño en caracteres.
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
