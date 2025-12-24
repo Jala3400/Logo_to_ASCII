@@ -45,17 +45,6 @@ fn main() -> io::Result<()> {
     // Get the font
     let font = abc::get_dict(&args);
 
-    // Resize the image
-    if args.width_in_chars > 0 {
-        args.width_in_pixels = args.width_in_chars * 8;
-    }
-    if args.height_in_chars > 0 {
-        args.height_in_pixels = args.height_in_chars * 16;
-    }
-    if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
-        resize(&mut img, &mut args);
-    }
-
     // Apply the offset
     if args.offsetx != 0 || args.offsety != 0 {
         add_offset(&mut img, &args);
@@ -87,6 +76,17 @@ fn main() -> io::Result<()> {
     // Apply the black and white filter
     if args.black_and_white {
         bw_filter(&mut img, &args);
+    }
+
+    // Resize the image
+    if args.width_in_chars > 0 {
+        args.width_in_pixels = args.width_in_chars * 8;
+    }
+    if args.height_in_chars > 0 {
+        args.height_in_pixels = args.height_in_chars * 16;
+    }
+    if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
+        resize(&mut img, &mut args);
     }
 
     // Convert the image to ASCII

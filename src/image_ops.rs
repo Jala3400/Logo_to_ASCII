@@ -116,7 +116,7 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
         img,
         target_width,
         target_height,
-        image::imageops::FilterType::Lanczos3,
+        image::imageops::FilterType::CatmullRom,
     );
 }
 
