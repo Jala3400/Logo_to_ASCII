@@ -99,6 +99,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             print!("{}", char_info.char);
         }
         println!();
+        println!("Char size: {}x{}", final_font.width, final_font.height);
     }
 
     final_font
