@@ -12,12 +12,17 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         enable_ansi_support().unwrap();
     }
 
+    // Get font dimensions
+    let font_width = font.width;
+    let font_height = font.height;
+    let cell_size = font.cell_size();
+
     // Precalculate needed values
     let height = img.height() as usize;
     let width = img.width() as usize;
 
-    let num_blocks_x = (width + 7) / 8;
-    let num_blocks_y = (height + 15) / 16;
+    let num_blocks_x = (width + font_width - 1) / font_width;
+    let num_blocks_y = (height + font_height - 1) / font_height;
 
     if args.verbose {
         println!("Image dimensions: {}x{}", width, height);
@@ -27,7 +32,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     let string_capacity = num_blocks_x * num_blocks_y * if args.print_color { 22 } else { 1 };
     let mut result = String::with_capacity(string_capacity);
 
-    let mut block = [0f32; 8 * 16];
+    let mut block = vec![0f32; cell_size];
     let mut bright_pixels;
     let mut high_pixels;
     let mut full_pixels;
@@ -47,11 +52,11 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             b = 0;
 
             // For each pixel in the block generate the brightness value and store the color
-            for by in 0..16 {
-                let iy = y * 16 + by;
-                for bx in 0..8 {
-                    let ix = x * 8 + bx;
-                    let cords_block = by * 8 + bx;
+            for by in 0..font_height {
+                let iy = y * font_height + by;
+                for bx in 0..font_width {
+                    let ix = x * font_width + bx;
+                    let cords_block = by * font_width + bx;
                     if iy < height && ix < width {
                         let pixel = img.get_pixel(ix as u32, iy as u32);
                         block[cords_block] = calc_custom_brightness(&pixel, args);
@@ -98,7 +103,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             }
 
             // Append the character
-            result.push(if full_pixels == 16 * 8 {
+            result.push(if full_pixels == cell_size {
                 font.data.last().unwrap().char
             } else {
                 match_block_with_char(&block, font, bright_pixels, &args.algorithm)

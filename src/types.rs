@@ -25,8 +25,12 @@ pub struct Bitmap {
 ///
 /// * `data` - A vector of character information entries ([`CharInfo`]),
 ///            ordered by minimum pixel value in descending order
+/// * `width` - The width of each character cell in pixels
+/// * `height` - The height of each character cell in pixels
 pub struct FontBitmap {
     pub data: Vec<CharInfo>, // It is ordered by the min value, from highest to lowest
+    pub width: usize,
+    pub height: usize,
 }
 
 /// Inserts a character information into the bitmap in ascending order based on minimum value.
@@ -45,6 +49,11 @@ impl FontBitmap {
         }
         self.data.insert(i, char_info);
     }
+
+    /// Returns the total number of pixels in each character cell
+    pub fn cell_size(&self) -> usize {
+        self.width * self.height
+    }
 }
 
 /// Represents the information of a character
@@ -52,7 +61,7 @@ impl FontBitmap {
 /// # Fields:
 ///
 /// * char - The character itself
-/// * data - The bitmap of the character, represented as an array of 8x16 elements
+/// * data - The bitmap of the character as a vector of brightness values
 /// * min - The minimum brightness threshold for this character, calculated as half of the total bright blocks
 /// * avg_brightness - The average brightness of the character, used for gradient-based algorithms. Ranges from 0 to 1.
 /// * norm - The L2 norm (magnitude) of the character data, used for NCC algorithm
@@ -60,7 +69,7 @@ impl FontBitmap {
 /// * std - The standard deviation of the character data, used for correlation algorithm
 pub struct CharInfo {
     pub char: char,
-    pub data: [f32; 8 * 16],
+    pub data: Vec<f32>,
     pub min: usize,
     pub avg_brightness: f32,
     pub norm: f32,
