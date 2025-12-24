@@ -3,7 +3,7 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
+        add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
     },
     proc_image::convert_image,
@@ -85,14 +85,14 @@ fn main() -> io::Result<()> {
         resize(&mut img, &mut args);
     }
 
-    // Adjust offset to center the image (after resizing, so it is centered with the final size)
+    // Adjust padding to center the image (after resizing, so it is centered with the final size)
     if args.center {
         center_image(&img, &mut args, &font);
     }
 
-    // Apply the offset (after resizing)
-    if args.offset_x != 0 || args.offset_y != 0 {
-        add_offset(&mut img, &args);
+    // Apply the padding (after resizing)
+    if args.padding_x != 0 || args.padding_y != 0 {
+        add_padding(&mut img, &args);
     }
 
     // Convert the image to ASCII

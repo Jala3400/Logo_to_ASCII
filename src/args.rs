@@ -114,13 +114,13 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0.5, help_heading = "Image Processing")]
     pub midpoint_brightness: f32,
 
-    // Dimensions and Offsets
+    // Dimensions and Padding
     /// Number of characters in the width of the end image (0 to default)
     #[arg(
         short = 'w',
         long = "wc",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
     pub width_in_chars: u32,
 
@@ -129,7 +129,7 @@ pub struct Args {
         short = 'h',
         long = "hc",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
     pub height_in_chars: u32,
 
@@ -137,7 +137,7 @@ pub struct Args {
     #[arg(
         long = "wp",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
     pub width_in_pixels: u32,
 
@@ -145,32 +145,28 @@ pub struct Args {
     #[arg(
         long = "hp",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
     pub height_in_pixels: u32,
 
-    /// Offsetx of the width of the image
+    /// Padding of the width of the image
     #[arg(
-        long = "ofx",
+        long = "pad-x",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub offset_x: usize,
+    pub padding_x: usize,
 
-    /// Offsety of the height of the image
+    /// Padding of the height of the image
     #[arg(
-        long = "ofy",
+        long = "pad-y",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub offset_y: usize,
+    pub padding_y: usize,
 
-    /// Center the image in respect to the characters by adjusting the offset
-    #[arg(
-        long,
-        default_value_t = false,
-        help_heading = "Dimensions and Offsets"
-    )]
+    /// Center the image in respect to the characters by adjusting the padding
+    #[arg(long, default_value_t = false, help_heading = "Dimensions and Padding")]
     pub center: bool,
 
     // Borders and Colors

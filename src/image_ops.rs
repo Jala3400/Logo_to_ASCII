@@ -141,33 +141,34 @@ pub fn saturate(img: &mut RgbaImage, args: &Args) {
     }
 }
 
-// Adds an offset to an image
-pub fn add_offset(img: &mut RgbaImage, args: &Args) {
+// Adds padding to an image
+pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     // Calculate dimensions
     let (img_width, img_height) = img.dimensions();
-    let new_width = img_width + args.offset_x as u32;
-    let new_height = img_height + args.offset_y as u32;
+    let new_width = img_width + (args.padding_x * 2) as u32;
+    let new_height = img_height + (args.padding_y * 2) as u32;
     let pixel_bytes = 4;
 
-    let mut new_bytes = vec![if args.visible {255} else {0}; (new_width * new_height) as usize * pixel_bytes];
+    let mut new_bytes =
+        vec![if args.visible { 255 } else { 0 }; (new_width * new_height) as usize * pixel_bytes];
     let original_bytes = img.as_bytes();
 
-    // Copy original image data with offset
+    // Copy original image data with padding
     for y in 0..img_height {
         let src_start = (y * img_width) as usize * pixel_bytes;
         let src_end = src_start + (img_width as usize * pixel_bytes);
-        let dst_start =
-            ((y + args.offset_y as u32) * new_width + args.offset_x as u32) as usize * pixel_bytes;
+        let dst_start = ((y + args.padding_y as u32) * new_width + args.padding_x as u32) as usize
+            * pixel_bytes;
 
         new_bytes[dst_start..dst_start + (img_width as usize * pixel_bytes)]
             .copy_from_slice(&original_bytes[src_start..src_end]);
     }
 
     *img = image::RgbaImage::from_raw(new_width, new_height, new_bytes)
-        .expect("Failed to create offset image");
+        .expect("Failed to create padding image");
 
     if args.verbose {
-        println!("Applied offset of {}x{}", args.offset_x, args.offset_y);
+        println!("Applied padding of {}x{}", args.padding_x, args.padding_y);
     }
 }
 
@@ -177,8 +178,8 @@ pub fn center_image(img: &RgbaImage, args: &mut Args, font: &FontBitmap) {
     let num_blocks_y = ((img_height as usize + font.vertical_step - 1) / font.vertical_step) as u32;
     let target_width = num_blocks_x * font.width as u32;
     let target_height = num_blocks_y * font.vertical_step as u32;
-    args.offset_x += ((target_width - img_width) / 2) as usize;
-    args.offset_y += ((target_height - img_height) / 2) as usize;
+    args.padding_x += ((target_width - img_width) / 2) as usize;
+    args.padding_y += ((target_height - img_height) / 2) as usize;
 }
 
 pub fn grayscale(img: &mut RgbaImage) {

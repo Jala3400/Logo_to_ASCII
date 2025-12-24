@@ -160,14 +160,14 @@ ___@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@___
 }
 
 #[test]
-fn cross_w100_ofx4() {
+fn cross_w100_padx4() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
         .arg("./images/Cross_Calatrava.png")
         .arg("--wc")
         .arg("100")
-        .arg("--ofx")
+        .arg("--pad-x")
         .arg("4")
         .arg("--verbose")
         .output()
@@ -180,8 +180,8 @@ Characters:  .·'qpbd8
 Char size: 8x16, Line gap: 0
 Block size: 8x16
 Original dimensions 480x480
-Applied offset of 4x0
-Image dimensions: 804x800
+Applied padding of 4x0
+Image dimensions: 808x800
 Number of characters: 101x50
                                                   8                                                  
                                                  p8q                                                 
@@ -235,19 +235,20 @@ Number of characters: 101x50
                                                   8                                                  
 [0m
 
+
 "#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
 #[test]
-fn cross_ofx4_ofy8() {
+fn cross_padx4_pady8() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
         .arg("./images/Cross_Calatrava.png")
-        .arg("--ofx")
+        .arg("--pad-x")
         .arg("4")
-        .arg("--ofy")
+        .arg("--pad-y")
         .arg("8")
         .arg("--verbose")
         .output()
@@ -259,8 +260,8 @@ fn cross_ofx4_ofy8() {
 Characters:  .·'qpbd8
 Char size: 8x16, Line gap: 0
 Block size: 8x16
-Applied offset of 4x8
-Image dimensions: 484x488
+Applied padding of 4x8
+Image dimensions: 488x496
 Number of characters: 61x31
                               .                              
                               8                              
@@ -293,12 +294,14 @@ Number of characters: 61x31
                             '888'                            
                               8                              
                               '                              
-[0m"#;
+[0m
+
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
 #[test]
-fn cross_csize17_center_ofx4_nv() {
+fn cross_csize17_center_padx4_nv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
@@ -306,7 +309,7 @@ fn cross_csize17_center_ofx4_nv() {
         .arg("--char-size")
         .arg("17")
         .arg("--center")
-        .arg("--ofx")
+        .arg("--pad-x")
         .arg("4")
         .arg("-n")
         .arg("-v")
@@ -320,8 +323,8 @@ fn cross_csize17_center_ofx4_nv() {
 Characters:  ·.'pbqd8
 Char size: 9x17, Line gap: 0
 Block size: 9x17
-Applied offset of 7x6
-Image dimensions: 487x486
+Applied padding of 7x6
+Image dimensions: 494x492
 Number of characters: 55x29
 8888888888888888888888888888888888888888888888888888888
 888888888888888888888888888 888888888888888888888888888
@@ -337,7 +340,7 @@ Number of characters: 55x29
 888888888    888q  8888' b   d d8888  q888    888888888
 888888888qp   8888q 8b'88b   d88'd8 q8888   qd888888888
 8888'   ''8     '''''''''     '''''''''     8''   d8888
-8qp                                                 q8'
+8qp                                                 q88
 8888p   qqq     qqqppqqqqp   qqqqqqqqqp     qqp   q8888
 88888qd888   qd888' qqq88b   d88qqq d888q    888qd88888
 888888888    8888 qd888p b   d q8888p 8888    888888888
@@ -352,6 +355,8 @@ Number of characters: 55x29
 888888888888888888888888qp   qq888888888888888888888888
 88888888888888888888888888q d88888888888888888888888888
 888888888888888888888888888q888888888888888888888888888
-[0m"#;
+[0m
+
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
