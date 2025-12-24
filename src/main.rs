@@ -90,7 +90,7 @@ fn main() -> io::Result<()> {
     }
 
     // Convert the image to ASCII
-    println!("{}", convert_image(&img, &font, &args));
+    print!("{}", convert_image(&img, &font, &args));
 
     // Save the image
     if let Some(output) = &args.output {
