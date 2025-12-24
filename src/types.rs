@@ -31,7 +31,7 @@ pub struct FontBitmap {
     pub data: Vec<CharInfo>, // It is ordered by the min value, from highest to lowest
     pub width: usize,
     pub height: usize,
-    pub line_gap: usize,
+    pub vertical_step: usize,
 }
 
 /// Inserts a character information into the bitmap in ascending order based on minimum value.

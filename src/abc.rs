@@ -77,7 +77,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         data: Vec::new(),
         width,
         height,
-        line_gap,
+        vertical_step: height + line_gap,
     };
 
     // Create a character for each character in the input string
@@ -137,12 +137,11 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         println!();
         println!(
             "Char size: {}x{}, Line gap: {}",
-            final_font.width, final_font.height, final_font.line_gap
+            final_font.width, final_font.height, line_gap
         );
         println!(
             "Block size: {}x{}",
-            final_font.width,
-            final_font.height + final_font.line_gap
+            final_font.width, final_font.vertical_step
         );
     }
 
