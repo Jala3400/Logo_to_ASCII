@@ -47,7 +47,7 @@ pub struct Args {
     #[arg(short, long, default_value = "", help_heading = "Character Set")]
     pub add_chars: String,
 
-    /// Use characters except:
+    /// Exclude characters from the default ones
     #[arg(short = 'x', long, default_value = "", help_heading = "Character Set")]
     pub except: String,
 
@@ -57,7 +57,7 @@ pub struct Args {
 
     /// Font size to use
     #[arg(long, default_value_t = 16, help_heading = "Character Set")]
-    pub font_size: u32,
+    pub char_size: u32,
 
     // Image Processing
     /// Inverse the brightness of the image (transparent is never printed)
