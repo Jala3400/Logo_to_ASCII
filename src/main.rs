@@ -45,16 +45,6 @@ fn main() -> io::Result<()> {
     // Get the font
     let font = abc::get_dict(&args);
 
-    // Center the image
-    if args.center {
-        center_image(&img, &mut args, &font);
-    }
-
-    // Apply the offset
-    if args.offset_x != 0 || args.offset_y != 0 {
-        add_offset(&mut img, &args);
-    }
-
     // Saturate the image
     if args.saturate {
         saturate(&mut img, &args);
@@ -70,7 +60,7 @@ fn main() -> io::Result<()> {
         negative(&mut img);
     }
 
-    // Always treat transparent pixels, because it makes them visible when printing color
+    // Always treat transparent pixels
     treat_transparent(&mut img, &args);
 
     // Grayscale and brighten the image
@@ -92,6 +82,16 @@ fn main() -> io::Result<()> {
     }
     if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
         resize(&mut img, &mut args);
+    }
+
+    // Adjust offset to center the image
+    if args.center {
+        center_image(&img, &mut args, &font);
+    }
+
+    // Apply the offset
+    if args.offset_x != 0 || args.offset_y != 0 {
+        add_offset(&mut img, &args);
     }
 
     // Convert the image to ASCII

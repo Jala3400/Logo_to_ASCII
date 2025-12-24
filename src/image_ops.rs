@@ -149,7 +149,7 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
     let new_height = img_height + args.offset_y as u32;
     let pixel_bytes = 4;
 
-    let mut new_bytes = vec![0; (new_width * new_height) as usize * pixel_bytes];
+    let mut new_bytes = vec![if args.visible {255} else {0}; (new_width * new_height) as usize * pixel_bytes];
     let original_bytes = img.as_bytes();
 
     // Copy original image data with offset
@@ -165,6 +165,10 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
 
     *img = image::RgbaImage::from_raw(new_width, new_height, new_bytes)
         .expect("Failed to create offset image");
+
+    if args.verbose {
+        println!("Applied offset of {}x{}", args.offset_x, args.offset_y);
+    }
 }
 
 pub fn center_image(img: &RgbaImage, args: &mut Args, font: &FontBitmap) {
