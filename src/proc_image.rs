@@ -13,16 +13,20 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     }
 
     // Get font dimensions
-    let font_width = font.width;
-    let font_height = font.height;
     let cell_size = font.cell_size();
+    let font_width = font.width;
+
+    // Calculate the effective vertical step including line gap
+    let font_height = font.height;
+    let line_gap = font.line_gap;
+    let vertical_step = font_height + line_gap;
 
     // Precalculate needed values
     let height = img.height() as usize;
     let width = img.width() as usize;
 
     let num_blocks_x = (width + font_width - 1) / font_width;
-    let num_blocks_y = (height + font_height - 1) / font_height;
+    let num_blocks_y = (height + vertical_step - 1) / vertical_step;
 
     if args.verbose {
         println!("Image dimensions: {}x{}", width, height);
@@ -53,7 +57,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
 
             // For each pixel in the block generate the brightness value and store the color
             for by in 0..font_height {
-                let iy = y * font_height + by;
+                let iy = y * vertical_step + by;
                 for bx in 0..font_width {
                     let ix = x * font_width + bx;
                     let cords_block = by * font_width + bx;

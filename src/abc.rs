@@ -63,6 +63,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
     // Get font metrics to determine character dimensions
     let v_metrics = font.v_metrics(scale);
     let height = (v_metrics.ascent - v_metrics.descent).ceil() as usize;
+    let line_gap = v_metrics.line_gap.ceil() as usize;
 
     // Use a reference character to get the width (for monospace fonts)
     let glyph = font.glyph('W').scaled(scale);
@@ -76,6 +77,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         data: Vec::new(),
         width,
         height,
+        line_gap,
     };
 
     // Create a character for each character in the input string
@@ -133,7 +135,15 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             print!("{}", char_info.char);
         }
         println!();
-        println!("Char size: {}x{}", final_font.width, final_font.height);
+        println!(
+            "Char size: {}x{}, Line gap: {}",
+            final_font.width, final_font.height, final_font.line_gap
+        );
+        println!(
+            "Block size: {}x{}",
+            final_font.width,
+            final_font.height + final_font.line_gap
+        );
     }
 
     final_font
