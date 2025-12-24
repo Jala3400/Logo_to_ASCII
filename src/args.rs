@@ -187,7 +187,7 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0, help_heading = "Borders and Colors")]
     pub border: u32,
 
-    /// Threshold for the color difference (from 0 to 360) (if used for brightness, it will be divided by 360 automatically)
+    /// Threshold for the color difference (from 0 to 360) (if used for brightness, it will be divided by 360)
     #[arg(short, long, default_value_t = 30, help_heading = "Borders and Colors")]
     pub difference: u16,
 

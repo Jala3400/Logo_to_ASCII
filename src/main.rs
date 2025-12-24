@@ -50,12 +50,13 @@ fn main() -> io::Result<()> {
         saturate(&mut img, &args);
     }
 
-    // Add borders
+    // Add borders (before negative effect so borders are visible)
+    // Cons: the borders are then scaled if resizing is applied, but there is no easy fix for that
     if args.color_borders || args.border != 0 {
         borders_image(&mut img, &args);
     }
 
-    // Apply the negative effect
+    // Apply the negative effect (before transparent treatment so transparent pixels are not affected)
     if args.negative {
         negative(&mut img);
     }
@@ -63,17 +64,17 @@ fn main() -> io::Result<()> {
     // Always treat transparent pixels
     treat_transparent(&mut img, &args);
 
-    // Grayscale and brighten the image
+    // Grayscale and brighten the image (after transparent so it is applied to the final colors)
     if args.grayscale {
         grayscale(&mut img);
     }
 
-    // Apply the black and white filter
+    // Apply the black and white filter (after transparent so it is applied to the final colors)
     if args.black_and_white {
         bw_filter(&mut img, &args);
     }
 
-    // Resize the image
+    // Resize the image (after transparent treatment because of artifacts)
     if args.width_in_chars > 0 {
         args.width_in_pixels = args.width_in_chars * 8;
     }
@@ -84,12 +85,12 @@ fn main() -> io::Result<()> {
         resize(&mut img, &mut args);
     }
 
-    // Adjust offset to center the image
+    // Adjust offset to center the image (after resizing, so it is centered with the final size)
     if args.center {
         center_image(&img, &mut args, &font);
     }
 
-    // Apply the offset
+    // Apply the offset (after resizing)
     if args.offset_x != 0 || args.offset_y != 0 {
         add_offset(&mut img, &args);
     }
