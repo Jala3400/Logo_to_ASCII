@@ -51,6 +51,10 @@ pub struct Args {
     #[arg(long, default_value_t = false, help_heading = "Character Set")]
     pub all: bool,
 
+    /// Font size to use
+    #[arg(long, default_value_t = 16, help_heading = "Character Set")]
+    pub font_size: u32,
+
     // Image Processing
     /// Inverse the brightness of the image (transparent is never printed)
     #[arg(
