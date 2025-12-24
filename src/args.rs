@@ -155,7 +155,7 @@ pub struct Args {
         default_value_t = 0,
         help_heading = "Dimensions and Offsets"
     )]
-    pub offsetx: usize,
+    pub offset_x: usize,
 
     /// Offsety of the height of the image
     #[arg(
@@ -163,7 +163,15 @@ pub struct Args {
         default_value_t = 0,
         help_heading = "Dimensions and Offsets"
     )]
-    pub offsety: usize,
+    pub offset_y: usize,
+
+    /// Center the image in respect to the characters by adjusting the offset
+    #[arg(
+        long,
+        default_value_t = false,
+        help_heading = "Dimensions and Offsets"
+    )]
+    pub center: bool,
 
     // Borders and Colors
     /// Separates colors (change thickness with `-b`)

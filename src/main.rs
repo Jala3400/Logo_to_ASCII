@@ -3,7 +3,7 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, bw_filter, grayscale, negative, resize, saturate,
+        add_offset, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
     },
     proc_image::convert_image,
@@ -45,8 +45,13 @@ fn main() -> io::Result<()> {
     // Get the font
     let font = abc::get_dict(&args);
 
+    // Center the image
+    if args.center {
+        center_image(&img, &mut args, &font);
+    }
+
     // Apply the offset
-    if args.offsetx != 0 || args.offsety != 0 {
+    if args.offset_x != 0 || args.offset_y != 0 {
         add_offset(&mut img, &args);
     }
 

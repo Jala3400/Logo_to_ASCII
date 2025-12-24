@@ -1,6 +1,7 @@
 use crate::{
     args::Args,
     proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
+    types::FontBitmap,
 };
 use image::{EncodableLayout, RgbaImage};
 
@@ -144,8 +145,8 @@ pub fn saturate(img: &mut RgbaImage, args: &Args) {
 pub fn add_offset(img: &mut RgbaImage, args: &Args) {
     // Calculate dimensions
     let (img_width, img_height) = img.dimensions();
-    let new_width = img_width + args.offsetx as u32;
-    let new_height = img_height + args.offsety as u32;
+    let new_width = img_width + args.offset_x as u32;
+    let new_height = img_height + args.offset_y as u32;
     let pixel_bytes = 4;
 
     let mut new_bytes = vec![0; (new_width * new_height) as usize * pixel_bytes];
@@ -156,7 +157,7 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
         let src_start = (y * img_width) as usize * pixel_bytes;
         let src_end = src_start + (img_width as usize * pixel_bytes);
         let dst_start =
-            ((y + args.offsety as u32) * new_width + args.offsetx as u32) as usize * pixel_bytes;
+            ((y + args.offset_y as u32) * new_width + args.offset_x as u32) as usize * pixel_bytes;
 
         new_bytes[dst_start..dst_start + (img_width as usize * pixel_bytes)]
             .copy_from_slice(&original_bytes[src_start..src_end]);
@@ -164,6 +165,16 @@ pub fn add_offset(img: &mut RgbaImage, args: &Args) {
 
     *img = image::RgbaImage::from_raw(new_width, new_height, new_bytes)
         .expect("Failed to create offset image");
+}
+
+pub fn center_image(img: &RgbaImage, args: &mut Args, font: &FontBitmap) {
+    let (img_width, img_height) = img.dimensions();
+    let num_blocks_x = ((img_width as usize + font.width - 1) / font.width) as u32;
+    let num_blocks_y = ((img_height as usize + font.vertical_step - 1) / font.vertical_step) as u32;
+    let target_width = num_blocks_x * font.width as u32;
+    let target_height = num_blocks_y * font.vertical_step as u32;
+    args.offset_x = ((target_width - img_width) / 2) as usize;
+    args.offset_y = ((target_height - img_height) / 2) as usize;
 }
 
 pub fn grayscale(img: &mut RgbaImage) {
