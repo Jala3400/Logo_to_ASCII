@@ -30,9 +30,13 @@ pub struct Args {
     #[arg(short, long, help_heading = "Input/Output")]
     pub output: Option<String>,
 
-    /// Path of the font to use (optional)
+    // Name of the font to use (optional)
     #[arg(short, long, help_heading = "Input/Output")]
-    pub font: Option<String>,
+    pub font_name: Option<String>,
+
+    /// Path of the font to use (optional)
+    #[arg(long, help_heading = "Input/Output")]
+    pub font_path: Option<String>,
 
     // Character Set
     /// Characters used to convert the image

@@ -3,6 +3,7 @@ use crate::{
     proc_pixel::calculate_brightness,
     types::{CharInfo, FontBitmap},
 };
+use font_kit::{family_name::FamilyName, properties::Properties, source::SystemSource};
 use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
@@ -14,10 +15,43 @@ pub fn get_dict(args: &Args) -> FontBitmap {
 
     // Load a font
     let font: Font<'_>;
-    if let Some(font_path) = args.font.as_ref() {
+    if let Some(font_path) = args.font_path.as_ref() {
         let font_data =
             std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
+
+        if args.verbose {
+            println!("Loaded font from path: {}", font_path);
+        }
+
         font = Font::try_from_vec(font_data).expect("Failed to load font");
+    } else if let Some(font_name) = args.font_name.as_ref() {
+        // Use font-kit to look up the font by name
+        let source = SystemSource::new();
+        let handle = source
+            .select_best_match(
+                &[FamilyName::Title(font_name.clone())],
+                &Properties::default(),
+            )
+            .expect(&format!("Failed to find font: {}", font_name));
+
+        let font_data = handle
+            .load()
+            .expect("Failed to load font data")
+            .copy_font_data()
+            .expect("Failed to copy font data");
+
+        if args.verbose {
+            match handle {
+                font_kit::handle::Handle::Path { path, .. } => {
+                    println!("Loaded font from path: {}", path.display());
+                }
+                font_kit::handle::Handle::Memory { .. } => {
+                    println!("Loaded font from memory");
+                }
+            }
+        }
+
+        font = Font::try_from_vec(font_data.to_vec()).expect("Failed to parse font");
     } else {
         font = Font::try_from_bytes(include_bytes!("../fonts/UbuntuMono-Regular.ttf")).unwrap();
     }
