@@ -1,3 +1,5 @@
+use std::vec;
+
 use crate::{
     args::Args,
     proc_pixel::calculate_brightness,
@@ -57,7 +59,7 @@ pub fn get_dict(args: &Args) -> FontBitmap {
     }
 
     // Define text properties
-    let scale = Scale::uniform(args.font_size as f32);
+    let scale = Scale::uniform(args.char_size as f32);
     let color = Rgba([255, 255, 255, 255]);
 
     // Get font metrics to determine character dimensions
@@ -80,8 +82,18 @@ pub fn get_dict(args: &Args) -> FontBitmap {
         vertical_step: height + line_gap,
     };
 
+    let mut unsupported_chars = Vec::new();
+
     // Create a character for each character in the input string
     for i in 0..characters.len() {
+        // Create a character for each character in the input string
+        let ch = characters[i];
+        // id 0 is the missing glyph
+        if font.glyph(ch).id().0 == 0 {
+            unsupported_chars.push(ch);
+            continue;
+        }
+
         // Create an image and then print the character on it
         let mut character: Vec<f32> = vec![0.0; width * height];
         img = RgbaImage::new(width as u32, height as u32);
@@ -126,6 +138,14 @@ pub fn get_dict(args: &Args) -> FontBitmap {
             std,
         };
         final_font.insert_ord(char_info);
+    }
+
+    // Warn about unsupported characters
+    if !unsupported_chars.is_empty() {
+        eprintln!(
+            "Warning - unsupported characters: {}",
+            unsupported_chars.iter().collect::<String>()
+        );
     }
 
     // Print all characters in the final font (ordered)
