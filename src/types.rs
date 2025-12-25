@@ -95,13 +95,17 @@ pub enum BorderCriteria {
 /// to generate ASCII art from bitmap images.
 ///
 /// # Variants
-/// 
+///
 /// * `All` - All printable ASCII characters from 32 to 126
 /// * `Symbols` - A small set of symbols
 /// * `Blocks` - A set of block characters for more solid representations.
-/// * `Braille` - A set of Braille characters for detailed patterns.
+/// * `BlocksAll` - A larger set of block characters including partial blocks.
+/// * `Nerd` - A set of Nerd Font characters for enhanced visual detail.
+/// /// * `Braille` - A set of Braille characters for detailed patterns.
 /// * `Box` - A set of box drawing characters for line-based art.
+/// * `BoxAll` - A larger set of box drawing characters including diagonal lines.
 /// * `BoxDouble` - A set of double-line box drawing characters.
+/// * `BoxDoubleAll` - A larger set of double-line box drawing characters including diagonal lines.
 /// * `Numbers` - A set of numeric characters (0-9).
 /// * `Letters` - A set of alphabetic characters (A-Z, a-z).
 /// * `Math` - A set of mathematical symbols.
@@ -114,12 +118,20 @@ pub enum BuiltInCharSet {
     Symbols,
     #[value(name = "blocks")]
     Blocks,
+    #[value(name = "blocks_all")]
+    BlocksAll,
     #[value(name = "nerd")]
     Nerd,
+    // #[value(name = "braille")]
+    // Braille,
     #[value(name = "box")]
     Box,
+    #[value(name = "box_all")]
+    BoxAll,
     #[value(name = "box_double")]
     BoxDouble,
+    #[value(name = "box_double_all")]
+    BoxDoubleAll,
     #[value(name = "numbers")]
     Numbers,
     #[value(name = "letters")]

@@ -33,7 +33,10 @@ fn main() -> io::Result<()> {
                     args.chars.push_str("@%#*+=-:. ");
                 }
                 BuiltInCharSet::Blocks => {
-                    args.chars.push_str(" █▓▒░");
+                    args.chars.push_str("█▓▒░ ");
+                }
+                BuiltInCharSet::BlocksAll => {
+                    args.chars.push_str("▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟▏ ");
                 }
                 BuiltInCharSet::Nerd => {
                     args.chars.push_str(" ");
@@ -46,8 +49,14 @@ fn main() -> io::Result<()> {
                 BuiltInCharSet::Box => {
                     args.chars.push_str("─│┌┐└┘├┤┬┴┼");
                 }
+                BuiltInCharSet::BoxAll => {
+                    args.chars.push_str("─│┌┐└┘├┤┬┴┼╱╲╳╭╮╰╯");
+                }
                 BuiltInCharSet::BoxDouble => {
                     args.chars.push_str("═║╔╗╚╝╠╣╦╩╬");
+                }
+                BuiltInCharSet::BoxDoubleAll => {
+                    args.chars.push_str("═║╔╗╚╝╠╣╦╩╬╱╲╳╭╮╰╯");
                 }
                 BuiltInCharSet::Numbers => {
                     args.chars.push_str("0123456789 ");
