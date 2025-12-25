@@ -35,7 +35,7 @@ fn main() -> io::Result<()> {
                     args.chars.push_str(" █▓▒░");
                 }
                 BuiltInCharSet::Braille => {
-                    args.chars.push_str("⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿");
+                    args.chars.push_str("⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿ ");
                 }
                 BuiltInCharSet::Box => {
                     args.chars.push_str("─│┌┐└┘├┤┬┴┼");
@@ -44,16 +44,16 @@ fn main() -> io::Result<()> {
                     args.chars.push_str("═║╔╗╚╝╠╣╦╩╬");
                 }
                 BuiltInCharSet::Numbers => {
-                    args.chars.push_str("0123456789");
+                    args.chars.push_str("0123456789 ");
                 }
                 BuiltInCharSet::Letters => {
-                    args.chars.push_str("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+                    args.chars.push_str("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ");
                 }
                 BuiltInCharSet::Math => {
-                    args.chars.push_str("±×÷≈≠≤≥∞∑∏√∫∂∆∇");
+                    args.chars.push_str("±×÷≈≠≤≥∞∑∏√∫∂∆∇ ");
                 }
                 BuiltInCharSet::Geometric => {
-                    args.chars.push_str("▲▼►◄◆◇○●■□◆◇◢◣◤◥");
+                    args.chars.push_str("▲▼►◄◆◇○●■□◆◇◢◣◤◥ ");
                 }
             }
         }
