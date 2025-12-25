@@ -95,6 +95,7 @@ pub enum BorderCriteria {
 /// to generate ASCII art from bitmap images.
 ///
 /// # Variants
+/// 
 /// * `All` - All printable ASCII characters from 32 to 126
 /// * `Symbols` - A small set of symbols
 /// * `Blocks` - A set of block characters for more solid representations.

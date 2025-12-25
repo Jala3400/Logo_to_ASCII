@@ -21,38 +21,40 @@ fn main() -> io::Result<()> {
         .to_rgba8();
 
     // If the flag indicates it, use all ASCII characters
-    if let Some(dict) = &args.dict {
-        match dict {
-            BuiltInCharSet::All => {
-                args.chars = (32..=126).map(|c| c as u8 as char).collect();
-            }
-            BuiltInCharSet::Symbols => {
-                args.chars = "@%#*+=-:. ".to_string();
-            }
-            BuiltInCharSet::Blocks => {
-                args.chars = " █▓▒░".to_string();
-            }
-            BuiltInCharSet::Braille => {
-                args.chars =
-                    "⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿".to_string();
-            }
-            BuiltInCharSet::Box => {
-                args.chars = "─│┌┐└┘├┤┬┴┼".to_string();
-            }
-            BuiltInCharSet::BoxDouble => {
-                args.chars = "═║╔╗╚╝╠╣╦╩╬".to_string();
-            }
-            BuiltInCharSet::Numbers => {
-                args.chars = "0123456789".to_string();
-            }
-            BuiltInCharSet::Letters => {
-                args.chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".to_string();
-            }
-            BuiltInCharSet::Math => {
-                args.chars = "±×÷≈≠≤≥∞∑∏√∫∂∆∇".to_string();
-            }
-            BuiltInCharSet::Geometric => {
-                args.chars = "▲▼►◄◆◇○●■□◆◇◢◣◤◥".to_string();
+    if let Some(dicts) = &args.dicts {
+        args.chars.clear();
+        for dict in dicts {
+            match dict {
+                BuiltInCharSet::All => {
+                    args.chars.push_str(&(32..=126).map(|c| c as u8 as char).collect::<String>());
+                }
+                BuiltInCharSet::Symbols => {
+                    args.chars.push_str("@%#*+=-:. ");
+                }
+                BuiltInCharSet::Blocks => {
+                    args.chars.push_str(" █▓▒░");
+                }
+                BuiltInCharSet::Braille => {
+                    args.chars.push_str("⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿");
+                }
+                BuiltInCharSet::Box => {
+                    args.chars.push_str("─│┌┐└┘├┤┬┴┼");
+                }
+                BuiltInCharSet::BoxDouble => {
+                    args.chars.push_str("═║╔╗╚╝╠╣╦╩╬");
+                }
+                BuiltInCharSet::Numbers => {
+                    args.chars.push_str("0123456789");
+                }
+                BuiltInCharSet::Letters => {
+                    args.chars.push_str("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+                }
+                BuiltInCharSet::Math => {
+                    args.chars.push_str("±×÷≈≠≤≥∞∑∏√∫∂∆∇");
+                }
+                BuiltInCharSet::Geometric => {
+                    args.chars.push_str("▲▼►◄◆◇○●■□◆◇◢◣◤◥");
+                }
             }
         }
     }

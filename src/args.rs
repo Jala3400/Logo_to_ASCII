@@ -52,8 +52,8 @@ pub struct Args {
     pub except: String,
 
     /// Specify to use the built-in dictionary
-    #[arg(long, value_enum, help_heading = "Character Set")]
-    pub dict: Option<BuiltInCharSet>,
+    #[arg(long = "dict", num_args = 1.., value_enum, help_heading = "Character Set")]
+    pub dicts: Option<Vec<BuiltInCharSet>>,
 
     /// Font size to use
     #[arg(long, default_value_t = 16, help_heading = "Character Set")]
