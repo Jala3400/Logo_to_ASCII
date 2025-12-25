@@ -44,34 +44,8 @@ fn main() -> io::Result<()> {
     // Get the font
     let font = abc::get_dict(&args);
 
-    // Saturate the image
-    if args.saturate {
-        saturate(&mut img, &args);
-    }
-
-    // Add borders (before negative effect so borders are visible)
-    // Cons: the borders are then scaled if resizing is applied, but there is no easy fix for that
-    if args.border_criteria.is_some() {
-        borders_image(&mut img, &args);
-    }
-
-    // Apply the negative effect (before transparent treatment so transparent pixels are not affected)
-    if args.negative {
-        negative(&mut img);
-    }
-
     // Always treat transparent pixels
     treat_transparent(&mut img, &args);
-
-    // Grayscale and brighten the image (after transparent so it is applied to the final colors)
-    if args.grayscale {
-        grayscale(&mut img);
-    }
-
-    // Apply the black and white filter (after transparent so it is applied to the final colors)
-    if args.black_and_white {
-        bw_filter(&mut img, &args);
-    }
 
     // Resize the image (after transparent treatment because of artifacts)
     if args.width_in_chars > 0 {
@@ -82,6 +56,31 @@ fn main() -> io::Result<()> {
     }
     if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
         resize(&mut img, &mut args);
+    }
+
+    // Saturate the image (before borders so borders are more visible and before negative so it is not inverted)
+    if args.saturate {
+        saturate(&mut img, &args);
+    }
+
+    // Add borders (before negative effect so borders are visible)
+    if args.border_criteria.is_some() {
+        borders_image(&mut img, &args);
+    }
+
+    // Apply the negative effect
+    if args.negative {
+        negative(&mut img);
+    }
+
+    // Grayscale and brighten the image (after transparent so it is applied to the final colors)
+    if args.grayscale {
+        grayscale(&mut img);
+    }
+
+    // Apply the black and white filter (after transparent so it is applied to the final colors)
+    if args.black_and_white {
+        bw_filter(&mut img, &args);
     }
 
     // Adjust padding to center the image (after resizing, so it is centered with the final size)
