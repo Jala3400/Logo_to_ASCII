@@ -33,6 +33,12 @@ impl FontBitmap {
         while i < self.data.len() && self.data[i].avg_brightness < char_info.avg_brightness {
             i += 1;
         }
+
+        // If the character already exists, do not insert it again
+        if i < self.data.len() && self.data[i].char == char_info.char {
+            return;
+        }
+
         self.data.insert(i, char_info);
     }
 
