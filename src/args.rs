@@ -210,7 +210,7 @@ pub struct Args {
 
     // Algorithm and Misc
     /// Algorithm used to match blocks to characters
-    #[arg(long = "algo", value_enum, default_value_t = Algorithm::MaxProd, help_heading = "Algorithm and Misc")]
+    #[arg(long = "alg", value_enum, default_value_t = Algorithm::MaxProd, help_heading = "Algorithm and Misc")]
     pub algorithm: Algorithm,
 
     /// Print information about the image
