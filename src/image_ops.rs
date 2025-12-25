@@ -6,12 +6,12 @@ use crate::{
 use image::{EncodableLayout, RgbaImage};
 
 // Detects the borders of an image and paints them black
-pub fn borders_image(img: &mut RgbaImage, args: &Args) {
+pub fn borders_image(img: &mut RgbaImage, args: &Args, thickness: u32) {
     // Get the borders (difference color or brightness)
     let borders = detect_borders(&img, args);
 
     // Paint the borders
-    paint_borders(img, borders, args);
+    paint_borders(img, borders, thickness);
 }
 
 // Detects the borders of an image
@@ -65,13 +65,7 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
 }
 
 // Paints the borders of an image black
-fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, args: &Args) {
-    // Precalculate needed values
-    let thickness = if args.border_thickness == 0 {
-        8
-    } else {
-        args.border_thickness
-    };
+fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness: u32) {
     let half_t = thickness / 2;
     let width = img.width();
     let height = img.height();
