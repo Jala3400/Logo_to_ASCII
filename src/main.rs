@@ -3,7 +3,7 @@ use logo_to_ascii::{
     abc,
     args::Args,
     image_ops::{
-        add_offset, borders_image, bw_filter, grayscale, negative, resize, saturate,
+        add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
     },
     proc_image::convert_image,
@@ -13,7 +13,6 @@ use std::io;
 fn main() -> io::Result<()> {
     // Parse the command line arguments
     let mut args: Args = Args::parse();
-    args.difference = args.difference % 360;
 
     // Load the image
     let mut img = image::open(&args.path)
@@ -45,30 +44,47 @@ fn main() -> io::Result<()> {
     // Get the font
     let font = abc::get_dict(&args);
 
-    // Resize the image
-    if args.char_width > 0 {
-        args.pixel_width = args.char_width * 8;
+    // Always treat transparent pixels
+    treat_transparent(&mut img, &args);
+
+    // Resize the image (after transparent treatment because of artifacts)
+    if args.width_in_chars > 0 {
+        args.width_in_pixels = args.width_in_chars * font.width as u32;
     }
-    if args.char_height > 0 {
-        args.pixel_height = args.char_height * 16;
+    if args.height_in_chars > 0 {
+        args.height_in_pixels = args.height_in_chars * font.vertical_step as u32;
     }
-    if args.pixel_height > 0 || args.pixel_width > 0 {
+    if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
         resize(&mut img, &mut args);
     }
 
-    // Apply the offset
-    if args.offsetx != 0 || args.offsety != 0 {
-        add_offset(&mut img, &args);
+    // Adjust padding to center the image (after resizing, so it is centered with the final size)
+    if args.center {
+        center_image(&img, &mut args, &font);
     }
 
-    // Saturate the image
+    // Apply the padding (after resizing) (before borders so borders are included in the padding)
+    // (also before saturate and negative so the padding is affected by them)
+    if args.padding_x != 0 || args.padding_y != 0 {
+        add_padding(&mut img, &args);
+    }
+
+    // Saturate the image (before borders so borders are more visible and before negative so it is not inverted)
     if args.saturate {
         saturate(&mut img, &args);
     }
 
-    // Add borders
-    if args.color_borders || args.border != 0 {
-        borders_image(&mut img, &args);
+    // Add borders (before negative effect so borders are visible)
+    if args.border_criteria.is_some() {
+        borders_image(
+            &mut img,
+            &args,
+            if args.border_thickness == 0 {
+                font.width as u32
+            } else {
+                args.border_thickness
+            },
+        );
     }
 
     // Apply the negative effect
@@ -76,21 +92,17 @@ fn main() -> io::Result<()> {
         negative(&mut img);
     }
 
-    // Always treat transparent pixels, because it makes them visible when printing color
-    treat_transparent(&mut img, &args);
-
-    // Grayscale and brighten the image
+    // Grayscale and brighten the image (after saturate, negative and transparent so it is applied to the final colors)
     if args.grayscale {
         grayscale(&mut img);
     }
 
-    // Apply the black and white filter
+    // Apply the black and white filter (after saturate, negative and transparent so it is applied to the final colors)
     if args.black_and_white {
         bw_filter(&mut img, &args);
     }
-
     // Convert the image to ASCII
-    println!("{}", convert_image(&img, &font, &args));
+    print!("{}", convert_image(&img, &font, &args));
 
     // Save the image
     if let Some(output) = &args.output {

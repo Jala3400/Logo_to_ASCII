@@ -2,7 +2,7 @@ use crate::types::{Algorithm, FontBitmap};
 
 // Matches a block of pixels with a character
 pub fn match_block_with_char(
-    block: &[f32; 8 * 16],
+    block: &[f32],
     font: &FontBitmap,
     bright_pixels: usize,
     algorithm: &Algorithm,
@@ -19,9 +19,10 @@ pub fn match_block_with_char(
 
 /// Maximum Product algorithm for matching a block of pixels with a character
 /// Custom algorithm that multiplies the brightness values of the block and the character
-fn max_prod(block: &[f32; 128], font: &FontBitmap, bright_pixels: usize) -> char {
+fn max_prod(block: &[f32], font: &FontBitmap, bright_pixels: usize) -> char {
     let mut best_match = font.data[0].char;
     let mut best_match_value = f32::MIN;
+    let cell_size = font.cell_size();
 
     // Only take the possible characters if the first char is space
     // If the first char is not space, there can be edge cases
@@ -33,7 +34,7 @@ fn max_prod(block: &[f32; 128], font: &FontBitmap, bright_pixels: usize) -> char
 
     for char in chars_to_check {
         let mut match_value = 0.0;
-        for i in 0..128 {
+        for i in 0..cell_size {
             // Add the value of the pixel to the match value (the block brightness multiplied by the character's brightness in a given position)
             match_value += block[i] * char.data[i];
         }
@@ -50,13 +51,14 @@ fn max_prod(block: &[f32; 128], font: &FontBitmap, bright_pixels: usize) -> char
 
 /// Minimum Difference algorithm for matching a block of pixels with a character
 /// Takes into account the absolute differences between pixel brightness values
-fn min_diff(block: &[f32; 128], font: &FontBitmap) -> char {
+fn min_diff(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut less_diffrence = f32::MAX;
+    let cell_size = font.cell_size();
 
     for char in &font.data {
         let mut match_value = 0.0;
-        for i in 0..128 {
+        for i in 0..cell_size {
             match_value += (block[i] - char.data[i]).abs();
         }
 
@@ -71,13 +73,14 @@ fn min_diff(block: &[f32; 128], font: &FontBitmap) -> char {
 
 /// Minimum Squared Difference algorithm for matching a block of pixels with a character
 /// Takes into account the squared differences between pixel brightness values
-fn min_diff_sq(block: &[f32; 128], font: &FontBitmap) -> char {
+fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut less_diffrence = f32::MAX;
+    let cell_size = font.cell_size();
 
     for char in &font.data {
         let mut match_value = 0.0;
-        for i in 0..128 {
+        for i in 0..cell_size {
             let diff = block[i] - char.data[i];
             match_value += diff * diff;
         }
@@ -93,13 +96,14 @@ fn min_diff_sq(block: &[f32; 128], font: &FontBitmap) -> char {
 
 /// Gradient algorithm for matching a block of pixels with a character
 /// Takes into account only the average brightness of the block
-fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
+fn gradient(block: &[f32], font: &FontBitmap) -> char {
     let max_char_brightness = font.data[font.data.len() - 1].avg_brightness;
     let min_char_brightness = font.data[0].avg_brightness;
+    let cell_size = font.cell_size() as f32;
 
     // Add 0.5 to convert from [-0.5, 0.5] to [0, 1] while allowing to adjust
     // the brightness with arg.midpoint_brightness
-    let avg_block_brightness: f32 = block.iter().sum::<f32>() / 128.0 + 0.5;
+    let avg_block_brightness: f32 = block.iter().sum::<f32>() / cell_size + 0.5;
 
     let mut best_match = font.data[0].char;
     let mut best_score = f32::MIN;
@@ -121,15 +125,17 @@ fn gradient(block: &[f32; 128], font: &FontBitmap) -> char {
 
 /// Correlation algorithm for matching a block of pixels with a character
 /// Takes into account only the pattern structure, not the brightness level
-fn correlation(block: &[f32; 128], font: &FontBitmap) -> char {
+fn correlation(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut best_correlation = f32::MIN;
+    let cell_size = font.cell_size();
+    let cell_size_f = cell_size as f32;
 
     // Calculate mean and standard deviation of the block
-    let block_mean: f32 = block.iter().sum::<f32>() / 128.0;
+    let block_mean: f32 = block.iter().sum::<f32>() / cell_size_f;
     let block_std = (block.iter()
         .map(|&x| (x - block_mean).powi(2))
-        .sum::<f32>() / 128.0)
+        .sum::<f32>() / cell_size_f)
         .sqrt();
 
     // Skip if block has no variance (all pixels same value)
@@ -145,10 +151,10 @@ fn correlation(block: &[f32; 128], font: &FontBitmap) -> char {
 
         // Calculate Pearson correlation coefficient
         let mut correlation_sum = 0.0;
-        for i in 0..128 {
+        for i in 0..cell_size {
             correlation_sum += (block[i] - block_mean) * (char.data[i] - char.mean);
         }
-        let correlation = correlation_sum / (128.0 * block_std * char.std);
+        let correlation = correlation_sum / (cell_size_f * block_std * char.std);
 
         if correlation > best_correlation {
             best_correlation = correlation;
@@ -161,9 +167,10 @@ fn correlation(block: &[f32; 128], font: &FontBitmap) -> char {
 
 /// Normalized Cross-Correlation (NCC) algorithm for matching a block of pixels with a character
 /// Different from correlation as it takes into account the brightness level, not only the pattern structure
-fn ncc(block: &[f32; 128], font: &FontBitmap) -> char {
+fn ncc(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
     let mut best_ncc = f32::MIN;
+    let cell_size = font.cell_size();
 
     // Calculate the norm (magnitude) of the block
     let block_norm = block.iter()
@@ -184,7 +191,7 @@ fn ncc(block: &[f32; 128], font: &FontBitmap) -> char {
 
         // Calculate normalized cross-correlation: Σ(block * char) / (||block|| * ||char||)
         let mut dot_product = 0.0;
-        for i in 0..128 {
+        for i in 0..cell_size {
             dot_product += block[i] * char.data[i];
         }
         let ncc_value = dot_product / (block_norm * char.norm);

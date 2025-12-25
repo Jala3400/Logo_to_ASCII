@@ -1,4 +1,4 @@
-use crate::types::Algorithm;
+use crate::types::{Algorithm, BorderCriteria};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;
@@ -30,9 +30,13 @@ pub struct Args {
     #[arg(short, long, help_heading = "Input/Output")]
     pub output: Option<String>,
 
-    /// Path of the font to use (optional)
+    // Name of the font to use (optional)
     #[arg(short, long, help_heading = "Input/Output")]
-    pub font: Option<String>,
+    pub font_name: Option<String>,
+
+    /// Path of the font to use (optional)
+    #[arg(long, help_heading = "Input/Output")]
+    pub font_path: Option<String>,
 
     // Character Set
     /// Characters used to convert the image
@@ -43,13 +47,17 @@ pub struct Args {
     #[arg(short, long, default_value = "", help_heading = "Character Set")]
     pub add_chars: String,
 
-    /// Use characters except:
+    /// Exclude characters from the default ones
     #[arg(short = 'x', long, default_value = "", help_heading = "Character Set")]
     pub except: String,
 
     /// Use all ASCII printable characters to convert the image
     #[arg(long, default_value_t = false, help_heading = "Character Set")]
     pub all: bool,
+
+    /// Font size to use
+    #[arg(long, default_value_t = 16, help_heading = "Character Set")]
+    pub char_size: u32,
 
     // Image Processing
     /// Inverse the brightness of the image (transparent is never printed)
@@ -106,78 +114,94 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0.5, help_heading = "Image Processing")]
     pub midpoint_brightness: f32,
 
-    // Dimensions and Offsets
+    // Dimensions and Padding
     /// Number of characters in the width of the end image (0 to default)
     #[arg(
         short = 'w',
-        long = "cw",
+        long = "wc",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub char_width: u32,
+    pub width_in_chars: u32,
 
     /// Number of characters in the height of the end image (0 to default)
     #[arg(
         short = 'h',
-        long = "ch",
+        long = "hc",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub char_height: u32,
+    pub height_in_chars: u32,
 
     /// Actual width of the image (0 to default)
     #[arg(
-        long = "pw",
+        long = "wp",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub pixel_width: u32,
+    pub width_in_pixels: u32,
 
     /// Actual height of the image (0 to default)
     #[arg(
-        long = "ph",
+        long = "hp",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub pixel_height: u32,
+    pub height_in_pixels: u32,
 
-    /// Offsetx of the width of the image
+    /// Padding of the width of the image
     #[arg(
-        long = "ofx",
+        long = "padx",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub offsetx: usize,
+    pub padding_x: usize,
 
-    /// Offsety of the height of the image
+    /// Padding of the height of the image
     #[arg(
-        long = "ofy",
+        long = "pady",
         default_value_t = 0,
-        help_heading = "Dimensions and Offsets"
+        help_heading = "Dimensions and Padding"
     )]
-    pub offsety: usize,
+    pub padding_y: usize,
+
+    /// Center the image in respect to the characters by adjusting the padding
+    #[arg(long, default_value_t = false, help_heading = "Dimensions and Padding")]
+    pub center: bool,
 
     // Borders and Colors
     /// Separates colors (change thickness with `-b`)
-    #[arg(
-        short,
-        long,
-        default_value_t = false,
-        help_heading = "Borders and Colors"
-    )]
-    pub color_borders: bool,
+    #[arg(short, long = "borders", help_heading = "Borders and Colors")]
+    pub border_criteria: Option<BorderCriteria>,
 
     /// Detect borders measuring brightness (when not used with color) (0 to disable)
-    #[arg(short, long, default_value_t = 0, help_heading = "Borders and Colors")]
-    pub border: u32,
+    #[arg(
+        short = 'k',
+        long = "thick",
+        default_value_t = 0,
+        help_heading = "Borders and Colors"
+    )]
+    pub border_thickness: u32,
 
-    /// Threshold for the color difference (from 0 to 360) (if used for brightness, it will be divided by 360 automatically)
-    #[arg(short, long, default_value_t = 30, help_heading = "Borders and Colors")]
-    pub difference: u16,
+    /// Threshold for the color difference (from 0 to 360, will be the remainder after division by 360)
+    #[arg(
+        long = "color-diff",
+        default_value_t = 30,
+        help_heading = "Borders and Colors"
+    )]
+    pub color_diff: u16,
+
+    /// Threshold for the brightness difference (from 0 to 1)
+    #[arg(
+        long = "brightness-diff",
+        default_value_t = 0.1,
+        help_heading = "Borders and Colors"
+    )]
+    pub brightness_diff: f32,
 
     /// Print the image with colors
     #[arg(
-        short = 'C',
+        short = 'c',
         long,
         default_value_t = false,
         help_heading = "Borders and Colors"
