@@ -1,4 +1,4 @@
-use crate::types::{Algorithm, BorderCriteria};
+use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;
@@ -51,9 +51,9 @@ pub struct Args {
     #[arg(short = 'x', long, default_value = "", help_heading = "Character Set")]
     pub except: String,
 
-    /// Use all ASCII printable characters to convert the image
-    #[arg(long, default_value_t = false, help_heading = "Character Set")]
-    pub all: bool,
+    /// Specify to use the built-in dictionary
+    #[arg(long, value_enum, help_heading = "Character Set")]
+    pub dict: Option<BuiltInCharSet>,
 
     /// Font size to use
     #[arg(long, default_value_t = 16, help_heading = "Character Set")]

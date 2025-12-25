@@ -7,6 +7,7 @@ use logo_to_ascii::{
         treat_transparent,
     },
     proc_image::convert_image,
+    types::BuiltInCharSet,
 };
 use std::io;
 
@@ -20,8 +21,40 @@ fn main() -> io::Result<()> {
         .to_rgba8();
 
     // If the flag indicates it, use all ASCII characters
-    if args.all {
-        args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
+    if let Some(dict) = &args.dict {
+        match dict {
+            BuiltInCharSet::All => {
+                args.chars = (32..=126).map(|c| c as u8 as char).collect();
+            }
+            BuiltInCharSet::Symbols => {
+                args.chars = "@%#*+=-:. ".to_string();
+            }
+            BuiltInCharSet::Blocks => {
+                args.chars = " █▓▒░".to_string();
+            }
+            BuiltInCharSet::Braille => {
+                args.chars =
+                    "⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿".to_string();
+            }
+            BuiltInCharSet::Box => {
+                args.chars = "─│┌┐└┘├┤┬┴┼".to_string();
+            }
+            BuiltInCharSet::BoxDouble => {
+                args.chars = "═║╔╗╚╝╠╣╦╩╬".to_string();
+            }
+            BuiltInCharSet::Numbers => {
+                args.chars = "0123456789".to_string();
+            }
+            BuiltInCharSet::Letters => {
+                args.chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".to_string();
+            }
+            BuiltInCharSet::Math => {
+                args.chars = "±×÷≈≠≤≥∞∑∏√∫∂∆∇".to_string();
+            }
+            BuiltInCharSet::Geometric => {
+                args.chars = "▲▼►◄◆◇○●■□◆◇◢◣◤◥".to_string();
+            }
+        }
     }
 
     // Add the additional characters
@@ -34,7 +67,10 @@ fn main() -> io::Result<()> {
         .filter(|c| !args.except.contains(*c))
         .collect();
 
-    if args.chars.is_empty() {
+    // Get the font
+    let font = abc::get_dict(&args);
+
+    if font.data.is_empty() {
         return Err(io::Error::new(
             io::ErrorKind::Other,
             "No characters available to convert the image.".to_string(),

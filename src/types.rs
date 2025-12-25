@@ -83,6 +83,46 @@ pub enum BorderCriteria {
     All,
 }
 
+/// Built in character sets for ASCII art generation.
+///
+/// This enum defines different predefined character sets that can be used
+/// to generate ASCII art from bitmap images.
+///
+/// # Variants
+/// * `All` - All printable ASCII characters from 32 to 126
+/// * `Symbols` - A small set of symbols
+/// * `Blocks` - A set of block characters for more solid representations.
+/// * `Braille` - A set of Braille characters for detailed patterns.
+/// * `Box` - A set of box drawing characters for line-based art.
+/// * `BoxDouble` - A set of double-line box drawing characters.
+/// * `Numbers` - A set of numeric characters (0-9).
+/// * `Letters` - A set of alphabetic characters (A-Z, a-z).
+/// * `Math` - A set of mathematical symbols.
+/// * `Geometric` - A set of geometric shapes and symbols.
+#[derive(Debug, Clone, ValueEnum)]
+pub enum BuiltInCharSet {
+    #[value(name = "all")]
+    All,
+    #[value(name = "symbols")]
+    Symbols,
+    #[value(name = "blocks")]
+    Blocks,
+    #[value(name = "braille")]
+    Braille,
+    #[value(name = "box")]
+    Box,
+    #[value(name = "box_double")]
+    BoxDouble,
+    #[value(name = "numbers")]
+    Numbers,
+    #[value(name = "letters")]
+    Letters,
+    #[value(name = "math")]
+    Math,
+    #[value(name = "geometric")]
+    Geometric,
+}
+
 /// Algorithm enumeration for ASCII art generation methods.
 ///
 /// This enum defines different algorithms that can be used to convert
