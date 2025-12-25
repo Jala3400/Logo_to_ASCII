@@ -30,7 +30,7 @@ pub struct Args {
     #[arg(short, long, help_heading = "Input/Output")]
     pub output: Option<String>,
 
-    // Name of the font to use (optional)
+    /// Name of the font to use (optional)
     #[arg(short, long, help_heading = "Input/Output")]
     pub font_name: Option<String>,
 
