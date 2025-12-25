@@ -114,8 +114,8 @@ pub enum BuiltInCharSet {
     Symbols,
     #[value(name = "blocks")]
     Blocks,
-    #[value(name = "braille")]
-    Braille,
+    #[value(name = "nerd")]
+    Nerd,
     #[value(name = "box")]
     Box,
     #[value(name = "box_double")]

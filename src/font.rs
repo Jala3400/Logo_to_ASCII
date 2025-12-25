@@ -55,7 +55,7 @@ pub fn get_font(args: &Args) -> FontBitmap {
 
         font = Font::try_from_vec(font_data.to_vec()).expect("Failed to parse font");
     } else {
-        font = Font::try_from_bytes(include_bytes!("../fonts/UbuntuMono-Regular.ttf")).unwrap();
+        font = Font::try_from_bytes(include_bytes!("../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf")).unwrap();
     }
 
     // Define text properties
