@@ -153,15 +153,9 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     let new_height = img_height + (args.padding_y * 2) as u32;
     let pixel_bytes = 4;
 
-    // The pixels should be trasparent, so depending on the visible and negative flags, they are black or white
-    let mut new_bytes = vec![
-        if args.visible != args.negative {
-            255
-        } else {
-            0
-        };
-        (new_width * new_height) as usize * pixel_bytes
-    ];
+    // The pixels should be trasparent, so depending on the visible flag they are black or white
+    let mut new_bytes =
+        vec![if args.visible { 255 } else { 0 }; (new_width * new_height) as usize * pixel_bytes];
     let original_bytes = img.as_bytes();
 
     // Copy original image data with padding

@@ -58,6 +58,17 @@ fn main() -> io::Result<()> {
         resize(&mut img, &mut args);
     }
 
+    // Adjust padding to center the image (after resizing, so it is centered with the final size)
+    if args.center {
+        center_image(&img, &mut args, &font);
+    }
+
+    // Apply the padding (after resizing) (before borders so borders are included in the padding)
+    // (also before saturate and negative so the padding is affected by them)
+    if args.padding_x != 0 || args.padding_y != 0 {
+        add_padding(&mut img, &args);
+    }
+
     // Saturate the image (before borders so borders are more visible and before negative so it is not inverted)
     if args.saturate {
         saturate(&mut img, &args);
@@ -73,26 +84,15 @@ fn main() -> io::Result<()> {
         negative(&mut img);
     }
 
-    // Grayscale and brighten the image (after transparent so it is applied to the final colors)
+    // Grayscale and brighten the image (after saturate, negative and transparent so it is applied to the final colors)
     if args.grayscale {
         grayscale(&mut img);
     }
 
-    // Apply the black and white filter (after transparent so it is applied to the final colors)
+    // Apply the black and white filter (after saturate, negative and transparent so it is applied to the final colors)
     if args.black_and_white {
         bw_filter(&mut img, &args);
     }
-
-    // Adjust padding to center the image (after resizing, so it is centered with the final size)
-    if args.center {
-        center_image(&img, &mut args, &font);
-    }
-
-    // Apply the padding (after resizing)
-    if args.padding_x != 0 || args.padding_y != 0 {
-        add_padding(&mut img, &args);
-    }
-
     // Convert the image to ASCII
     print!("{}", convert_image(&img, &font, &args));
 
