@@ -1,20 +1,5 @@
 use clap::ValueEnum;
 
-/// A structure representing a bitmap image with brightness values.
-///
-/// # Fields
-///
-/// * `data` - A vector containing brightness values of each pixel in the image
-/// * `width` - The width of the image in pixels
-/// * `height` - The height of the image in pixels
-/// * `max_brightness` - The maximum brightness value found in the image data
-pub struct Bitmap {
-    pub data: Vec<f32>,
-    pub width: usize,
-    pub height: usize,
-    pub max_brightness: f32,
-}
-
 /// A structure representing a bitmap font, containing character information
 ///
 /// The font bitmap stores character data in a vector, ordered by their minimum
