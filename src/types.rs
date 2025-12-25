@@ -79,8 +79,8 @@ pub enum BorderCriteria {
     Color,
     #[value(name = "brightness")]
     Brightness,
-    #[value(name = "both")]
-    Both,
+    #[value(name = "all")]
+    All,
 }
 
 /// Algorithm enumeration for ASCII art generation methods.

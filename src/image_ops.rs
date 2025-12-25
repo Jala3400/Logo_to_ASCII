@@ -167,7 +167,7 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
                     brightness_difference(&current_pixel, &right_pixel) > b_threshold
                         || brightness_difference(&current_pixel, &bottom_pixel) > b_threshold
                 }
-                BorderCriteria::Both => {
+                BorderCriteria::All => {
                     // Both color and brightness detection (OR logic)
                     hue_difference(&current_pixel, &right_pixel) > hue_threshold
                         || hue_difference(&current_pixel, &bottom_pixel) > hue_threshold
