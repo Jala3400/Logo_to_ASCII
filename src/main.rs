@@ -37,12 +37,9 @@ fn main() -> io::Result<()> {
     if args.chars.is_empty() {
         return Err(io::Error::new(
             io::ErrorKind::Other,
-            "No characters to use. Please provide valid characters.",
+            "No characters available to convert the image.".to_string(),
         ));
     }
-
-    // Get the font
-    let font = abc::get_dict(&args);
 
     // Always treat transparent pixels
     treat_transparent(&mut img, &args);
