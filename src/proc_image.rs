@@ -53,7 +53,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             b = 0;
 
             // For each pixel in the block generate the brightness value and store the color
-            // The block height might be greater than the character height, so iterate by the 
+            // The block height might be greater than the character height, so iterate by the
             // font_heigh but calculate the coordinates with the vertical_step.
             for by in 0..font_height {
                 let iy = y * vertical_step + by;
@@ -76,7 +76,8 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
                         }
                     } else {
                         // If the pixel is outside of the image, it is considered transparent
-                        block[cords_block] = if args.visible {
+                        // transparent pixels are only visible when this flags are not equal
+                        block[cords_block] = if args.visible != args.negative {
                             r += 255;
                             g += 255;
                             b += 255;

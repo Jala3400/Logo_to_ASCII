@@ -148,6 +148,7 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     let pixel_bytes = 4;
 
     // The pixels should be trasparent, so depending on the visible flag they are black or white
+    // we can do this this way because the alpha channel is ignored.
     let mut new_bytes =
         vec![if args.visible { 255 } else { 0 }; (new_width * new_height) as usize * pixel_bytes];
     let original_bytes = img.as_bytes();
