@@ -61,6 +61,10 @@ fn tentacles_cnv() {
         .arg("all")
         .arg("-n")
         .arg("-v")
+        .arg("--padx")
+        .arg("16")
+        .arg("--pady")
+        .arg("24")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");
@@ -71,35 +75,39 @@ fn tentacles_cnv() {
 Characters:  .·'qpbd8
 Char size: 8x16, Line gap: 0
 Block size: 8x16
-Image dimensions: 416x432
-Number of characters: 52x27
-            .pp888qp.                 q88           
-          p8'       88.             p8' 8           
-        q8'          '8            d8   8           
-       .8     ppqq    8b           8b   8b          
-       8   .pp8pq8qqq.8             8p   88.        
-       8p888'       '888qq          '8    '8        
-     .d8'                88q        .8     db       
-    d8                     88.   .q88      db       
-   8b             qqq       d8p88'        p8        
-  8b          qp88'888bq      8q      pp88'         
- p8         p88'    '8.8b      8p  q88'     .....   
- 8         d8        '8.8bp    d8pdbqpqp888'''  '88.
-d8        d88q         8888p    d8q               '8
-8b        8  8b         8b'8q     d8pq         p8  .
-8         8   '8         88p88q     '88888bpqp888  8
-8         dq   '8        d8 ''88pq            qd8 d8
-b          8q   '8        8p     '88qqqqqpppq88' p8 
-b           88.  8        d8       pd8'''''    p8'  
-'            d8b 8p        8p   p88'         p8'    
-p              88db        d8p88'          p8'      
-b               d8b         88            8'        
-8                d8         8b           d8         
-8                 8b         8           db         
-8b                db         8p          d8         
- 8p               d8         d8           8         
- '8p              db          8           d8        
-  '8q            q8           8p           8b       
+Applied padding of 16x24
+Image dimensions: 448x480
+Number of characters: 56x30
+                                                        
+                 ....                    p8             
+             p88'' ''88q               q8b8             
+           p8'         8b            .8'  8             
+          8'            8            8b   8.            
+         pb     88'8    8b           'b   '8q           
+         8 pq8888888888b8q            8b    8b          
+        .888'            '88q          8     8b         
+      .88'                  d8q      .d8     db         
+     p8b                      8b pq88'       d'         
+    p8            pppqpqq      d8'        pq8'          
+   .8          pq8'   8888p     d8    pq88'             
+   8b        q88       8b'8p     88 q8'   .pqp88888p.   
+  q8        q88         8bd8p     8b 8888''         8b  
+  db        8''8p        d8b8bp    d8q            p  8b 
+  8         8   8q        d8q88q     888ppppp   p88  8b 
+  8         8b   8q        888888qp      ''888888q8 q8  
+ d8         d8    8b        8    '88qqp       qpd8  8'  
+ db          d8q   8        dq       'b88888888'  p8'   
+ db            88. 8         8     .q88'        p8'     
+ db             d8qdb        8b .q8'          p8'       
+ db               88b         888           p8'         
+ db                8q         8b           q8           
+  8                 8p        d8           db           
+  8p                db         8           db           
+  '8                d8         8b           8           
+   8b               d8          8           8b          
+    8bp             8b          8p           8          
+     '88888888888888888888888888888888888888888         
+                                                        
 [0m"#;
     assert_eq!(stdout.trim(), expected.trim());
 }

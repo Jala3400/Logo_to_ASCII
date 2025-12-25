@@ -151,7 +151,7 @@ pub struct Args {
 
     /// Padding of the width of the image
     #[arg(
-        long = "pad-x",
+        long = "padx",
         default_value_t = 0,
         help_heading = "Dimensions and Padding"
     )]
@@ -159,7 +159,7 @@ pub struct Args {
 
     /// Padding of the height of the image
     #[arg(
-        long = "pad-y",
+        long = "pady",
         default_value_t = 0,
         help_heading = "Dimensions and Padding"
     )]
