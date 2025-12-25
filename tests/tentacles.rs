@@ -52,7 +52,7 @@ Number of characters: 52x27
 }
 
 #[test]
-fn tentacles_cn() {
+fn tentacles_cnv() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
@@ -60,6 +60,7 @@ fn tentacles_cn() {
         .arg("-b")
         .arg("both")
         .arg("-n")
+        .arg("-v")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");
@@ -104,7 +105,7 @@ b                d8         8b           d8
 }
 
 #[test]
-fn tentacles_cnv() {
+fn tentacles_cn() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
@@ -112,7 +113,6 @@ fn tentacles_cnv() {
         .arg("-b")
         .arg("both")
         .arg("-n")
-        .arg("-v")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");

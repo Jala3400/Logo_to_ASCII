@@ -53,13 +53,12 @@ Number of characters: 60x30
 }
 
 #[test]
-fn cross_nv() {
+fn cross_n() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
         .arg("./images/Cross_Calatrava.png")
         .arg("-n")
-        .arg("-v")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");
@@ -301,7 +300,7 @@ Number of characters: 61x31
 }
 
 #[test]
-fn cross_csize17_center_padx4_nv() {
+fn cross_csize17_center_padx4_n() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
@@ -312,7 +311,6 @@ fn cross_csize17_center_padx4_nv() {
         .arg("--pad-x")
         .arg("4")
         .arg("-n")
-        .arg("-v")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");
