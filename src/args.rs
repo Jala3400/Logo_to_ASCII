@@ -201,7 +201,7 @@ pub struct Args {
 
     /// Print the image with colors
     #[arg(
-        short = 'C',
+        short = 'c',
         long,
         default_value_t = false,
         help_heading = "Borders and Colors"
