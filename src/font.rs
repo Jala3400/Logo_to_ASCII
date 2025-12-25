@@ -11,7 +11,7 @@ use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 
 /// Returns a FontBitmap with the characters and their brightness values
-pub fn get_dict(args: &Args) -> FontBitmap {
+pub fn get_font(args: &Args) -> FontBitmap {
     // Load or create an image
     let mut img;
 

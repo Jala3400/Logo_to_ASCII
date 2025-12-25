@@ -1,7 +1,7 @@
 use clap::Parser;
 use logo_to_ascii::{
-    abc,
     args::Args,
+    font,
     image_ops::{
         add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
@@ -68,7 +68,7 @@ fn main() -> io::Result<()> {
         .collect();
 
     // Get the font
-    let font = abc::get_dict(&args);
+    let font = font::get_font(&args);
 
     if font.data.is_empty() {
         return Err(io::Error::new(
