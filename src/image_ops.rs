@@ -1,27 +1,31 @@
 use crate::{
     args::Args,
     proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
-    types::FontBitmap,
+    types::{BorderCriteria, FontBitmap},
 };
 use image::{EncodableLayout, RgbaImage};
 
 // Detects the borders of an image and paints them black
 pub fn borders_image(img: &mut RgbaImage, args: &Args) {
     // Get the borders (difference color or brightness)
-    let borders = if args.color_borders {
-        detect_color_borders(&img, args.difference)
-    } else {
-        detect_borders(&img, args.difference as f32 / 360.0)
-    };
+    let borders = detect_borders(&img, args);
 
     // Paint the borders
     paint_borders(img, borders, args);
 }
 
-// Detects the borders of an image using brightness
-fn detect_borders(img: &image::RgbaImage, threshold: f32) -> Vec<(u32, u32)> {
+// Detects the borders of an image
+// Unified function that handles all detection modes in a single if statement
+fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
+    // Return empty if no border criteria is set
+    let Some(criteria) = &args.border_criteria else {
+        return Vec::new();
+    };
+
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
+    let b_threshold = args.brightness_diff;
+    let hue_threshold = args.color_diff % 360;
 
     // Compares a pixel to the one on its right and below
     for y in 0..height - 1 {
@@ -30,32 +34,28 @@ fn detect_borders(img: &image::RgbaImage, threshold: f32) -> Vec<(u32, u32)> {
             let right_pixel = img.get_pixel(x + 1, y);
             let bottom_pixel = img.get_pixel(x, y + 1);
 
-            if brightness_difference(&current_pixel, &right_pixel) > threshold
-                || brightness_difference(&current_pixel, &bottom_pixel) > threshold
-            {
-                borders.push((x, y));
-            }
-        }
-    }
+            // Single if statement - modify this to change detection strategy
+            let is_border = match criteria {
+                BorderCriteria::Color => {
+                    // Color (hue) detection only
+                    hue_difference(&current_pixel, &right_pixel) > hue_threshold
+                        || hue_difference(&current_pixel, &bottom_pixel) > hue_threshold
+                }
+                BorderCriteria::Brightness => {
+                    // Brightness detection only
+                    brightness_difference(&current_pixel, &right_pixel) > b_threshold
+                        || brightness_difference(&current_pixel, &bottom_pixel) > b_threshold
+                }
+                BorderCriteria::Both => {
+                    // Both color and brightness detection (OR logic)
+                    hue_difference(&current_pixel, &right_pixel) > hue_threshold
+                        || hue_difference(&current_pixel, &bottom_pixel) > hue_threshold
+                        || brightness_difference(&current_pixel, &right_pixel) > b_threshold
+                        || brightness_difference(&current_pixel, &bottom_pixel) > b_threshold
+                }
+            };
 
-    borders
-}
-
-// Detects the borders of an image using color
-fn detect_color_borders(img: &image::RgbaImage, threshold: u16) -> Vec<(u32, u32)> {
-    let mut borders = Vec::new();
-    let (width, height) = img.dimensions();
-
-    // Compares a pixel to the one on its right and below
-    for y in 0..height - 1 {
-        for x in 0..width - 1 {
-            let current_pixel = img.get_pixel(x, y);
-            let right_pixel = img.get_pixel(x + 1, y);
-            let bottom_pixel = img.get_pixel(x, y + 1);
-
-            if hue_difference(&current_pixel, &right_pixel) > threshold
-                || hue_difference(&current_pixel, &bottom_pixel) > threshold
-            {
+            if is_border {
                 borders.push((x, y));
             }
         }
@@ -67,7 +67,11 @@ fn detect_color_borders(img: &image::RgbaImage, threshold: u16) -> Vec<(u32, u32
 // Paints the borders of an image black
 fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, args: &Args) {
     // Precalculate needed values
-    let thickness = if args.border == 0 { 8 } else { args.border };
+    let thickness = if args.border_thickness == 0 {
+        8
+    } else {
+        args.border_thickness
+    };
     let half_t = thickness / 2;
     let width = img.width();
     let height = img.height();

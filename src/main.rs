@@ -13,7 +13,6 @@ use std::io;
 fn main() -> io::Result<()> {
     // Parse the command line arguments
     let mut args: Args = Args::parse();
-    args.difference = args.difference % 360;
 
     // Load the image
     let mut img = image::open(&args.path)
@@ -52,7 +51,7 @@ fn main() -> io::Result<()> {
 
     // Add borders (before negative effect so borders are visible)
     // Cons: the borders are then scaled if resizing is applied, but there is no easy fix for that
-    if args.color_borders || args.border != 0 {
+    if args.border_criteria.is_some() {
         borders_image(&mut img, &args);
     }
 

@@ -1,4 +1,4 @@
-use crate::types::Algorithm;
+use crate::types::{Algorithm, BorderCriteria};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;
@@ -171,21 +171,33 @@ pub struct Args {
 
     // Borders and Colors
     /// Separates colors (change thickness with `-b`)
-    #[arg(
-        short,
-        long,
-        default_value_t = false,
-        help_heading = "Borders and Colors"
-    )]
-    pub color_borders: bool,
+    #[arg(short, long = "borders", help_heading = "Borders and Colors")]
+    pub border_criteria: Option<BorderCriteria>,
 
     /// Detect borders measuring brightness (when not used with color) (0 to disable)
-    #[arg(short, long, default_value_t = 0, help_heading = "Borders and Colors")]
-    pub border: u32,
+    #[arg(
+        short = 'k',
+        long = "thick",
+        default_value_t = 0,
+        help_heading = "Borders and Colors"
+    )]
+    pub border_thickness: u32,
 
-    /// Threshold for the color difference (from 0 to 360) (if used for brightness, it will be divided by 360)
-    #[arg(short, long, default_value_t = 30, help_heading = "Borders and Colors")]
-    pub difference: u16,
+    /// Threshold for the color difference (from 0 to 360, will be the remainder after division by 360)
+    #[arg(
+        long = "color-diff",
+        default_value_t = 30,
+        help_heading = "Borders and Colors"
+    )]
+    pub color_diff: u16,
+
+    /// Threshold for the brightness difference (from 0 to 1)
+    #[arg(
+        long = "brightness-diff",
+        default_value_t = 0.2,
+        help_heading = "Borders and Colors"
+    )]
+    pub brightness_diff: f32,
 
     /// Print the image with colors
     #[arg(

@@ -63,6 +63,26 @@ pub struct CharInfo {
     pub std: f32,
 }
 
+/// Criteria for detecting borders in the image.
+///
+/// This enum defines the different criteria that can be used to identify borders
+/// in the image during the ASCII art generation process.
+///
+/// # Variants
+///
+/// * `Color` - Detect borders based on color differences.
+/// * `Brightness` - Detect borders based on brightness differences.
+/// * `Both` - Detect borders using both color and brightness differences.
+#[derive(Debug, Clone, ValueEnum)]
+pub enum BorderCriteria {
+    #[value(name = "color")]
+    Color,
+    #[value(name = "brightness")]
+    Brightness,
+    #[value(name = "both")]
+    Both,
+}
+
 /// Algorithm enumeration for ASCII art generation methods.
 ///
 /// This enum defines different algorithms that can be used to convert
