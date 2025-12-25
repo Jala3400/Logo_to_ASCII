@@ -76,7 +76,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
                         }
                     } else {
                         // If the pixel is outside of the image, it is considered transparent
-                        // transparent pixels are only visible when this flags are not equal
+                        // transparent pixels are only visible when (visible xor negative)
                         block[cords_block] = if args.visible != args.negative {
                             r += 255;
                             g += 255;

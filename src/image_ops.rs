@@ -8,16 +8,17 @@ use image::{EncodableLayout, RgbaImage};
 // Make transparent pixels visible
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
     for pixel in img.pixels_mut() {
-        if pixel[3] == 0 {
-            if args.visible {
-                pixel[0] = 255;
-                pixel[1] = 255;
-                pixel[2] = 255;
-            } else {
-                pixel[0] = 0;
-                pixel[1] = 0;
-                pixel[2] = 0;
-            }
+        let alpha = pixel[3];
+        if !args.visible {
+            let factor = alpha as f32 / 255.0;
+            pixel[0] = (pixel[0] as f32 * factor) as u8;
+            pixel[1] = (pixel[1] as f32 * factor) as u8;
+            pixel[2] = (pixel[2] as f32 * factor) as u8;
+        } else {
+            let factor = alpha as f32 / 255.0;
+            pixel[0] = (pixel[0] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
+            pixel[1] = (pixel[1] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
+            pixel[2] = (pixel[2] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
         }
         pixel[3] = 255;
     }
