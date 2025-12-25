@@ -194,7 +194,7 @@ pub struct Args {
     /// Threshold for the brightness difference (from 0 to 1)
     #[arg(
         long = "brightness-diff",
-        default_value_t = 0.2,
+        default_value_t = 0.1,
         help_heading = "Borders and Colors"
     )]
     pub brightness_diff: f32,
