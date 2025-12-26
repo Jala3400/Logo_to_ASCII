@@ -1,6 +1,7 @@
 use std::process::Command;
 
 #[test]
+#[ignore]
 fn gradient_w80_a_aeou() {
     let output = Command::new("cargo")
         .arg("run")

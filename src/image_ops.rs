@@ -268,6 +268,5 @@ pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
         pixel[0] = value;
         pixel[1] = value;
         pixel[2] = value;
-        pixel[3] = 255; // Keep alpha fully opaque
     }
 }

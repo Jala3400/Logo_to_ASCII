@@ -1,7 +1,7 @@
 use crate::args::Args;
 use image::Rgba;
 
-// Calculate the brightness and subtract the midpoint brightness 
+// Calculate the brightness and subtract the midpoint brightness
 pub fn calc_custom_brightness(pixel: &Rgba<u8>, args: &Args) -> f32 {
     calculate_brightness(&pixel) - args.midpoint_brightness
 }
@@ -13,16 +13,6 @@ pub fn calculate_brightness(pixel: &Rgba<u8>) -> f32 {
     let b = pixel[2] as f32;
 
     ((0.299 * r + 0.587 * g + 0.114 * b) / 255.0).sqrt()
-}
-
-// Calculate the hue of a pixel. If the pixel is transparent, return 720
-pub fn calc_custom_hue(pixel: &Rgba<u8>) -> u16 {
-    if pixel[3] == 0 {
-        // If the pixel is transparent
-        720
-    } else {
-        calc_hue(pixel)
-    }
 }
 
 // Calculate the hue of a pixel
@@ -73,6 +63,6 @@ pub fn brightness_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
 
 // Calculate the difference between the hue of two pixels
 pub fn hue_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> u16 {
-    let diff = calc_custom_hue(pixel1).abs_diff(calc_custom_hue(pixel2));
+    let diff = calc_hue(pixel1).abs_diff(calc_hue(pixel2));
     diff.min(360_u16.abs_diff(diff))
 }
