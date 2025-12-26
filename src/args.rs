@@ -171,6 +171,15 @@ pub struct Args {
     pub center: bool,
 
     // Borders and Colors
+    /// Print the image with colors
+    #[arg(
+        short = 'c',
+        long,
+        default_value_t = false,
+        help_heading = "Borders and Colors"
+    )]
+    pub print_color: bool,
+
     /// Separates colors (change thickness with `-b`)
     #[arg(short, long = "borders", help_heading = "Borders and Colors")]
     pub border_criteria: Option<BorderCriteria>,
@@ -199,15 +208,6 @@ pub struct Args {
         help_heading = "Borders and Colors"
     )]
     pub brightness_diff: f32,
-
-    /// Print the image with colors
-    #[arg(
-        short = 'c',
-        long,
-        default_value_t = false,
-        help_heading = "Borders and Colors"
-    )]
-    pub print_color: bool,
 
     // Algorithm and Misc
     /// Algorithm used to match blocks to characters

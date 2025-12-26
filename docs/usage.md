@@ -22,7 +22,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 - `--chars <CHARS>`: Characters used to convert the image [default: "8dbqp'·. "]
 - `-a, --add-chars <ADD_CHARS>`: Add characters to the default ones [default: ]
 - `-x, --except <EXCEPT>`: Exclude characters from the default ones [default: ]
-- `--dict <DICTS>...`: Specify to use the built-in dictionary. Overrides `--chars` but not `--add-chars` and `--except` You can specify multiple times to use multiple dictionaries or specify a list separated by commas [possible values: all, symbols, blocks, blocks_all, box, box_all, box_double, box_double_all, nerd, math, numbers, letters]
+- `-d, --dict <DICTS>...`: Specify to use the built-in dictionary. Overrides `--chars` but not `--add-chars` and `--except` You can specify multiple times to use multiple dictionaries or specify a list separated by commas [possible values: all, symbols, blocks, blocks_all, box, box_all, box_double, box_double_all, nerd, math, numbers, letters]
 - `--char-size <CHAR_SIZE>`: Font size to use [default: 16]
 
 ### Image Processing
@@ -44,11 +44,11 @@ Usage: l2a.exe [OPTIONS] <PATH>
 - `--center`: Center the image in respect to the characters by adjusting the padding
 
 ### Borders and Colors
+- `-c, --print-color`: Print the image with colors
 - `-b, --borders <BORDER_CRITERIA>`: Separates colors (change thickness with `-b`) [possible values: color, brightness, all]
 - `-k, --thick <BORDER_THICKNESS>`: Detect borders measuring brightness (when not used with color) (0 to disable) [default: 0]
 - `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, will be the remainder after division by 360) [default: 30]
 - `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1) [default: 0.1]
-- `-c, --print-color`: Print the image with colors
 
 ### Algorithm and Misc
 - `--alg <ALGORITHM>`: Algorithm used to match blocks to characters [default: max_prod] [possible values: max_prod, min_diff, min_diff_sq, gradient, corr, ncc]

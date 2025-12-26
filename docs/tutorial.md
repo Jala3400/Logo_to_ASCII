@@ -10,7 +10,7 @@ This tutorial will guide you through the basic workflow of converting images to 
   - [Colored Logo](#colored-logo)
   - [Printing Colors](#printing-colors)
   - [Putting It All Together](#putting-it-all-together)
-  - [Next Steps](#next-steps)
+  - [Other](#other)
 
 ## Simple Logo
 
@@ -21,50 +21,52 @@ The basic case consists of treating single-color logos. We will use the followin
 To convert it, we run the program from the console. The first argument must be the image path.
 
 ```bash
-lta Cross_Calatrava.png
+l2a Cross_Calatrava.png
 ```
 
-![Cross of Calatrava](../images/ascii/cruz.png)
+![Cross of Calatrava](../images/ascii/cross.png)
 
-- To print the image in negative, you must add `-n` to the command.
-
-> [!IMPORTANT]
-> Transparent pixels are never printed. In this case, the image has a transparent background, so we have to add `-v` to print them.
+-   To print the image in negative, `-n` must be added to the command.
 
 ```bash
-lta Cross_Calatrava.png -nv
+l2a Cross_Calatrava.png -n
 ```
 
-![Cross of Calatrava in negative](../images/ascii/cruz_nv.png)
+![Cross of Calatrava in negative](../images/ascii/cross_n.png)
 
-The default character set is `8dbqp '·.` (including the space).
+-   In case the default set of characters is not enough.
 
-- To change the character set, use the argument `--chars <characters>`. The character set must be enclosed in `"` or `'` if you want to include the space.
-- To add characters to the default group, use `-a <characters_to_add>`. For example, `-a "_/\\"` will add the characters `_`, `/`, and `\`.
-- To use all printable ASCII characters, add `--all`.
-- To remove characters, use `-x <characters_to_remove>`.
+There are many ways to change the characters used to transform the image, all of them explained in the [characters tutorial](tutorial/tutorial-characters).
+
+However, the simplest one is to use a prebuilt character set. For example, here we use all the printable ASCII characters, although there are more.
 
 ```bash
-lta Cross_Calatrava.png --all
+l2a Cross_Calatrava.png -d all
 ```
 
-![Cross of Calatrava with all characters](../images/ascii/cruz_all.png)
+![Cross of Calatrava with all characters](../images/ascii/cross_dict_all.png)
 
-- To change the image size, use `-w <width>` and `-h <height>` for character dimensions, or `--wp <width>` and `--hp <height>` for pixel dimensions. If you change only one dimension, the aspect ratio is maintained.
+-   It is also possible to change the size of the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for more.
+
+In this case we use the argument `-w`, which sets the width in characters the end result will have.
 
 ```bash
-lta Cross_Calatrava.png -w100
+l2a Cross_Calatrava.png -w 100
 ```
 
-![Cross of Calatrava with 100 characters width](../images/ascii/cruz_w100.png)
+![Cross of Calatrava with 100 characters width](../images/ascii/cross_w100.png)
 
-- For alignment issues, use offset arguments `--ofx <offset_x>` and `--ofy <offset_y>`.
+-   Sometimes the image will not line up perfectly with the characters we have.
+
+For alignment issues we can add padding or center the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for a deeper explanation.
+
+Here we apply a padding in the x-axis and y-axis of half a character (you can find this out in [other](#other)).
 
 ```bash
 l2a .\images\Cross_Calatrava.png --ofx 4 --ofy 8
 ```
 
-![Cross of Calatrava with offset](../images/ascii/cruz_ofx4_ofy8.png)
+![Cross of Calatrava with offset](../images/ascii/cross_padx4_pady8.png)
 
 ## Colored Logo
 
@@ -72,66 +74,61 @@ Now let's try with a multi-color logo:
 
 ![Tentacles](../images/sources/tentacles.png)
 
-- To draw borders between colors, use `--borders color`. This detects color changes and draws black borders.
+-   To draw borders between colors, use `--borders all`. This detects color and brightness changes and draws black borders.
+-   The thickness of the border can be changed with `-k, --thickness` and it is measured in pixels.
+
+> [!Warning]
+> Here we use `--borders all` instead of `--borders color` because the background color is transparent. Because of [how this app works](how-it-works.md), the transparent pixels are transformed into black, which shares the same hue as red, so just checking for color will not detect the border between the red tentacle and the background.
 
 ```bash
-l2a '.\images\tentacles.png' --borders color
+l2a '.\images\tentacles.png' -b all
 ```
 
-![Tentacles](../images/ascii/tentaculos.png)
+![Tentacles](../images/ascii/tentacles_b_all.png)
 
-- Combine with `-n` for negative, or `-v` to show transparent pixels.
+-   Combine with `-n` for negative, or `-v` to show only the borders.
 
 ```bash
-l2a '.\images\tentacles.png' --borders color -n
+l2a '.\images\tentacles.png' --borders all -nv
 ```
 
-![Tentacles border](../images/ascii/tentaculos_n.png)
+![Tentacles border](../images/ascii/tentacles_nv.png)
 
-- To convert to black and white, add `--bw` and optionally `-t <threshold>`.
+The other combinations of `-n` and `-v` are also interesting, you should always try them.
+
+You can further customize the borders in the [border tutorial](tutorial/tutorial-borders.md)
 
 ## Printing Colors
 
-- To print with colors, use the argument `-C`.
-- Adding `-s` saturates each pixel to the maximum.
+-   To print the image with colors, use the argument `-c`.
 
 ```bash
-l2a .\images\Cross_Calatrava.png -C
+l2a .\images\Cross_Calatrava.png -c
 ```
 
-![Cross of Calatrava with colors](../images/ascii/cruz_C.png)
+![Cross of Calatrava with colors](../images/ascii/cross_c.png)
 
 ```bash
-l2a .\images\tentacles.png -cC
+l2a .\images\tentacles.png -b all -c
 ```
 
-![Tentacles with colors](../images/ascii/tentaculos_cC.png)
+![Tentacles with colors](../images/ascii/tentacles_b_all_c.png)
 
 ## Putting It All Together
 
 You can combine multiple options for more complex results:
 
 ```bash
-l2a .\images\Cross_Calatrava.png -cCv
+l2a .\images\Cross_Calatrava.png -cvb all
 ```
 
-![Cross of Calatrava combined](../images/ascii/cruz_cCv.png)
+![Cross of Calatrava combined](../images/ascii/cross_cvb_all.png)
 
-```bash
-l2a .\images\tentacles.png -cCv -a "@#$&Yg*'´_/\ \""
-```
+## Other
 
-![Tentacles combined](../images/ascii/tentaculos_cCv_chars.png)
+Other important arguments are:
 
-- To save the processed image before conversion, use `-o <filename>`.
-
-```bash
-l2a .\images\tentacles.png -cCv -o final_tentacles_cCv.png
-```
-
-## Next Steps
-
-- [Learn about different algorithms](tutorial/tutorial-algorithms.md) for character matching
-- [Explore advanced techniques](tutorial/tutorial-advanced.md) and combinations
-- [Tips for different types of images](tutorial/tutorial-images.md)
-- [Full usage reference](../usage.md)
+-   `--verbose`, which will give you information about the characters used and the image.
+-   `-o <file_name>` Because of [how this app works](how-it-works.md), the image you give it will be modified. This arguments lets you save it.
+-   `--alg` changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
+-   In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do.
