@@ -98,18 +98,17 @@ pub enum BorderCriteria {
 ///
 /// * `All` - All printable ASCII characters from 32 to 126
 /// * `Symbols` - A small set of symbols
+/// /// * `Braille` - A set of Braille characters for detailed patterns.
 /// * `Blocks` - A set of block characters for more solid representations.
 /// * `BlocksAll` - A larger set of block characters including partial blocks.
-/// * `Nerd` - A set of Nerd Font characters for enhanced visual detail.
-/// /// * `Braille` - A set of Braille characters for detailed patterns.
 /// * `Box` - A set of box drawing characters for line-based art.
 /// * `BoxAll` - A larger set of box drawing characters including diagonal lines.
 /// * `BoxDouble` - A set of double-line box drawing characters.
 /// * `BoxDoubleAll` - A larger set of double-line box drawing characters including diagonal lines.
+/// * `Nerd` - A set of Nerd Font characters for enhanced visual detail.
+/// * `Math` - A set of mathematical symbols.
 /// * `Numbers` - A set of numeric characters (0-9).
 /// * `Letters` - A set of alphabetic characters (A-Z, a-z).
-/// * `Math` - A set of mathematical symbols.
-/// * `Geometric` - A set of geometric shapes and symbols.
 #[derive(Debug, Clone, ValueEnum)]
 pub enum BuiltInCharSet {
     #[value(name = "all")]
@@ -117,13 +116,11 @@ pub enum BuiltInCharSet {
     #[value(name = "symbols")]
     Symbols,
     #[value(name = "blocks")]
+    // #[value(name = "braille")]
+    // Braille,
     Blocks,
     #[value(name = "blocks_all")]
     BlocksAll,
-    #[value(name = "nerd")]
-    Nerd,
-    // #[value(name = "braille")]
-    // Braille,
     #[value(name = "box")]
     Box,
     #[value(name = "box_all")]
@@ -132,14 +129,14 @@ pub enum BuiltInCharSet {
     BoxDouble,
     #[value(name = "box_double_all")]
     BoxDoubleAll,
+    #[value(name = "nerd")]
+    Nerd,
+    #[value(name = "math")]
+    Math,
     #[value(name = "numbers")]
     Numbers,
     #[value(name = "letters")]
     Letters,
-    #[value(name = "math")]
-    Math,
-    #[value(name = "geometric")]
-    Geometric,
 }
 
 /// Algorithm enumeration for ASCII art generation methods.

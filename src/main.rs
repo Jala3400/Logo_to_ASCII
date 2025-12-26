@@ -30,22 +30,19 @@ fn main() -> io::Result<()> {
                         .push_str(&(32..=126).map(|c| c as u8 as char).collect::<String>());
                 }
                 BuiltInCharSet::Symbols => {
-                    args.chars.push_str("@%#*+=-:. ");
-                }
-                BuiltInCharSet::Blocks => {
-                    args.chars.push_str("█▓▒░ ");
-                }
-                BuiltInCharSet::BlocksAll => {
-                    args.chars.push_str("▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟▏ ");
-                }
-                BuiltInCharSet::Nerd => {
-                    args.chars.push_str(" ");
+                    args.chars.push_str("@!¡+=-:.' ");
                 }
                 // There is no good monospace font with braille characters included by default
                 // Might work on this later
                 // BuiltInCharSet::Braille => {
                 //     args.chars.push_str("⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿ ");
                 // }
+                BuiltInCharSet::Blocks => {
+                    args.chars.push_str("█▓▒░ ");
+                }
+                BuiltInCharSet::BlocksAll => {
+                    args.chars.push_str("▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟▏ ");
+                }
                 BuiltInCharSet::Box => {
                     args.chars.push_str("─│┌┐└┘├┤┬┴┼");
                 }
@@ -58,18 +55,18 @@ fn main() -> io::Result<()> {
                 BuiltInCharSet::BoxDoubleAll => {
                     args.chars.push_str("═║╔╗╚╝╠╣╦╩╬╱╲╳╭╮╰╯");
                 }
+                BuiltInCharSet::Nerd => {
+                    args.chars.push_str(" ");
+                }
+                BuiltInCharSet::Math => {
+                    args.chars.push_str("±×÷≈≠≤≥∞∑∏√∫∂∆∇ ");
+                }
                 BuiltInCharSet::Numbers => {
                     args.chars.push_str("0123456789 ");
                 }
                 BuiltInCharSet::Letters => {
                     args.chars
                         .push_str("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ");
-                }
-                BuiltInCharSet::Math => {
-                    args.chars.push_str("±×÷≈≠≤≥∞∑∏√∫∂∆∇ ");
-                }
-                BuiltInCharSet::Geometric => {
-                    args.chars.push_str("▲▼►◄◆◇○●■□◆◇◢◣◤◥ ");
                 }
             }
         }
