@@ -32,9 +32,19 @@ jobs:
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
+      - name: Generate checksums
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            Get-FileHash target/${{ matrix.target }}/release/${{ matrix.name }} -Algorithm SHA256 | Out-File -FilePath ${{ matrix.name }}.sha256
+          else
+            sha256sum target/${{ matrix.target }}/release/${{ matrix.name }} > ${{ matrix.name }}.sha256
+          fi
+
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/${{ matrix.target }}/release/${{ matrix.name }}
+          files: |
+            target/${{ matrix.target }}/release/${{ matrix.name }}
+            ${{ matrix.name }}.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
