@@ -98,6 +98,8 @@ pub enum BorderCriteria {
 ///
 /// * `All` - All printable ASCII characters from 32 to 126
 /// * `Symbols` - A small set of symbols
+/// /// There is no good monospace font with braille characters included by default
+/// /// Might work on this later
 /// /// * `Braille` - A set of Braille characters for detailed patterns.
 /// * `Blocks` - A set of block characters for more solid representations.
 /// * `BlocksAll` - A larger set of block characters including partial blocks.

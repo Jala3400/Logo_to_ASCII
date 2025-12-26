@@ -1,4 +1,5 @@
 pub mod args;
+pub mod characters;
 pub mod font;
 pub mod image_ops;
 pub mod proc_block;
