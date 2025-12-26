@@ -15,7 +15,7 @@ In addition to the default algorithm (`max_prod`), Logo to ASCII supports severa
 
 The `min_diff` and `min_diff_sq` algorithms operate pixel by pixel, producing results similar to `max_prod` but with less definition.
 
-The `gradient` algorithm calculates the average luminosity of each block rather than comparing shapes. This is more like traditional ASCII art converters.
+The `gradient` algorithm calculates the average brightness of each block rather than comparing shapes. This is more like traditional ASCII art converters.
 
 `corr` and `ncc` measure correlation and normalized cross-correlation respectively. These consider how similar the variations are between a block and a character, with `ncc` also accounting for magnitude differences.
 
