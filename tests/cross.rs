@@ -111,7 +111,8 @@ fn cross_all() {
         .arg("run")
         .arg("--")
         .arg("./images/Cross_Calatrava.png")
-        .arg("--all")
+        .arg("--dict")
+        .arg("all")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");

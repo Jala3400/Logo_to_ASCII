@@ -1,4 +1,4 @@
-use crate::types::{Algorithm, BorderCriteria};
+use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;
@@ -30,7 +30,7 @@ pub struct Args {
     #[arg(short, long, help_heading = "Input/Output")]
     pub output: Option<String>,
 
-    // Name of the font to use (optional)
+    /// Name of the font to use (optional)
     #[arg(short, long, help_heading = "Input/Output")]
     pub font_name: Option<String>,
 
@@ -51,9 +51,9 @@ pub struct Args {
     #[arg(short = 'x', long, default_value = "", help_heading = "Character Set")]
     pub except: String,
 
-    /// Use all ASCII printable characters to convert the image
-    #[arg(long, default_value_t = false, help_heading = "Character Set")]
-    pub all: bool,
+    /// Specify to use the built-in dictionary
+    #[arg(long = "dict", num_args = 1.., value_enum, help_heading = "Character Set")]
+    pub dicts: Option<Vec<BuiltInCharSet>>,
 
     /// Font size to use
     #[arg(long, default_value_t = 16, help_heading = "Character Set")]
@@ -210,7 +210,7 @@ pub struct Args {
 
     // Algorithm and Misc
     /// Algorithm used to match blocks to characters
-    #[arg(long = "algo", value_enum, default_value_t = Algorithm::MaxProd, help_heading = "Algorithm and Misc")]
+    #[arg(long = "alg", value_enum, default_value_t = Algorithm::MaxProd, help_heading = "Algorithm and Misc")]
     pub algorithm: Algorithm,
 
     /// Print information about the image

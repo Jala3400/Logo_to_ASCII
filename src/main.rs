@@ -1,7 +1,8 @@
 use clap::Parser;
 use logo_to_ascii::{
-    abc,
     args::Args,
+    characters::process_characters,
+    font,
     image_ops::{
         add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
@@ -19,30 +20,17 @@ fn main() -> io::Result<()> {
         .unwrap_or_else(|e| panic!("Failed to open image: {}", e))
         .to_rgba8();
 
-    // If the flag indicates it, use all ASCII characters
-    if args.all {
-        args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
-    }
-
-    // Add the additional characters
-    args.chars.push_str(&args.add_chars);
-
-    // Remove the excluded characters
-    args.chars = args
-        .chars
-        .chars()
-        .filter(|c| !args.except.contains(*c))
-        .collect();
-
-    if args.chars.is_empty() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            "No characters to use. Please provide valid characters.",
-        ));
-    }
+    process_characters(&mut args);
 
     // Get the font
-    let font = abc::get_dict(&args);
+    let font = font::get_font(&args);
+
+    if font.data.is_empty() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "No characters available to convert the image.".to_string(),
+        ));
+    }
 
     // Always treat transparent pixels
     treat_transparent(&mut img, &args);

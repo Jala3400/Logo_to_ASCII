@@ -11,7 +11,7 @@ use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 
 /// Returns a FontBitmap with the characters and their brightness values
-pub fn get_dict(args: &Args) -> FontBitmap {
+pub fn get_font(args: &Args) -> FontBitmap {
     // Load or create an image
     let mut img;
 
@@ -55,7 +55,10 @@ pub fn get_dict(args: &Args) -> FontBitmap {
 
         font = Font::try_from_vec(font_data.to_vec()).expect("Failed to parse font");
     } else {
-        font = Font::try_from_bytes(include_bytes!("../fonts/UbuntuMono-Regular.ttf")).unwrap();
+        font = Font::try_from_bytes(include_bytes!(
+            "../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf"
+        ))
+        .unwrap();
     }
 
     // Define text properties
