@@ -1,5 +1,5 @@
 use clap::Parser;
-use logo_to_ascii::{
+use l2a::{
     args::Args,
     characters::process_characters,
     font,
