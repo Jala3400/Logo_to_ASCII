@@ -2,11 +2,11 @@
 
 There are two main ways you can install this app: Cloning the github repo or downloading the executable from the releases
 
-After getting the executable you can add it to the path so you can use it in the terminal.
-
 ## Releases
 
 Pre-built binaries for Windows, Linux, and macOS are available on the [releases page](https://github.com/Jala3400/Logo_to_ASCII/releases).
+
+Once downloaded you can [finish the setup](#environment-variables)
 
 ## Clone the repo
 
@@ -28,3 +28,11 @@ Pre-built binaries for Windows, Linux, and macOS are available on the [releases 
     ```bash
     cargo build --release
     ```
+
+3. [Finish the setup](#finish-the-setup)
+
+## Finish the setup
+
+To use a binary from anywhere in the terminal you add it to the  environment variables or put the binary in a folder that is already registered.
+
+It is different for each OS, you should look it up.
