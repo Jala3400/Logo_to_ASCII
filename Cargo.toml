@@ -1,5 +1,5 @@
 [package]
-name = "logo_to_ascii"
+name = "l2a"
 version = "0.4.2"
 edition = "2021"
 

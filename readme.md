@@ -30,6 +30,7 @@ Funciona mejor con imágenes de pocos colores y bordes bien definidos.
   - [3. Convertir bloques a carácter](#3-convertir-bloques-a-carácter)
 - [Preguntas frecuentes](#preguntas-frecuentes)
 
+
 ## Instalación
 
 - Prerrequisitos:
@@ -62,7 +63,7 @@ El caso más básico consiste en tratar logos de un solo color. Usaremos la sigu
 Para convertirla, ejecutamos el programa desde la consola. El primer argumento debe ser la ruta de la imagen.
 
 ```bash
-./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png
+./target/release/l2a.exe ./images/Cross_Calatrava.png
 ```
 
 ![Cruz de Calatrava](./images/cruz.png)
@@ -73,7 +74,7 @@ Para convertirla, ejecutamos el programa desde la consola. El primer argumento d
 > Los píxeles transparentes nunca se imprimen. En este caso, la imagen tiene el fondo transparente, por lo que tenemos que añadir `-v` para imprimirlos.
 
 ```bash
-./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png -nv
+./target/release/l2a.exe ./images/Cross_Calatrava.png -nv
 ```
 
 ![Cruz de Calatrava en negativo](./images/cruz_nv.png)
@@ -104,7 +105,7 @@ El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 - Para eliminar caracteres de ser usados, se puede usar `-x <caracteres_a_eliminar>`.
 
 ```bash
-./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png --all
+./target/release/l2a.exe ./images/Cross_Calatrava.png --all
 ```
 
 ![Cruz de Calatrava con todos los caracteres](./images/cruz_all.png)
@@ -115,7 +116,7 @@ El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
     En la consola los caracteres tienen una proporción de 1x2. El tamaño que se usa en esta aplicación es de 8x16.
 
 ```bash
-./target/release/logo_to_ascii.exe ./images/Cross_Calatrava.png -w100
+./target/release/l2a.exe ./images/Cross_Calatrava.png -w100
 ```
 
 ![Cruz de calatrava con 100 caracteres de anchura](./images/cruz_w100.png)
@@ -123,7 +124,7 @@ El set por defecto de caracteres es `8dbqp '·.` (incluyendo el espacio).
 - Si la imagen no queda bien alineada con los caracteres, se puede usar el argumento offset `--ofx <offset_x>` y `--ofy <offset_y>`. Estos valores añaden un offset transparente a la imagen. Se puede ver mejor en las esquinas afiladas.
 
 ```bash
-./target/release/logo_to_ascii.exe .\images\Cross_Calatrava.png --ofx 4 --ofy 8
+./target/release/l2a.exe .\images\Cross_Calatrava.png --ofx 4 --ofy 8
 ```
 
 ![Cruz de calatrava con offset de 4 en x y 8 en y](./images/cruz_ofx4_ofy8.png)
@@ -145,7 +146,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 - Para dibujar un borde entre los colores se usa el flag `-c`. Esto pondrá un borde negro donde detecte cambios de color. La anchura de los bordes se puede cambiar con el argumento `-b <anchura>`. Para cambiar la sensibilidad del detector de bordes se usa `-d <diferencia>`. Cuanto más alto sea el valor, más brusco tendrá que ser el cambio para que se detecte.
 
 ```bash
-./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -c
+./target/release/l2a.exe '.\images\tentacles.png' -c
 ```
 
 ![Tentáculos](./images/tentaculos.png)
@@ -153,7 +154,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 - Si se combina con `-n` y se tiene el fondo transparente solo se verán los bordes.
 
 ```bash
-./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -cn
+./target/release/l2a.exe '.\images\tentacles.png' -cn
 ```
 
 ![Tentáculos borde](./images/tentaculos_n.png)
@@ -161,7 +162,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 - Para ver la imagen original en negativo, al igual que con el logo anterior, se debe añadir `-nv`
 
 ```bash
-./target/release/Logo_to_ASCII.exe '.\images\tentacles.png' -cnv
+./target/release/l2a.exe '.\images\tentacles.png' -cnv
 ```
 
 ![Tentáculos inverso](./images/tentaculos_nv.png)
@@ -169,7 +170,7 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 - Otra combinación interesante es `-cv`
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cv
+./target/release/l2a.exe .\images\tentacles.png -cv
 ```
 
 ![Tentáculos borde oscuro](./images/tentaculos_cv.png)
@@ -185,13 +186,13 @@ Ahora vamos a probar con un logo de varios colores. Usaremos la siguiente imagen
 Las imágenes situadas al inicio del documento son:
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\Cross_Calatrava.png -C
+./target/release/l2a.exe .\images\Cross_Calatrava.png -C
 ```
 
 ![Cruz de Calatrava con coles](./images/cruz_C.png)
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cC
+./target/release/l2a.exe .\images\tentacles.png -cC
 ```
 
 ![Tentáculos con colores](./images/tentaculos_cC.png)
@@ -216,7 +217,7 @@ El algoritmo `gradient` normaliza la luminosidad de los caracteres, pero no la d
 Una opción para arreglar esto es el argumento `-g`, que convierte la imagen a escala de grises y luego la ilumina de forma que el punto más luminoso sea blanco. En los ejemplos de abajo se usa una imagen que va de blanco a negro, por lo que no es necesario usar `-g`.
 
 ```bash
-./target/release/logo_to_ascii.exe .\images\gradient.jpg -w 80 --algo gradient -a aeou
+./target/release/l2a.exe .\images\gradient.jpg -w 80 --algo gradient -a aeou
 ```
 
 ![Degradado normal](./images/gradient_aeou.png)
@@ -224,7 +225,7 @@ Una opción para arreglar esto es el argumento `-g`, que convierte la imagen a e
 Al añadir una @ y eliminar el espacio, ahora los bloques más oscuros los ocupa el siguiente carácter más oscuro y los más claros el más claro.
 
 ```bash
-./target/release/logo_to_ascii.exe .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " "
+./target/release/l2a.exe .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " "
 ```
 
 ![Degradado ajustado](./images/gradient_aeou@.png)
@@ -234,13 +235,13 @@ Al añadir una @ y eliminar el espacio, ahora los bloques más oscuros los ocupa
 - Todos estos argumentos también se puede mezclar unos con otros
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\Cross_Calatrava.png -cCv
+./target/release/l2a.exe .\images\Cross_Calatrava.png -cCv
 ```
 
 ![Cruz de Calatrava borde oscuro](./images/cruz_cCv.png)
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cCv -a "@#$&Yg*'´_/\ \"
+./target/release/l2a.exe .\images\tentacles.png -cCv -a "@#$&Yg*'´_/\ \"
 ```
 
 ![Tentáculos borde oscuro con más caracteres](./images/tentaculos_cCv_chars.png)
@@ -248,7 +249,7 @@ Al añadir una @ y eliminar el espacio, ahora los bloques más oscuros los ocupa
 - Antes de convertir la imagen a caracteres, la aplicación cambia la imagen. Para guardar la imagen final se usa `-o <nombre_imagen>`.
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\tentacles.png -cCv -o final_tentacles_cCv.png
+./target/release/l2a.exe .\images\tentacles.png -cCv -o final_tentacles_cCv.png
 ```
 
 ![Imagen final tentáculos](./images/final_tentacles_cCv_chars.png)
@@ -266,7 +267,7 @@ Por ejemplo:
 ![Palmera](./images/palm_rt7.jpg)
 
 ```bash
-./target/release/Logo_to_ASCII.exe .\images\palm.jpg -rt 0.7
+./target/release/l2a.exe .\images\palm.jpg -rt 0.7
 ```
 
 ![Palmera](./images/palmera.png)
@@ -274,7 +275,7 @@ Por ejemplo:
 Otra opción es añadir `-m 0` y `-C`, lo que imprimirá todos los caracteres con colores.
 
 ```bash
- ./target/release/Logo_to_ASCII.exe .\images\palm.jpg -m 0 -C
+ ./target/release/l2a.exe .\images\palm.jpg -m 0 -C
 ```
 
 ![Palmera con colores](./images/palmera_m0_C.png)
