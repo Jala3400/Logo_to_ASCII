@@ -53,7 +53,7 @@ pub struct Args {
 
     /// Specify to use the built-in dictionary. Overrides `--chars` but not `--add-chars` and `--except`
     /// You can specify multiple times to use multiple dictionaries or specify a list separated by commas
-    #[arg(long = "dict", num_args = 1.., value_delimiter = ',', value_enum, help_heading = "Character Set")]
+    #[arg(short, long = "dict", num_args = 1.., value_delimiter = ',', value_enum, help_heading = "Character Set")]
     pub dicts: Option<Vec<BuiltInCharSet>>,
 
     /// Font size to use
@@ -178,7 +178,7 @@ pub struct Args {
     /// Detect borders measuring brightness (when not used with color) (0 to disable)
     #[arg(
         short = 'k',
-        long = "thick",
+        long = "thickness",
         default_value_t = 0,
         help_heading = "Borders and Colors"
     )]
