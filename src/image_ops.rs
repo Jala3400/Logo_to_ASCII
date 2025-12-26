@@ -3,7 +3,7 @@ use crate::{
     proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
     types::{BorderCriteria, FontBitmap},
 };
-use image::{EncodableLayout, RgbaImage};
+use image::{EncodableLayout, RgbaImage, imageops};
 
 // Make transparent pixels visible
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
@@ -48,11 +48,11 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     args.height_in_pixels = target_height;
 
     // Resize the image
-    *img = image::imageops::resize(
+    *img = imageops::resize(
         img,
         target_width,
         target_height,
-        image::imageops::FilterType::CatmullRom,
+        imageops::FilterType::CatmullRom,
     );
 }
 
@@ -74,7 +74,7 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     let new_height = img_height + (args.padding_y * 2) as u32;
     let pixel_bytes = 4;
 
-    // The pixels should be trasparent, so depending on the visible flag they are black or white
+    // The pixels should be transparent, so depending on the visible flag they are black or white
     let mut new_bytes = vec![0u8; (new_width * new_height) as usize * pixel_bytes];
 
     // Set RGB based on visibility, alpha always 255

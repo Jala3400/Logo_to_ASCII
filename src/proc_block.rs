@@ -53,7 +53,7 @@ fn max_prod(block: &[f32], font: &FontBitmap, bright_pixels: usize) -> char {
 /// Takes into account the absolute differences between pixel brightness values
 fn min_diff(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
-    let mut less_diffrence = f32::MAX;
+    let mut less_difference = f32::MAX;
     let cell_size = font.cell_size();
 
     for char in &font.data {
@@ -62,8 +62,8 @@ fn min_diff(block: &[f32], font: &FontBitmap) -> char {
             match_value += (block[i] - char.data[i]).abs();
         }
 
-        if match_value < less_diffrence {
-            less_diffrence = match_value;
+        if match_value < less_difference {
+            less_difference = match_value;
             best_match = char.char;
         }
     }
@@ -75,7 +75,7 @@ fn min_diff(block: &[f32], font: &FontBitmap) -> char {
 /// Takes into account the squared differences between pixel brightness values
 fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
-    let mut less_diffrence = f32::MAX;
+    let mut less_difference = f32::MAX;
     let cell_size = font.cell_size();
 
     for char in &font.data {
@@ -85,8 +85,8 @@ fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
             match_value += diff * diff;
         }
 
-        if match_value < less_diffrence {
-            less_diffrence = match_value;
+        if match_value < less_difference {
+            less_difference = match_value;
             best_match = char.char;
         }
     }
