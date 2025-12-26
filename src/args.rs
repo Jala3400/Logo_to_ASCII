@@ -51,8 +51,9 @@ pub struct Args {
     #[arg(short = 'x', long, default_value = "", help_heading = "Character Set")]
     pub except: String,
 
-    /// Specify to use the built-in dictionary
-    #[arg(long = "dict", num_args = 1.., value_enum, help_heading = "Character Set")]
+    /// Specify to use the built-in dictionary. Overrides `--chars` but not `--add-chars` and `--except`
+    /// You can specify multiple times to use multiple dictionaries or specify a list separated by commas
+    #[arg(long = "dict", num_args = 1.., value_delimiter = ',', value_enum, help_heading = "Character Set")]
     pub dicts: Option<Vec<BuiltInCharSet>>,
 
     /// Font size to use
