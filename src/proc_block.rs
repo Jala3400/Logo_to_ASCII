@@ -179,7 +179,9 @@ fn gradient(block: &[f32], font: &FontBitmap) -> char {
     let cell_size = font.cell_size() as f32;
 
     // Add 0.5 to convert from [-0.5, 0.5] to [0, 1] while allowing to adjust
-    // the brightness with arg.midpoint_brightness
+    // If we wanted to do this correctly, we would need to add midpoint_brightness here, but
+    // then midpoint_brightness would not have any effect. So by just adding 0.5
+    // we let the user adjust the brightness level by changing midpoint_brightness
     let avg_block_brightness: f32 = block.iter().sum::<f32>() / cell_size + 0.5;
 
     let mut best_match = font.data[0].char;
