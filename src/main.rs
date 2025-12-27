@@ -10,6 +10,7 @@ use l2a::{
     proc_image::convert_image,
 };
 use std::io;
+use std::num::NonZeroU32;
 
 fn main() -> io::Result<()> {
     // Parse the command line arguments
@@ -36,13 +37,13 @@ fn main() -> io::Result<()> {
     treat_transparent(&mut img, &args);
 
     // Resize the image (after transparent treatment because of artifacts)
-    if args.width_in_chars > 0 {
-        args.width_in_pixels = args.width_in_chars * font.width as u32;
+    if let Some(w_nz) = args.width_in_chars {
+        args.width_in_pixels = NonZeroU32::new(w_nz.get() * font.width as u32);
     }
-    if args.height_in_chars > 0 {
-        args.height_in_pixels = args.height_in_chars * font.vertical_step as u32;
+    if let Some(h_nz) = args.height_in_chars {
+        args.height_in_pixels = NonZeroU32::new(h_nz.get() * font.vertical_step as u32);
     }
-    if args.height_in_pixels > 0 || args.width_in_pixels > 0 {
+    if args.height_in_pixels.is_some() || args.width_in_pixels.is_some() {
         resize(&mut img, &mut args);
     }
 
@@ -67,11 +68,7 @@ fn main() -> io::Result<()> {
         borders_image(
             &mut img,
             &args,
-            if args.border_thickness == 0 {
-                font.width as u32
-            } else {
-                args.border_thickness
-            },
+            args.border_thickness.map_or(font.width as u32, |t| t.get()),
         );
     }
 

@@ -3,7 +3,8 @@ use crate::{
     proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
     types::{BorderCriteria, FontBitmap},
 };
-use image::{EncodableLayout, RgbaImage, imageops};
+use image::{imageops, EncodableLayout, RgbaImage};
+use std::num::NonZeroU32;
 
 // Make transparent pixels visible
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
@@ -32,20 +33,24 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     }
 
     // Calculate dimensions once upfront
-    let (target_width, target_height) = match (args.width_in_pixels, args.height_in_pixels) {
-        (0, h) => {
+    let (target_width, target_height) = match (
+        args.width_in_pixels.map(|nz| nz.get()),
+        args.height_in_pixels.map(|nz| nz.get()),
+    ) {
+        (None, Some(h)) => {
             let ratio = h as f32 / orig_height as f32;
-            (((orig_width as f32) * ratio) as u32, h)
+            ((orig_width as f32 * ratio) as u32, h)
         }
-        (w, 0) => {
+        (Some(w), None) => {
             let ratio = w as f32 / orig_width as f32;
-            (w, ((orig_height as f32) * ratio) as u32)
+            (w, (orig_height as f32 * ratio) as u32)
         }
-        (w, h) => (w, h),
+        (Some(w), Some(h)) => (w, h),
+        (None, None) => (orig_width, orig_height),
     };
 
-    args.width_in_pixels = target_width;
-    args.height_in_pixels = target_height;
+    args.width_in_pixels = NonZeroU32::new(target_width);
+    args.height_in_pixels = NonZeroU32::new(target_height);
 
     // Resize the image
     *img = imageops::resize(
@@ -231,13 +236,13 @@ pub fn grayscale(img: &mut RgbaImage) {
     // Convert to grayscale and find min/max in single pass
     let mut max_brightness = 0u8;
     let mut min_brightness = 255u8;
-    
+
     for pixel in img.pixels_mut() {
         let gray_value = (calculate_brightness(pixel) * 255.0).round() as u8;
         pixel[0] = gray_value;
         pixel[1] = gray_value;
         pixel[2] = gray_value;
-        
+
         max_brightness = max_brightness.max(gray_value);
         min_brightness = min_brightness.min(gray_value);
     }

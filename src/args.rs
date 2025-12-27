@@ -2,6 +2,7 @@ use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;
+use std::num::NonZeroU32;
 
 #[derive(Parser)]
 #[command(
@@ -57,11 +58,11 @@ pub struct Args {
     pub dicts: Option<Vec<BuiltInCharSet>>,
 
     /// Font size to use
-    #[arg(long, default_value_t = 16, help_heading = "Character Set")]
-    pub char_size: u32,
+    #[arg(long, default_value = "16", help_heading = "Character Set")]
+    pub char_size: NonZeroU32,
 
     // Image Processing
-    /// Inverse the brightness of the image (transparent is never printed)
+    /// Inverse the brightness of the image
     #[arg(
         short,
         long,
@@ -116,39 +117,35 @@ pub struct Args {
     pub midpoint_brightness: f32,
 
     // Dimensions and Padding
-    /// Number of characters in the width of the end image (0 to default)
+    /// Number of characters in the width of the end image
     #[arg(
         short = 'w',
         long = "wc",
-        default_value_t = 0,
         help_heading = "Dimensions and Padding"
     )]
-    pub width_in_chars: u32,
+    pub width_in_chars: Option<NonZeroU32>,
 
-    /// Number of characters in the height of the end image (0 to default)
+    /// Number of characters in the height of the end image
     #[arg(
         short = 'h',
         long = "hc",
-        default_value_t = 0,
         help_heading = "Dimensions and Padding"
     )]
-    pub height_in_chars: u32,
+    pub height_in_chars: Option<NonZeroU32>,
 
-    /// Actual width of the image (0 to default)
+    /// Actual width of the image
     #[arg(
         long = "wp",
-        default_value_t = 0,
         help_heading = "Dimensions and Padding"
     )]
-    pub width_in_pixels: u32,
+    pub width_in_pixels: Option<NonZeroU32>,
 
-    /// Actual height of the image (0 to default)
+    /// Actual height of the image
     #[arg(
         long = "hp",
-        default_value_t = 0,
         help_heading = "Dimensions and Padding"
     )]
-    pub height_in_pixels: u32,
+    pub height_in_pixels: Option<NonZeroU32>,
 
     /// Padding of the width of the image
     #[arg(
@@ -184,14 +181,13 @@ pub struct Args {
     #[arg(short, long = "borders", help_heading = "Borders and Colors")]
     pub border_criteria: Option<BorderCriteria>,
 
-    /// Detect borders measuring brightness (when not used with color) (0 to disable)
+    /// Border thickness. (optional, default: width of the block)
     #[arg(
         short = 'k',
         long = "thickness",
-        default_value_t = 0,
         help_heading = "Borders and Colors"
     )]
-    pub border_thickness: u32,
+    pub border_thickness: Option<NonZeroU32>,
 
     /// Threshold for the color difference (from 0 to 360, will be the remainder after division by 360)
     #[arg(
