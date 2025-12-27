@@ -86,7 +86,7 @@ l2a '.\images\tentacles.png' -b all
 
 ![Tentacles](../images/ascii/tentacles_b_all.png)
 
--   Combine with `-n` for `--negative`, or `-v`  for `--visible` to show only the borders.
+-   Combine with `-n` for `--negative`, or `-v` for `--visible` to show only the borders.
 
 ```bash
 l2a '.\images\tentacles.png' --borders all -nv

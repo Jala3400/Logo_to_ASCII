@@ -56,7 +56,7 @@ l2a '.\images\tentacles.png' -b all -c --padx 1 -o
 ![Tentacles padx1](../../images/ascii/tentacles_b_all_c_padx1.png)
 
 The `d` has disappeared.
- 
+
 ```bash
 l2a '.\images\tentacles.png' -b all -c --padx 1 -o test2.png
 ```

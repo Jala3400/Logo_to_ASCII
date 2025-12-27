@@ -23,7 +23,7 @@ You can see a more technical explanation here [this](../how-it-works.md#other-al
 
 ## Gradient Algorithm Details
 
-The `gradient` algorithm normalizes the brightness of the characters (the less bright character is a 0 and the brightest is a 1) but not the image's blocks. 
+The `gradient` algorithm normalizes the brightness of the characters (the less bright character is a 0 and the brightest is a 1) but not the image's blocks.
 
 This means adding or removing characters changes the ranges assigned to each character. For darker images, brighter characters may not appear.
 
