@@ -48,7 +48,7 @@ l2a Cross_Calatrava.png -d all
 
 -   It is also possible to change the size of the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for more.
 
-In this case we use the argument `-w`, which sets the width in characters the end result will have.
+In this case we use the argument `-w, --wc <WIDTH_IN_CHARS>`, which sets the width in characters the end result will have.
 
 ```bash
 l2a Cross_Calatrava.png -w 100
@@ -63,7 +63,7 @@ For alignment issues we can add padding or center the image. See the [size and p
 Here we apply a padding in the x-axis and y-axis of half a block (you can find this out in [other](#other)).
 
 ```bash
-l2a .\images\Cross_Calatrava.png --ofx 4 --ofy 8
+l2a .\images\Cross_Calatrava.png --padx 4 --pady 8
 ```
 
 ![Cross of Calatrava with offset](../images/ascii/cross_padx4_pady8.png)
@@ -74,8 +74,8 @@ Now let's try with a multi-color logo:
 
 ![Tentacles](../images/sources/tentacles.png)
 
--   To draw borders between colors, use `--borders all`. This detects color and brightness changes and draws black borders.
--   The thickness of the border can be changed with `-k, --thickness` and it is measured in pixels.
+-   To draw borders between colors, use `-b, --borders all`. This detects color and brightness changes and draws black borders.
+-   The thickness of the border can be changed with `-k, --thick <BORDER_THICKNESS>` and it is measured in pixels.
 
 > [!Warning]
 > Here we use `--borders all` instead of `--borders color` because the background color is transparent. Because of [how this app works](how-it-works.md), the transparent pixels are transformed into black, which shares the same hue as red, so just checking for color will not detect the border between the red tentacle and the background.
@@ -86,7 +86,7 @@ l2a '.\images\tentacles.png' -b all
 
 ![Tentacles](../images/ascii/tentacles_b_all.png)
 
--   Combine with `-n` for negative, or `-v` to show only the borders.
+-   Combine with `-n` for `--negative`, or `-v`  for `--visible` to show only the borders.
 
 ```bash
 l2a '.\images\tentacles.png' --borders all -nv
@@ -100,7 +100,7 @@ You can further customize the borders in the [border tutorial](tutorial/tutorial
 
 ## Printing Colors
 
--   To print the image with colors, use the argument `-c`.
+-   To print the image with colors, use the argument `-c, --print-color`.
 
 ```bash
 l2a .\images\Cross_Calatrava.png -c
@@ -142,8 +142,8 @@ Number of characters: 80x34
 Unfilled space: 0x11 pixels
 ```
 
--   `-o <file_name>`: Because of [how this app works](how-it-works.md), the image you give it will be modified. This arguments lets you save it.
--   `--alg`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
+-   `-o, --output <OUTPUT>`: Because of [how this app works](how-it-works.md), the image you give it will be modified. This arguments lets you save it.
+-   `--alg <ALGORITHM>`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
 
 Other important tutorials:
 

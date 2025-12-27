@@ -6,11 +6,11 @@ When rendering text each font has different measures, and, depending on the scal
 
 To change the font you have two arguments:
 
-- `-f, --font-name <font_name>`: Search a font by the font name. For example `-f "Cascadia Mono"`.
-- `--font-path <font_path>`: Uses the font given its path.
+- `-f, --font-name <FONT_NAME>`: Search a font by the font name. For example `-f "Cascadia Mono"`.
+- `--font-path <FONT_PATH>`: Uses the font given its path.
 
 This will automatically adjust the size of the block to match the font.
 
 ## Adjusting the scale.
 
-`--char-size <height_in_pixels>` Lets you specify the desired height the characters will have.
+`--char-size <CHAR_SIZE>` Lets you specify the desired height in pixels the characters will have.

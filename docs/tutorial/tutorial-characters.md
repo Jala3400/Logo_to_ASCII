@@ -8,14 +8,14 @@ However, there are more interesting character sets.
 
 ## Customize the character set
 
--   To add characters use `-a <characters_to_add>`. For example, `-a "_/\\"` will add the characters `_`, `/`, and `\`.
--   To remove characters, use `-x <characters_to_remove>`.
--   To change the character set, use the argument `--chars <characters>`. The character set must be enclosed in `"` or `'` if you want to include the space.
--   You can also use prebuilt sets with the argument `--dicts <dicts>`, explained in the next section.
+-   To add characters use `-a, --add-chars <ADD_CHARS>`. For example, `-a "_/\\"` will add the characters `_`, `/`, and `\`.
+-   To remove characters, use `-x, --except <EXCEPT>`.
+-   To change the character set, use the argument `--chars <CHARS>`. The character set must be enclosed in `"` or `'` if you want to include the space.
+-   You can also use prebuilt sets with the argument `-d, --dict <DICTS>`, explained in the next section.
 
 ## Use a prebuilt character set
 
-With the option `-d` you can specify a different default character set. It will override the ones in `--chars`, but you can still use `-a` and `-x` to customize it.
+With the option `-d, --dict <DICTS>` you can specify a different default character set. It will override the ones in `--chars`, but you can still use `-a, --add-chars` and `-x, --except` to customize it.
 
 You can know which characters are in each dict with the `--verbose` option.
 

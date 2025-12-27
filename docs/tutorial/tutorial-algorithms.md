@@ -27,16 +27,16 @@ The `gradient` algorithm normalizes the brightness of the characters (the less b
 
 This means adding or removing characters changes the ranges assigned to each character. For darker images, brighter characters may not appear.
 
-To change this, the `-g` flag is used, which converts the image to grayscale and brightens it so the brightest point in the image becomes white.
+To change this, the `-g, --grayscale` flag is used, which converts the image to grayscale and brightens it so the brightest point in the image becomes white.
 
 ## Examples
 
 Using a gradient image to demonstrate:
 
-(The `-v` flag is added to make the transparent pixels white, because the image doesn't fill perfectly the bottom part)
+(The `-v, --visible` flag is added to make the transparent pixels white, because the image doesn't fill perfectly the bottom part)
 
 ```bash
-l2a .\images\gradient.jpg -w 80 --algo gradient --chars aeou -v
+l2a .\images\gradient.jpg -w 80 --alg gradient --chars aeou -v
 ```
 
 ![Normal gradient](../../images/ascii/gradient_aeou.png)
