@@ -11,9 +11,9 @@ There are more transformations you can do to the image before transforming it:
 
 This are kind of self explanatory, but you can check out [how the app works](../how-it-works.md) to see how they work.
 
-And there is a special one here:
+There is also a special argument that doesn't fit anywhere else:
 
-- `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>`: Because of [how the app works](../how-it-works.md) we need the brightness to have negative values, so we subtract this value to the brightness.
+- `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>`: Because of [how the app works](../how-it-works.md) we need the brightness to have positive and negative values, so we subtract this value to the brightness.
 
 Higher values will have cloudier edges, and lower values will have sharper edges.
 
@@ -25,4 +25,4 @@ l2a palm.jpg -c -m 0 --center --chars "8"
 
 ![Palm with color](../../images/ascii/palm_m0_center_chars8.png)
 
-We do not recommend using this for images with a lot of details, like this palm, this might be the only solution.
+We do not recommend using this app for images with a lot of details, like this palm tree, but this is the best way to do it.
