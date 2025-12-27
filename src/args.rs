@@ -185,9 +185,9 @@ pub struct Args {
     )]
     pub print_color: bool,
 
-    /// Separates colors (change thickness with `-b`)
-    #[arg(short, long = "borders", help_heading = "Borders and Colors")]
-    pub border_criteria: Option<BorderCriteria>,
+    /// Draws borders on the image according to the specified policy. You can specify multiple policies.
+    #[arg(short, long = "borders", num_args = 1.., value_delimiter = ',', value_enum, help_heading = "Borders and Colors")]
+    pub border_criteria: Option<Vec<BorderCriteria>>,
 
     /// Border thickness. (optional, default: width of the block)
     #[arg(short = 'k', long = "thickness", help_heading = "Borders and Colors")]
@@ -208,6 +208,14 @@ pub struct Args {
         help_heading = "Borders and Colors"
     )]
     pub brightness_diff: f32,
+
+    /// Threshold for the alpha difference (from 0 to 1)
+    #[arg(
+        long = "alpha-diff",
+        default_value_t = 0.0,
+        help_heading = "Borders and Colors"
+    )]
+    pub alpha_diff: f32,
 
     // Algorithm and Misc
     /// Algorithm used to match blocks to characters

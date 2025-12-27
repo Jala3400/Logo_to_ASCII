@@ -78,13 +78,16 @@ pub struct CharInfo {
 ///
 /// * `Color` - Detect borders based on color differences.
 /// * `Brightness` - Detect borders based on brightness differences.
-/// * `Both` - Detect borders using both color and brightness differences.
+/// * `Alpha` - Detect borders based on alpha (transparency) differences.
+/// * `All` - Detect borders using all criteria (color, brightness, and alpha).
 #[derive(Debug, Clone, ValueEnum)]
 pub enum BorderCriteria {
     #[value(name = "color")]
     Color,
     #[value(name = "brightness")]
     Brightness,
+    #[value(name = "alpha")]
+    Alpha,
     #[value(name = "all")]
     All,
 }

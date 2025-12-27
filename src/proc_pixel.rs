@@ -74,3 +74,10 @@ pub fn hue_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> u16 {
     let diff = calc_hue(pixel1).abs_diff(calc_hue(pixel2));
     diff.min(360_u16.abs_diff(diff))
 }
+
+// Calculate the difference between the alpha values of two pixels
+pub fn alpha_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
+    let alpha1 = pixel1[3] as f32 / 255.0;
+    let alpha2 = pixel2[3] as f32 / 255.0;
+    (alpha1 - alpha2).abs()
+}

@@ -1,29 +1,13 @@
 use crate::{
     args::Args,
-    proc_pixel::{brightness_difference, calculate_brightness, calculate_linear_brightness, hue_difference},
+    proc_pixel::{
+        alpha_difference, brightness_difference, calculate_brightness, calculate_linear_brightness,
+        hue_difference,
+    },
     types::{BorderCriteria, FontBitmap},
 };
 use image::{imageops, EncodableLayout, RgbaImage};
 use std::num::NonZeroU32;
-
-// Make transparent pixels visible
-pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
-    for pixel in img.pixels_mut() {
-        let alpha = pixel[3];
-        if !args.visible {
-            let factor = alpha as f32 / 255.0;
-            pixel[0] = (pixel[0] as f32 * factor) as u8;
-            pixel[1] = (pixel[1] as f32 * factor) as u8;
-            pixel[2] = (pixel[2] as f32 * factor) as u8;
-        } else {
-            let factor = alpha as f32 / 255.0;
-            pixel[0] = (pixel[0] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-            pixel[1] = (pixel[1] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-            pixel[2] = (pixel[2] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-        }
-        pixel[3] = 255;
-    }
-}
 
 // Resizes an image
 pub fn resize(img: &mut RgbaImage, args: &mut Args) {
@@ -79,17 +63,9 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     let new_height = img_height + (args.padding_y * 2) as u32;
     let pixel_bytes = 4;
 
-    // The pixels should be transparent, so depending on the visible flag they are black or white
+    // The pixels should be transparent
     let mut new_bytes = vec![0u8; (new_width * new_height) as usize * pixel_bytes];
 
-    // Set RGB based on visibility, alpha always 255
-    let fill_value = if args.visible { 255 } else { 0 };
-    for chunk in new_bytes.chunks_exact_mut(4) {
-        chunk[0] = fill_value;
-        chunk[1] = fill_value;
-        chunk[2] = fill_value;
-        chunk[3] = 255;
-    }
     let original_bytes = img.as_bytes();
 
     // Copy original image data with padding
@@ -141,17 +117,36 @@ pub fn borders_image(img: &mut RgbaImage, args: &Args, thickness: u32) {
 }
 
 // Detects the borders of an image
-// Unified function that handles all detection modes in a single if statement
+// Unified function that handles all detection modes
 fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
     // Return empty if no border criteria is set
-    let Some(criteria) = &args.border_criteria else {
+    let Some(criteria_list) = &args.border_criteria else {
         return Vec::new();
     };
+
+    // Convert criteria list to flags for efficient checking
+    let mut check_color = false;
+    let mut check_brightness = false;
+    let mut check_alpha = false;
+
+    for criteria in criteria_list {
+        match criteria {
+            BorderCriteria::Color => check_color = true,
+            BorderCriteria::Brightness => check_brightness = true,
+            BorderCriteria::Alpha => check_alpha = true,
+            BorderCriteria::All => {
+                check_color = true;
+                check_brightness = true;
+                check_alpha = true;
+            }
+        }
+    }
 
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
     let b_threshold = args.brightness_diff;
     let hue_threshold = args.color_diff % 360;
+    let alpha_threshold = args.alpha_diff;
 
     // Compares a pixel to the one on its right and below
     for y in 0..height - 1 {
@@ -160,26 +155,16 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
             let right_pixel = img.get_pixel(x + 1, y);
             let bottom_pixel = img.get_pixel(x, y + 1);
 
-            // Single if statement - modify this to change detection strategy
-            let is_border = match criteria {
-                BorderCriteria::Color => {
-                    // Color (hue) detection only
-                    hue_difference(&current_pixel, &right_pixel) > hue_threshold
-                        || hue_difference(&current_pixel, &bottom_pixel) > hue_threshold
-                }
-                BorderCriteria::Brightness => {
-                    // Brightness detection only
-                    brightness_difference(&current_pixel, &right_pixel) > b_threshold
-                        || brightness_difference(&current_pixel, &bottom_pixel) > b_threshold
-                }
-                BorderCriteria::All => {
-                    // Both color and brightness detection (OR logic)
-                    hue_difference(&current_pixel, &right_pixel) > hue_threshold
-                        || hue_difference(&current_pixel, &bottom_pixel) > hue_threshold
-                        || brightness_difference(&current_pixel, &right_pixel) > b_threshold
-                        || brightness_difference(&current_pixel, &bottom_pixel) > b_threshold
-                }
-            };
+            // Check enabled criteria using flags
+            let is_border = (check_color
+                && (hue_difference(&current_pixel, &right_pixel) > hue_threshold
+                    || hue_difference(&current_pixel, &bottom_pixel) > hue_threshold))
+                || (check_brightness
+                    && (brightness_difference(&current_pixel, &right_pixel) > b_threshold
+                        || brightness_difference(&current_pixel, &bottom_pixel) > b_threshold))
+                || (check_alpha
+                    && (alpha_difference(&current_pixel, &right_pixel) > alpha_threshold
+                        || alpha_difference(&current_pixel, &bottom_pixel) > alpha_threshold));
 
             if is_border {
                 borders.push((x, y));
@@ -210,6 +195,25 @@ fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness
                 img.put_pixel(nx, ny, black_pixel);
             }
         }
+    }
+}
+
+// Make transparent pixels visible
+pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
+    for pixel in img.pixels_mut() {
+        let alpha = pixel[3];
+        if !args.visible {
+            let factor = alpha as f32 / 255.0;
+            pixel[0] = (pixel[0] as f32 * factor) as u8;
+            pixel[1] = (pixel[1] as f32 * factor) as u8;
+            pixel[2] = (pixel[2] as f32 * factor) as u8;
+        } else {
+            let factor = alpha as f32 / 255.0;
+            pixel[0] = (pixel[0] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
+            pixel[1] = (pixel[1] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
+            pixel[2] = (pixel[2] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
+        }
+        pixel[3] = 255;
     }
 }
 
