@@ -7,6 +7,9 @@ pub fn process_characters(args: &mut Args) {
         args.chars.clear();
         for dict in dicts {
             match dict {
+                BuiltInCharSet::Default => {
+                    args.chars.push_str("8dbqp'·. ");
+                }
                 BuiltInCharSet::All => {
                     args.chars
                         .push_str(&(32..=126).map(|c| c as u8 as char).collect::<String>());
