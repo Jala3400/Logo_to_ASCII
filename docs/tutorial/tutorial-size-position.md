@@ -2,24 +2,26 @@
 
 It is weird that the image that you have fits perfectly where you want and how you want it, so we provide a set of tools that help with it.
 
+
 ## Adjusting size
 
 There are multiple options to change the size of the final result:
 
--   `-w, --wc <WIDTH_IN_CHARS>` This is number of characters the final result with have per line.
--   `-h, --hc <HEIGHT_IN_CHARS>` This is the number of lines the final result will have.
--   `--wp <WIDTH_IN_PIXELS>` This is is width in pixels you want the image to have.
--   `--hp <HEIGHT_IN_PIXELS>` This is the height in pixels you want the image to have.
+-   `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the width of the end image
+-   `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the height of the end image
+-   `-W, --width-pixels <WIDTH_IN_PIXELS>`: Actual width of the image in pixels
+-   `-H, --height-pixels <HEIGHT_IN_PIXELS>`: Actual height of the image in pixels
 
 Specifying size in characters overrides the size in pixels, and if you only change one dimension, the aspect ratio will be kept.
+
 
 ## Adjusting position
 
 Sometimes the image is not in the position we want. To fix it we can change the padding.
 
--   `--center` Automatically adjusts the padding so the image is centered.
--   `--padx <PADDING_X>` Specifies more padding to be added on the x axis.
--   `--pady <PADDING_Y>` Specifies more padding to be added on the y axis.
+-   `-C, --center`: Center the image in respect to the characters by adjusting the padding
+-   `-X, --padx <PADDING_X>`: Padding of the width of the image [default: 0]
+-   `-Y, --pady <PADDING_Y>`: Padding of the height of the image [default: 0]
 
 The padding will be treated in the same way as a transparent color, and the padding you specify manually will be added to the one calculated on `--center`.
 

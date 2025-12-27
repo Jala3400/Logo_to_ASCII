@@ -31,7 +31,7 @@ The `gradient` algorithm normalizes the brightness of the characters, so the dar
 
 This means that adding or removing characters changes the ranges of brightness assigned to each character, and that in dark images the bright characters might not appear.
 
-To normalize the brightness of the image you should use the `-g, --grayscale` flag, which converts the image to grayscale and brightens it so the brightest point in the image becomes white and the darkest black.
+To normalize the brightness of the image you should use the `-g, --grayscale` flag, which converts the image to grayscale and normalizes the brightness so the brightest point in the image becomes white and the darkest black.
 
 ## Examples
 

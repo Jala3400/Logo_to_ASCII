@@ -7,7 +7,7 @@ When rendering text each font has different measures for its characters, and, de
 To change the font you have two arguments:
 
 -   `-f, --font-name <FONT_NAME>`: Search a font by the font name. For example `-f "Cascadia Mono"`.
--   `--font-path <FONT_PATH>`: Uses the font given its path.
+-   `-F, --font-path <FONT_PATH>`: Uses the font given its path.
 
 This will automatically adjust the size of the block to match the font.
 

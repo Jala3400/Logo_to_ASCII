@@ -22,7 +22,7 @@ Something similar happens when working with black logos and brightness, but you 
 
 ### Border thickness
 
-`-k, --thick <BORDER_THICKNESS>` receives a number. It is the thickness of the borders that will be drawn.
+`-k, --thickness <BORDER_THICKNESS>`: Border thickness (default: width of the block)
 
 If not specified its default value is the width of a block.
 
@@ -30,8 +30,8 @@ If not specified its default value is the width of a block.
 
 There is one threshold for color and other for brightness.
 
--   `--color-diff <COLOR_DIFF>`: From 0 to 360, enforced by using the remainder of COLOR_DIFF by 360 (modulus operation).
--   `--brightness-diff <BRIGHTNESS_DIFF>`: From 0 to 1, it is a number with decimals.
+-   `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360)
+-   `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1)
 
 ## Recommendations
 
