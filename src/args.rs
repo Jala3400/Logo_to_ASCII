@@ -36,7 +36,7 @@ pub struct Args {
     pub font_name: Option<String>,
 
     /// Path of the font to use (optional)
-    #[arg(long, help_heading = "Input/Output")]
+    #[arg(short = 'F', long, help_heading = "Input/Output")]
     pub font_path: Option<String>,
 
     // Character Set
@@ -71,11 +71,10 @@ pub struct Args {
     )]
     pub negative: bool,
 
-    /// Preprocess the image to black and white.
-    /// Makes the transparent pixels black by default.
+    /// Turn the image into black and white.
     #[arg(
-        short = 'r',
-        long = "bw",
+        short = 'B',
+        long = "black-white",
         default_value_t = false,
         help_heading = "Image Processing"
     )]
@@ -103,7 +102,7 @@ pub struct Args {
     )]
     pub saturate: bool,
 
-    /// Grayscale and brighten the image
+    /// Grayscale and normalize the brightness of the image
     #[arg(
         short = 'g',
         long,
@@ -120,7 +119,7 @@ pub struct Args {
     /// Number of characters in the width of the end image
     #[arg(
         short = 'w',
-        long = "wc",
+        long = "width-chars",
         help_heading = "Dimensions and Padding"
     )]
     pub width_in_chars: Option<NonZeroU32>,
@@ -128,27 +127,30 @@ pub struct Args {
     /// Number of characters in the height of the end image
     #[arg(
         short = 'h',
-        long = "hc",
+        long = "height-chars",
         help_heading = "Dimensions and Padding"
     )]
     pub height_in_chars: Option<NonZeroU32>,
 
     /// Actual width of the image
     #[arg(
-        long = "wp",
+        short = 'W',
+        long = "width-pixels",
         help_heading = "Dimensions and Padding"
     )]
     pub width_in_pixels: Option<NonZeroU32>,
 
     /// Actual height of the image
     #[arg(
-        long = "hp",
+        short = 'H',
+        long = "height-pixels",
         help_heading = "Dimensions and Padding"
     )]
     pub height_in_pixels: Option<NonZeroU32>,
 
     /// Padding of the width of the image
     #[arg(
+        short = 'X',
         long = "padx",
         default_value_t = 0,
         help_heading = "Dimensions and Padding"
@@ -157,6 +159,7 @@ pub struct Args {
 
     /// Padding of the height of the image
     #[arg(
+        short = 'Y',
         long = "pady",
         default_value_t = 0,
         help_heading = "Dimensions and Padding"
@@ -164,7 +167,12 @@ pub struct Args {
     pub padding_y: usize,
 
     /// Center the image in respect to the characters by adjusting the padding
-    #[arg(long, default_value_t = false, help_heading = "Dimensions and Padding")]
+    #[arg(
+        short = 'C',
+        long,
+        default_value_t = false,
+        help_heading = "Dimensions and Padding"
+    )]
     pub center: bool,
 
     // Borders and Colors
@@ -182,11 +190,7 @@ pub struct Args {
     pub border_criteria: Option<BorderCriteria>,
 
     /// Border thickness. (optional, default: width of the block)
-    #[arg(
-        short = 'k',
-        long = "thickness",
-        help_heading = "Borders and Colors"
-    )]
+    #[arg(short = 'k', long = "thickness", help_heading = "Borders and Colors")]
     pub border_thickness: Option<NonZeroU32>,
 
     /// Threshold for the color difference (from 0 to 360, will be the remainder after division by 360)
@@ -207,7 +211,7 @@ pub struct Args {
 
     // Algorithm and Misc
     /// Algorithm used to match blocks to characters
-    #[arg(long = "alg", value_enum, default_value_t = Algorithm::MaxProd, help_heading = "Algorithm and Misc")]
+    #[arg(short = 'A', long = "alg", value_enum, default_value_t = Algorithm::MaxProd, help_heading = "Algorithm and Misc")]
     pub algorithm: Algorithm,
 
     /// Print information about the image

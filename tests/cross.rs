@@ -165,7 +165,7 @@ fn cross_w100_padx4() {
         .arg("run")
         .arg("--")
         .arg("./images/sources/Cross_Calatrava.png")
-        .arg("--wc")
+        .arg("-w")
         .arg("100")
         .arg("--padx")
         .arg("4")
