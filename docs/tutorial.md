@@ -128,7 +128,7 @@ l2a .\images\Cross_Calatrava.png -cvb all
 
 Other important arguments are:
 
--   `--verbose`, which will give you information about the characters used and the image.
+-   `--verbose`: Will give you information about the characters used and the image.
 
 An example of this is:
 
@@ -142,6 +142,10 @@ Number of characters: 80x34
 Unfilled space: 0x11 pixels
 ```
 
--   `-o <file_name>` Because of [how this app works](how-it-works.md), the image you give it will be modified. This arguments lets you save it.
--   `--alg` changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
--   In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do.
+-   `-o <file_name>`: Because of [how this app works](how-it-works.md), the image you give it will be modified. This arguments lets you save it.
+-   `--alg`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
+
+Other important tutorials:
+
+-   To adapt the result to your specific font you should check out the [font tutorial](tutorial/tutorial-font.md)
+-   In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do before converting the image.
