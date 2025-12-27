@@ -60,7 +60,7 @@ l2a Cross_Calatrava.png -w 100
 
 For alignment issues we can add padding or center the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for a deeper explanation.
 
-Here we apply a padding in the x-axis and y-axis of half a character (you can find this out in [other](#other)).
+Here we apply a padding in the x-axis and y-axis of half a block (you can find this out in [other](#other)).
 
 ```bash
 l2a .\images\Cross_Calatrava.png --ofx 4 --ofy 8
@@ -129,6 +129,19 @@ l2a .\images\Cross_Calatrava.png -cvb all
 Other important arguments are:
 
 -   `--verbose`, which will give you information about the characters used and the image.
+
+An example of this is:
+
+```txt
+Characters:  .·'qpbd8
+Char size: 8x16, Line gap: 0
+Block size: 8x16
+Original dimensions 1920x1600
+Image dimensions: 640x533
+Number of characters: 80x34
+Unfilled space: 0x11 pixels
+```
+
 -   `-o <file_name>` Because of [how this app works](how-it-works.md), the image you give it will be modified. This arguments lets you save it.
 -   `--alg` changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
 -   In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do.

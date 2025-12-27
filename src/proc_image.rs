@@ -28,6 +28,15 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     if args.verbose {
         println!("Image dimensions: {}x{}", width, height);
         println!("Number of characters: {}x{}", num_blocks_x, num_blocks_y);
+        
+        let filled_width = num_blocks_x * font_width;
+        let filled_height = num_blocks_y * vertical_step;
+        let unfilled_width = filled_width - width;
+        let unfilled_height = filled_height - height;
+        
+        if unfilled_width > 0 || unfilled_height > 0 {
+            println!("Unfilled space: {}x{} pixels", unfilled_width, unfilled_height);
+        }
     }
 
     let string_capacity = num_blocks_x * num_blocks_y * if args.print_color { 22 } else { 1 };
