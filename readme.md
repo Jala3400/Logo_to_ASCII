@@ -1,6 +1,6 @@
 <div>
 <img src="./images/ascii/cross_dict_box_all.png" height="400"/>
-<img src="./images/ascii/tentacles_ball_c_a=_padx9_pady8.png" height="400"/>
+<img src="./images/ascii/tentacles_b_all_c_padx1.png" height="400"/>
 </div>
 
 # Logo to ASCII
