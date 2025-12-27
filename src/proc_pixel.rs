@@ -15,6 +15,14 @@ pub fn calculate_brightness(pixel: &Rgba<u8>) -> f32 {
     ((0.299 * r + 0.587 * g + 0.114 * b) / 255.0).sqrt()
 }
 
+pub fn calculate_linear_brightness(pixel: &Rgba<u8>) -> f32 {
+    let r = pixel[0] as f32;
+    let g = pixel[1] as f32;
+    let b = pixel[2] as f32;
+
+    (0.299 * r + 0.587 * g + 0.114 * b) / 255.0
+}
+
 // Calculate the hue of a pixel
 pub fn calc_hue(pixel: &Rgba<u8>) -> u16 {
     let r = pixel[0] as f32 / 255.0;

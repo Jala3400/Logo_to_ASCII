@@ -1,6 +1,6 @@
 use crate::{
     args::Args,
-    proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
+    proc_pixel::{brightness_difference, calculate_brightness, calculate_linear_brightness, hue_difference},
     types::{BorderCriteria, FontBitmap},
 };
 use image::{imageops, EncodableLayout, RgbaImage};
@@ -238,7 +238,11 @@ pub fn grayscale(img: &mut RgbaImage) {
     let mut min_brightness = 255u8;
 
     for pixel in img.pixels_mut() {
-        let gray_value = (calculate_brightness(pixel) * 255.0).round() as u8;
+        // Do not use calculate_brightness to avoid sqrt
+        // otherwise it changes the brightness distribution.
+        // In other places it is fine to use calculate_brightness
+        // because you treat darker pixels differently than brighter ones.
+        let gray_value = (calculate_linear_brightness(pixel) * 255.0).round() as u8;
         pixel[0] = gray_value;
         pixel[1] = gray_value;
         pixel[2] = gray_value;
