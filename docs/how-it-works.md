@@ -9,27 +9,27 @@ But, before applying the algorithm, a few steps are needed.
 1. Process the characters we want to use
 2. Preprocess the image (if necessary), as it is weird that an image fits perfectly the first time.
 
-You can jump directly to the [part of the algorithm](#3-convert-blocks-to-character) if you want, but to understand how this app works you will the two first steps.
+You can jump directly to the [explanation of the algorithm](#3-convert-blocks-to-character) if you want, but to understand how this app works you will the two first steps.
 
 ## 1. Characters
 
-After this step we will have a bitmap with the brightness of each pixel of each character and the dimensions of the blocks.
+After this step we will have the dimensions of the blocks and a bitmap of each character including the brightness of its pixels.
 
 1. **Dimensions of the block**
 
 We assume a monospaced font.
 
-The dimensions of the blocks need to be calculated here because different fonts have different proportions and different gaps between lines.
+The dimensions of the blocks need to be calculated because different fonts have different proportions and different gaps between lines.
 
 Also, the width changes depending on the height of the character.
 
-The default font used here is `Ubuntu Mono Nerd Font` with a default height of 16px, which results in 8x16 characters with no line gap.
+The default font used here is `UbuntuMono Nerd Font` with a default height of 16px, which results in 8x16 characters with no line gap.
 
 The dimensions of the block are (char_width)x(char_height + line_gap)
 
 2. **Character bitmap**
 
-First we iterate over every pixel and calculate is brightness.
+We iterate over every pixel and calculate is brightness.
 
 When calculating brightness, a value from 0 to 1 is obtained. It is important to subtract 0.5, because the algorithm only works with positive and negative values. This will make sense later.
 
@@ -37,7 +37,7 @@ We also collect statistical information on each character to work with different
 
 ## 2. Preprocessing (if any)
 
-After this step we will have the final image to be processed.
+After this step we will have the final image to be converted.
 
 This steps are only executed if the flags say so
 
@@ -49,7 +49,7 @@ Transparencies usually mean that a pixel is less visible, so a pixel is mixed wi
 
 2. **Resize the image**:
 
-If the dimension has been given in characters, calculate it in pixels.
+If the dimension has been given in characters, calculate its equivalent in pixels.
 
 Little explanation here, just resize the image.
 
@@ -59,11 +59,11 @@ Sometimes the image doesn't fully fill the right or bottom blocks. In this step 
 
 4. **Add padding**:
 
-On top of the padding from the previous step, if there is any, you can add more padding to the image.
+Add more padding to the image on top of the previous one, if there is any.
 
 5. **Saturate the image**:
 
-Increases the color saturation of each pixel.
+Increases the color saturation of each pixel if it is brighter than the midpoint brightness and decreases it if it isn't.
 
 6. **Draw borders**:
 
@@ -92,6 +92,8 @@ For each pixel, if it brightness is over a threshold, make it white. Otherwise, 
 
 ## 3. Convert Blocks to Character
 
+After this step we will have a string with the characters that match the image the best.
+
 First, the image is divided into blocks with the same measures as the characters and compared with all characters.
 
 After processing a block, we should have the character that fits it best.
@@ -104,7 +106,7 @@ We get the bitmap of the block in the same way as the characters. We calculate t
 
 2. **Finding the best match**
 
-For each character, each pixel is multiplied by its equivalent in the block, and all values are summed (`[0][0] * [0][0] + [0][1] * [0][1] + ... + [n][m] * [n][m]`).
+For each character, each pixel is multiplied by its equivalent in the block, and all values are added (`[0][0] * [0][0] + [0][1] * [0][1] + ... + [n][m] * [n][m]`).
 
 This works because it rewards matching pixels (both with positive or negative brightness) and punishes mismatching ones (one positive and the other negative).
 
@@ -112,19 +114,25 @@ The character with the highest score is the one that matches the best.
 
 **Optimization:**
 
-Only applies to `max_prod` when the first character is the space.
+It only applies with this algorithm when the first character is a space (i think there can be a general solution, but i do not have it yet).
 
-In this step, the number of illuminated pixels in the block is also counted. A character is only considered for printing if half of its positive brightness pixels are at least the number of illuminated pixels in the block.
+In this step, the number of bright pixels in the block is also counted. With bright I mean with a brightness higher than the midpoint brightness, as we subtract the midpoint brightness to the original brightness.
 
-The sentence is complicated to understand, but in summary, if a character has 10 pixels with brightness > 0, a character will only be considered if it has at least 5 illuminated pixels. If it had less than 5, there would be no scenario where that character would be chosen before the space. If there is no space, the character with the fewest illuminated pixels is chosen.
+The base case is simple. If it doesn't have bright pixels then the best match is always the space. It doesn't matter that there is other character with a similar shape, because when multiplying the space has the greatest values, so it will have the highest result.
 
-Additionally, if all pixels are completely illuminated, the brightest character can be printed directly.
+Now comes a complicated phrase, but in the following paragraph we give an example. This is the main logic for the optimization:
+
+A character is only considered for printing if half of its bright pixels are at least the number of illuminated pixels in the block.
+
+The sentence is complicated to understand, but in summary, if a character has 10 bright pixels, a character will only be considered if it has at least 5 bright pixels. If it had less than 5, there would be no scenario where that character would be chosen before the space. If there is no space, the character with the fewest illuminated pixels is chosen.
+
+Additionally, if all pixels are completely illuminated, the brightest character can be printed directly. Notice that if they where not completely illuminated there might be combinations where other character fits best.
 
 ## Other algorithms
 
 This app has other algorithms that can match a block:
 
-The first one `max_prod` is the one we have explained before. None of the others can match the results of this one except `ncc`, which acts in a similar way, so the results are practically the same.
+The first one is called `max_prod` and it is the one we have explained before. None of the others can match the results of this one except `ncc`, which acts in a similar way, so the results are practically the same.
 
 -   **Maximum Product (`max_prod`)**: The default algorithm described in step 3.2. Multiplies each pixel of the character with its equivalent in the block and sums all values (`block[0] * char[0] + block[1] * char[1] + ...`). The character with the highest score wins. This rewards matching pixels (both bright or both dark) and punishes mismatches.
 
@@ -140,8 +148,18 @@ The first one `max_prod` is the one we have explained before. None of the others
 
 ## Calculating brightness
 
+### Brightness formula
+
 In the following sections, when calculating the brightness from an rgb value, we use the following formula:
 
 sqrt(0.299 \* r + 0.587 \* g + 0.114 \* b)
 
 We do the square root because the human eye does not perceive the brightness linearly. If we didn't do the square root, the color red would be dark enough that it would not print.
+
+### Custom brightness formula
+
+It is the same as before but you subtract 0.5 (or other value of your liking). The point is that you need negative and positive values.
+
+If the brightness range is from 0 to 1, when you multiply you can only increase the score, so a brighter character will have a higher value than the darker ones. Even if it was a completely dark block it will have a score of 0 with every character.
+
+It is only when you have negative values that you can punish mismatches.

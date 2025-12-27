@@ -1,6 +1,6 @@
 # Tutorial: Font
 
-When rendering text each font has different measures, and, depending on the scale, each character is drawn differently.
+When rendering text each font has different measures for its characters, and, depending on the scale, each character is drawn differently.
 
 ## Changing the font
 

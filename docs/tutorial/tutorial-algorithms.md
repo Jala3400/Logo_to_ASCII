@@ -1,6 +1,8 @@
 # Tutorial: Algorithms
 
-In addition to the default algorithm (`max_prod`), Logo to ASCII supports several other algorithms for matching image blocks to characters. Each algorithm has different strengths and can produce varying results.
+In addition to the default algorithm (`max_prod`), Logo to ASCII supports several other algorithms for matching image blocks to characters.
+
+The best one is the default one by far (except for `cnn`, which acts in a really similar way), but we include them to experiment.
 
 ## Available Algorithms
 
@@ -13,21 +15,23 @@ In addition to the default algorithm (`max_prod`), Logo to ASCII supports severa
 
 ## Algorithm Explanations
 
-The `min_diff` and `min_diff_sq` algorithms operate pixel by pixel, producing results similar to `max_prod` but with less definition.
+The `min_diff` and `min_diff_sq` algorithms operate pixel by pixel, producing results similar to `max_prod` but less defined.
 
 `corr` and `ncc` measure correlation and normalized cross-correlation respectively. These consider how similar the variations are between a block and a character, with `ncc` also accounting for magnitude differences.
 
-The `gradient` algorithm calculates the average brightness of each block rather than comparing shapes. This is more like traditional ASCII art converters.
+The `gradient` algorithm calculates the average brightness of each block rather than comparing shapes. This is closer to traditional ASCII art converters.
 
-You can see a more technical explanation here [this](../how-it-works.md#other-algorithms) page.
+You can see a more technical explanation on the algorithms in [this](../how-it-works.md#other-algorithms) page.
 
 ## Gradient Algorithm Details
 
-The `gradient` algorithm normalizes the brightness of the characters (the less bright character is a 0 and the brightest is a 1) but not the image's blocks.
+Even if it operates with the average brightness of a block, it still has a few advantages:
 
-This means adding or removing characters changes the ranges assigned to each character. For darker images, brighter characters may not appear.
+The `gradient` algorithm normalizes the brightness of the characters, so the darkest character has a brightness o 0 and the brightest a 1. However it doesn't normalize the image.
 
-To change this, the `-g, --grayscale` flag is used, which converts the image to grayscale and brightens it so the brightest point in the image becomes white.
+This means that adding or removing characters changes the ranges of brightness assigned to each character, and that in dark images the bright characters might not appear.
+
+To normalize the brightness of the image you should use the `-g, --grayscale` flag, which converts the image to grayscale and brightens it so the brightest point in the image becomes white and the darkest black.
 
 ## Examples
 
@@ -51,7 +55,7 @@ l2a .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " " -v
 
 ## Choosing an Algorithm
 
--   Use `max_prod` for most logos and simple shapes (default)
+-   Use `max_prod`
 -   Try `gradient` for photos or images with smooth gradients
 -   Experiment with the other ones, but with little hope
 

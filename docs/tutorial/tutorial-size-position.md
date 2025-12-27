@@ -1,5 +1,7 @@
 # Tutorial: Size and Position
 
+It is weird that the image that you have fits perfectly where you want and how you want it, so we provide a set of tools that help with it.
+
 ## Adjusting size
 
 There are multiple options to change the size of the final result:
@@ -9,7 +11,7 @@ There are multiple options to change the size of the final result:
 -   `--wp <WIDTH_IN_PIXELS>` This is is width in pixels you want the image to have.
 -   `--hp <HEIGHT_IN_PIXELS>` This is the height in pixels you want the image to have.
 
-The size in characters overrides the size in pixels, and if you only change one dimension, the aspect ratio will be kept.
+Specifying size in characters overrides the size in pixels, and if you only change one dimension, the aspect ratio will be kept.
 
 ## Adjusting position
 
@@ -27,7 +29,7 @@ Lets revisit the example of the tentacles:
 
 ![Tentacles](../../images/sources/tentacles.png)
 
-This image fits perfectly, there is no need to align it, but when we render it we might notice some characters that seem out of place on the left part of the photo:
+This image fill the characters perfectly, there is no need to center it, but when we render it we might notice a character that seems out of place on the left part of the photo:
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c
@@ -37,7 +39,7 @@ l2a '.\images\tentacles.png' -b all -c
 
 That letter `d` is sticking a bit too much.
 
-Lets see what is happening behind the scenes by saving the final image.
+Lets have a look behind the scenes by saving the final image.
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c -o test.png
@@ -45,9 +47,9 @@ l2a '.\images\tentacles.png' -b all -c -o test.png
 
 ![Tentacles final](../../images/final/tentacles_b_all.png)
 
-The border of the red tentacles is touching the left border of the image, so no border is detected there. The same thing happens with the blue tentacle on the right border.
+The border of the red tentacle is touching the left border of the image, so no border is detected there. The same thing happens with the blue tentacle on the right border.
 
-We can fix this by adding padding in the x direction.
+We can fix this by adding padding in the x axis.
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c --padx 1 -o
@@ -55,7 +57,7 @@ l2a '.\images\tentacles.png' -b all -c --padx 1 -o
 
 ![Tentacles padx1](../../images/ascii/tentacles_b_all_c_padx1.png)
 
-The `d` has disappeared.
+The `d` has disappeared. Lets check the final image again
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c --padx 1 -o test2.png
@@ -63,4 +65,6 @@ l2a '.\images\tentacles.png' -b all -c --padx 1 -o test2.png
 
 ![Tentacles final padx1](../../images/final/tentacles_b_all_padx1.png)
 
-We can see that all the borders have been detected (except the ones at the bottom, it is left as an exercise to the reader).
+We can see that those borders have been detected.
+
+However, if you look at the bottom there are still borders that have not been detected. They do not look really important, so fixing it is left as an exercise to the reader.

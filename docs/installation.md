@@ -1,6 +1,6 @@
 # Installation
 
-There are two main ways you can install this app: Cloning the github repo or downloading the executable from the releases
+There are two main ways you can install this app: Downloading the executable from the releases or cloning the github repo or
 
 ## Releases
 
@@ -12,8 +12,8 @@ Once downloaded you can [finish the setup](#environment-variables)
 
 ### Prerequisites
 
-- [Rust](https://www.rust-lang.org/tools/install)
-- [Git](https://git-scm.com/downloads)
+-   [Rust](https://www.rust-lang.org/tools/install)
+-   [Git](https://git-scm.com/downloads)
 
 ### Steps
 
@@ -33,6 +33,6 @@ Once downloaded you can [finish the setup](#environment-variables)
 
 ## Finish the setup
 
-To use a binary from anywhere in the terminal you add it to the  environment variables or put the binary in a folder that is already registered.
+To use a binary from anywhere in the terminal you **add it to the environment variables** or put the binary in a folder that is already registered.
 
 It is different for each OS, you should look it up.

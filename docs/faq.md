@@ -10,4 +10,4 @@
     In some cases, when adding characters (at least in Windows 10 powershell), if it ends in `\"` (to add the `"` character), what comes after will be taken as characters to add. The solution is to put the arguments before the character argument.
 
 -   **Can we mix multiple character sets (dicts)?**
-    Yes, you can use multiple separated by a comma: `-d box_all,blocks`.
+    Yes, you can use multiple dicts separated by a comma: `-d box_all,blocks`.

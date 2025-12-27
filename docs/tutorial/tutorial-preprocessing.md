@@ -2,14 +2,14 @@
 
 There are more transformations you can do to the image before transforming it:
 
--   `-n, --negative`
--   `-r, --bw`
+-   `-n, --negative` Inverts the brightness of the image.
+-   `-r, --bw` Transforms the image into black and white
     -   `-t, --threshold <THRESHOLD>`: threshold for the black and white.
--   `-v, --visible`
--   `-s, --saturate`
--   `-g, --grayscale`
+-   `-v, --visible` Makes the transparent pixels visible
+-   `-s, --saturate` Saturates the color of bright pixels and makes the other ones darker.
+-   `-g, --grayscale` Converts the image to grayscale and normalizes the brightness (the darkest pixel will become black and the lightest will become white).
 
-This are kind of self explanatory, but you can check out [how the app works](../how-it-works.md) to see how they work.
+You can check out [how the app works](../how-it-works.md) to see a more detailed explanation.
 
 There is also a special argument that doesn't fit anywhere else:
 
@@ -17,12 +17,4 @@ There is also a special argument that doesn't fit anywhere else:
 
 Higher values will have cloudier edges, and lower values will have sharper edges.
 
-It can also be used to print images like this:
-
-```bash
-l2a palm.jpg -c -m 0 --center --chars "8"
-```
-
-![Palm with color](../../images/ascii/palm_m0_center_chars8.png)
-
-We do not recommend using this app for images with a lot of details, like this palm tree, but this is the best way to do it.
+It can also be used to print images with a lot of details like [this](../tutorial.md#images-with-a-lot-of-details).
