@@ -5,7 +5,7 @@ fn cross() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("./images/Cross_Calatrava.png")
+        .arg("./images/sources/Cross_Calatrava.png")
         .arg("--verbose")
         .output()
         .expect("Failed to execute command");
@@ -57,7 +57,7 @@ fn cross_n() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("./images/Cross_Calatrava.png")
+        .arg("./images/sources/Cross_Calatrava.png")
         .arg("-n")
         .arg("--verbose")
         .output()
@@ -110,7 +110,7 @@ fn cross_all() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("./images/Cross_Calatrava.png")
+        .arg("./images/sources/Cross_Calatrava.png")
         .arg("--dict")
         .arg("all")
         .arg("--verbose")
@@ -164,7 +164,7 @@ fn cross_w100_padx4() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("./images/Cross_Calatrava.png")
+        .arg("./images/sources/Cross_Calatrava.png")
         .arg("--wc")
         .arg("100")
         .arg("--padx")
@@ -242,7 +242,7 @@ fn cross_padx4_pady8() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("./images/Cross_Calatrava.png")
+        .arg("./images/sources/Cross_Calatrava.png")
         .arg("--padx")
         .arg("4")
         .arg("--pady")
@@ -300,7 +300,7 @@ fn cross_csize17_center_padx4_n() {
     let output = Command::new("cargo")
         .arg("run")
         .arg("--")
-        .arg("./images/Cross_Calatrava.png")
+        .arg("./images/sources/Cross_Calatrava.png")
         .arg("--char-size")
         .arg("17")
         .arg("--center")
@@ -320,6 +320,7 @@ Block size: 9x17
 Applied padding of 7x6
 Image dimensions: 494x492
 Number of characters: 55x29
+Unfilled space: 1x1 pixels
 888888888888888888888888888d888888888888888888888888888
 888888888888888888888888888 888888888888888888888888888
 8888888888888888888888888     8888888888888888888888888

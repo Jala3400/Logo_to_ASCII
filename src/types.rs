@@ -96,6 +96,7 @@ pub enum BorderCriteria {
 ///
 /// # Variants
 ///
+/// * `Default` - The default character set, a balanced selection of characters
 /// * `All` - All printable ASCII characters from 32 to 126
 /// * `Symbols` - A small set of symbols
 /// /// There is no good monospace font with braille characters included by default
@@ -113,6 +114,8 @@ pub enum BorderCriteria {
 /// * `Letters` - A set of alphabetic characters (A-Z, a-z).
 #[derive(Debug, Clone, ValueEnum)]
 pub enum BuiltInCharSet {
+    #[value(name = "default")]
+    Default,
     #[value(name = "all")]
     All,
     #[value(name = "symbols")]

@@ -1,9 +1,10 @@
 use crate::{
     args::Args,
-    proc_pixel::{brightness_difference, calculate_brightness, hue_difference},
+    proc_pixel::{brightness_difference, calculate_brightness, calculate_linear_brightness, hue_difference},
     types::{BorderCriteria, FontBitmap},
 };
-use image::{EncodableLayout, RgbaImage};
+use image::{imageops, EncodableLayout, RgbaImage};
+use std::num::NonZeroU32;
 
 // Make transparent pixels visible
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
@@ -32,27 +33,31 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     }
 
     // Calculate dimensions once upfront
-    let (target_width, target_height) = match (args.width_in_pixels, args.height_in_pixels) {
-        (0, h) => {
+    let (target_width, target_height) = match (
+        args.width_in_pixels.map(|nz| nz.get()),
+        args.height_in_pixels.map(|nz| nz.get()),
+    ) {
+        (None, Some(h)) => {
             let ratio = h as f32 / orig_height as f32;
-            (((orig_width as f32) * ratio) as u32, h)
+            ((orig_width as f32 * ratio) as u32, h)
         }
-        (w, 0) => {
+        (Some(w), None) => {
             let ratio = w as f32 / orig_width as f32;
-            (w, ((orig_height as f32) * ratio) as u32)
+            (w, (orig_height as f32 * ratio) as u32)
         }
-        (w, h) => (w, h),
+        (Some(w), Some(h)) => (w, h),
+        (None, None) => (orig_width, orig_height),
     };
 
-    args.width_in_pixels = target_width;
-    args.height_in_pixels = target_height;
+    args.width_in_pixels = NonZeroU32::new(target_width);
+    args.height_in_pixels = NonZeroU32::new(target_height);
 
     // Resize the image
-    *img = image::imageops::resize(
+    *img = imageops::resize(
         img,
         target_width,
         target_height,
-        image::imageops::FilterType::CatmullRom,
+        imageops::FilterType::CatmullRom,
     );
 }
 
@@ -74,7 +79,7 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     let new_height = img_height + (args.padding_y * 2) as u32;
     let pixel_bytes = 4;
 
-    // The pixels should be trasparent, so depending on the visible flag they are black or white
+    // The pixels should be transparent, so depending on the visible flag they are black or white
     let mut new_bytes = vec![0u8; (new_width * new_height) as usize * pixel_bytes];
 
     // Set RGB based on visibility, alpha always 255
@@ -228,22 +233,22 @@ pub fn negative(img: &mut RgbaImage) {
 }
 
 pub fn grayscale(img: &mut RgbaImage) {
-    // Convert to grayscale
+    // Convert to grayscale and find min/max in single pass
+    let mut max_brightness = 0u8;
+    let mut min_brightness = 255u8;
+
     for pixel in img.pixels_mut() {
-        let gray = calculate_brightness(pixel);
-        let gray_value = (gray * 255.0).round() as u8;
+        // Do not use calculate_brightness to avoid sqrt
+        // otherwise it changes the brightness distribution.
+        // In other places it is fine to use calculate_brightness
+        // because you treat darker pixels differently than brighter ones.
+        let gray_value = (calculate_linear_brightness(pixel) * 255.0).round() as u8;
         pixel[0] = gray_value;
         pixel[1] = gray_value;
         pixel[2] = gray_value;
-    }
 
-    // Find the brightest and darkest pixels
-    // Only need to check one channel since it's grayscale
-    let mut max_brightness = 0u8;
-    let mut min_brightness = 255u8;
-    for pixel in img.pixels() {
-        max_brightness = max_brightness.max(pixel[0]);
-        min_brightness = min_brightness.min(pixel[0]);
+        max_brightness = max_brightness.max(gray_value);
+        min_brightness = min_brightness.min(gray_value);
     }
 
     // Normalize the image based on the brightness range
@@ -272,6 +277,5 @@ pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
         pixel[0] = value;
         pixel[1] = value;
         pixel[2] = value;
-        pixel[3] = 255; // Keep alpha fully opaque
     }
 }

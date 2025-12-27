@@ -53,7 +53,7 @@ fn max_prod(block: &[f32], font: &FontBitmap, bright_pixels: usize) -> char {
 /// Takes into account the absolute differences between pixel brightness values
 fn min_diff(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
-    let mut less_diffrence = f32::MAX;
+    let mut less_difference = f32::MAX;
     let cell_size = font.cell_size();
 
     for char in &font.data {
@@ -62,8 +62,8 @@ fn min_diff(block: &[f32], font: &FontBitmap) -> char {
             match_value += (block[i] - char.data[i]).abs();
         }
 
-        if match_value < less_diffrence {
-            less_diffrence = match_value;
+        if match_value < less_difference {
+            less_difference = match_value;
             best_match = char.char;
         }
     }
@@ -75,7 +75,7 @@ fn min_diff(block: &[f32], font: &FontBitmap) -> char {
 /// Takes into account the squared differences between pixel brightness values
 fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
     let mut best_match = font.data[0].char;
-    let mut less_diffrence = f32::MAX;
+    let mut less_difference = f32::MAX;
     let cell_size = font.cell_size();
 
     for char in &font.data {
@@ -85,37 +85,8 @@ fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
             match_value += diff * diff;
         }
 
-        if match_value < less_diffrence {
-            less_diffrence = match_value;
-            best_match = char.char;
-        }
-    }
-
-    best_match
-}
-
-/// Gradient algorithm for matching a block of pixels with a character
-/// Takes into account only the average brightness of the block
-fn gradient(block: &[f32], font: &FontBitmap) -> char {
-    let max_char_brightness = font.data[font.data.len() - 1].avg_brightness;
-    let min_char_brightness = font.data[0].avg_brightness;
-    let cell_size = font.cell_size() as f32;
-
-    // Add 0.5 to convert from [-0.5, 0.5] to [0, 1] while allowing to adjust
-    // the brightness with arg.midpoint_brightness
-    let avg_block_brightness: f32 = block.iter().sum::<f32>() / cell_size + 0.5;
-
-    let mut best_match = font.data[0].char;
-    let mut best_score = f32::MIN;
-
-    for char in &font.data {
-        // Normalize char brightnesses to [0, 1] range
-        let normalized_char_brightness = (char.avg_brightness - min_char_brightness)
-            / (max_char_brightness - min_char_brightness);
-        let score = 1.0 - (avg_block_brightness - normalized_char_brightness).abs();
-
-        if score > best_score {
-            best_score = score;
+        if match_value < less_difference {
+            less_difference = match_value;
             best_match = char.char;
         }
     }
@@ -133,10 +104,8 @@ fn correlation(block: &[f32], font: &FontBitmap) -> char {
 
     // Calculate mean and standard deviation of the block
     let block_mean: f32 = block.iter().sum::<f32>() / cell_size_f;
-    let block_std = (block.iter()
-        .map(|&x| (x - block_mean).powi(2))
-        .sum::<f32>() / cell_size_f)
-        .sqrt();
+    let block_std =
+        (block.iter().map(|&x| (x - block_mean).powi(2)).sum::<f32>() / cell_size_f).sqrt();
 
     // Skip if block has no variance (all pixels same value)
     if block_std == 0.0 {
@@ -173,10 +142,7 @@ fn ncc(block: &[f32], font: &FontBitmap) -> char {
     let cell_size = font.cell_size();
 
     // Calculate the norm (magnitude) of the block
-    let block_norm = block.iter()
-        .map(|&x| x * x)
-        .sum::<f32>()
-        .sqrt();
+    let block_norm = block.iter().map(|&x| x * x).sum::<f32>().sqrt();
 
     // Skip if block has zero magnitude
     if block_norm == 0.0 {
@@ -198,6 +164,37 @@ fn ncc(block: &[f32], font: &FontBitmap) -> char {
 
         if ncc_value > best_ncc {
             best_ncc = ncc_value;
+            best_match = char.char;
+        }
+    }
+
+    best_match
+}
+
+/// Gradient algorithm for matching a block of pixels with a character
+/// Takes into account only the average brightness of the block
+fn gradient(block: &[f32], font: &FontBitmap) -> char {
+    let max_char_brightness = font.data[font.data.len() - 1].avg_brightness;
+    let min_char_brightness = font.data[0].avg_brightness;
+    let cell_size = font.cell_size() as f32;
+
+    // Add 0.5 to convert from [-0.5, 0.5] to [0, 1] while allowing to adjust
+    // If we wanted to do this correctly, we would need to add midpoint_brightness here, but
+    // then midpoint_brightness would not have any effect. So by just adding 0.5
+    // we let the user adjust the brightness level by changing midpoint_brightness
+    let avg_block_brightness: f32 = block.iter().sum::<f32>() / cell_size + 0.5;
+
+    let mut best_match = font.data[0].char;
+    let mut best_score = f32::MIN;
+
+    for char in &font.data {
+        // Normalize char brightnesses to [0, 1] range
+        let normalized_char_brightness = (char.avg_brightness - min_char_brightness)
+            / (max_char_brightness - min_char_brightness);
+        let score = 1.0 - (avg_block_brightness - normalized_char_brightness).abs();
+
+        if score > best_score {
+            best_score = score;
             best_match = char.char;
         }
     }

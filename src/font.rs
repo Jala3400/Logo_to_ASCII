@@ -62,7 +62,7 @@ pub fn get_font(args: &Args) -> FontBitmap {
     }
 
     // Define text properties
-    let scale = Scale::uniform(args.char_size as f32);
+    let scale = Scale::uniform(args.char_size.get() as f32);
     let color = Rgba([255, 255, 255, 255]);
 
     // Get font metrics to determine character dimensions
