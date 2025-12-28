@@ -67,11 +67,14 @@ Increases the color saturation of each pixel if it is brighter than the midpoint
 
 6. **Draw borders**:
 
-You can detect borders by hue, brightness of both.
+You can detect borders by hue, brightness, alpha (transparencies) or a mix of them.
 
 A border is detected by comparing a pixel with its right and bottom neighbor. If its difference is higher than a threshold, it records that position.
 
 When all the borders have been identified, there is a second pass on the image that draws them. It draws a square with a specific thickness on each position.
+
+When dealing with transparent pixels we have to take some aspects into consideration:
+- 
 
 7. **Apply negative effect**:
 
@@ -163,3 +166,15 @@ It is the same as before but you subtract 0.5 (or other value of your liking). T
 If the brightness range is from 0 to 1, when you multiply you can only increase the score, so a brighter character will have a higher value than the darker ones. Even if it was a completely dark block it will have a score of 0 with every character.
 
 It is only when you have negative values that you can punish mismatches.
+
+## Printing color
+
+When printing color we have to take special measures, we can't just take the average of the block.
+
+In older versions this was the case, and in photos where you printed color and had borders you usually had color leaking on some characters.
+
+This happens because there are pixels that are not shown in the character from one side of the border whose color is registered.
+
+We can fix this by only taking into consideration the color where the character has a bright pixel and the block has a bright pixel.
+
+This way only the color of the pixels that took the decision is printed.

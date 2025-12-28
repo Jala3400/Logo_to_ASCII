@@ -15,13 +15,6 @@ pub fn calculate_brightness(pixel: &Rgba<u8>) -> f32 {
     ((0.299 * r + 0.587 * g + 0.114 * b) / 255.0).sqrt()
 }
 
-// This function 
-pub fn calculate_brightness_alpha(pixel: &Rgba<u8>) -> f32 {
-    let brightness = calculate_brightness(pixel);
-    let alpha = pixel[3] as f32 / 255.0;
-    brightness * alpha
-}
-
 pub fn calculate_linear_brightness(pixel: &Rgba<u8>) -> f32 {
     let r = pixel[0] as f32;
     let g = pixel[1] as f32;
@@ -73,7 +66,10 @@ pub fn calc_hue(pixel: &Rgba<u8>) -> u16 {
 
 // Calculate the difference between the brightness of two pixels
 pub fn brightness_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
-    (calculate_brightness_alpha(pixel1) - calculate_brightness_alpha(pixel2)).abs()
+    let alpha1 = pixel1[3] as f32 / 255.0;
+    let alpha2 = pixel2[3] as f32 / 255.0;
+    (calculate_brightness(pixel1) * alpha1 - calculate_brightness(pixel2) * alpha2)
+        .abs()
 }
 
 // Calculate the difference between the hue of two pixels
