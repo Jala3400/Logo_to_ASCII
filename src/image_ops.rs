@@ -147,7 +147,7 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
     let b_threshold = args.brightness_diff;
-    let hue_threshold = args.color_diff % 360;
+    let hue_threshold = args.color_diff % 360.0;
     let alpha_threshold = args.alpha_diff;
 
     // Compares a pixel to the one on its right and below

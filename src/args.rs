@@ -205,10 +205,10 @@ pub struct Args {
     /// Threshold for the color difference (from 0 to 360, will be the remainder after division by 360)
     #[arg(
         long = "color-diff",
-        default_value_t = 30,
+        default_value_t = 30.0,
         help_heading = "Borders and Colors"
     )]
-    pub color_diff: u16,
+    pub color_diff: f32,
 
     /// Threshold for the brightness difference (from 0 to 1)
     #[arg(
