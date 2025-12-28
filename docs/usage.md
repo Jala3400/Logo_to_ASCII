@@ -53,7 +53,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 ### Borders and Colors
 
 -   `-c, --print-color`: Print the image with colors
--   `-b, --borders <BORDER_CRITERIA>`: Draws borders on the image according to the specified policy. You can specify the argument multiple times or as a comma separated list. [possible values: color, brightness, alpha, all]
+-   `-b, --borders <BORDER_CRITERIA>..`: Draws borders on the image according to the specified policy. You can specify the argument multiple times or as a comma separated list. [possible values: color, brightness, alpha, all]
 -   `-k, --thickness <BORDER_THICKNESS>`: Border thickness (default: width of the character)
 -   `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360) [default: 30]
 -   `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1) [default: 0.1]

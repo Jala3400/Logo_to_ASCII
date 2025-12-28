@@ -79,10 +79,10 @@ Now let's try with a colored logo:
 
 If we just used the app it would probably look horrible, so lets skip to the good part.
 
--   To draw borders between colors, use `-b, --borders all`. This detects color and brightness changes and draws black borders.
+-   To draw borders between colors, use `-b, --borders all`. This detects color, brightness and transparency changes and draws black borders.
 
 > [!Warning]
-> Here we use `--borders all` instead of `--borders color` because the background color is transparent. Because of [how this app works](how-it-works.md), the transparent pixels are transformed into black, which shares the same hue as red, so just checking for color will not detect the border between the red tentacle and the background.
+> Here we use `--borders all` instead of `--borders color` because the background color is transparent. If we only detected the borders between the tentacles they would have a strange shape. we could have also used `--borders color, alpha`, as we do not need to look for brightness.
 
 ```bash
 l2a '.\images\tentacles.png' -b all

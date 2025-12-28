@@ -41,13 +41,7 @@ After this step we will have the final image to be converted.
 
 This steps are only executed if the flags say so
 
-1. **Treat transparent pixels** (always applied):
-
-The algorithm doesn't work with alpha values, it can only see brightness.
-
-Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white if the arguments say so) in proportion to its alpha.
-
-2. **Resize the image**:
+1. **Resize the image**:
 
 If the dimension has been given in characters, calculate its equivalent in pixels.
 
@@ -55,11 +49,11 @@ Little explanation here, just resize the image.
 
 3. **Center the image**:
 
-Sometimes the image doesn't fully fill the right or bottom blocks. In this step we add enough padding so the image does fit them. The padding is in transparent color.
+Sometimes the image doesn't fully fill the right or bottom blocks. In this step we add enough padding so the image does fill them.
 
 4. **Add padding**:
 
-Add more padding to the image on top of the previous one, if there is any.
+Add more padding to the image on top of the previous one, if there is any. It is drawn as transparent.
 
 5. **Saturate the image**:
 
@@ -73,8 +67,18 @@ A border is detected by comparing a pixel with its right and bottom neighbor. If
 
 When all the borders have been identified, there is a second pass on the image that draws them. It draws a square with a specific thickness on each position.
 
-When dealing with transparent pixels we have to take some aspects into consideration:
-- 
+When dealing with transparent pixels we have to take some aspects into consideration that the transparent color is weird.
+
+- It usually shares hue with red, as it is the hue for black and white.
+- It is usually black but it can have an arbitrary brightness.
+
+To stop transparencies with interfering with hue or brightness, we multiply the difference by the alpha of the two pixels (the alpha should be between 0 and 1). This way the more transparent they are the less difference between them.
+
+1. **Treat transparent pixels** (always applied):
+
+The algorithm doesn't work with alpha values, it can only see brightness.
+
+Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white if the arguments say so) in proportion to its alpha.
 
 7. **Apply negative effect**:
 
@@ -171,10 +175,10 @@ It is only when you have negative values that you can punish mismatches.
 
 When printing color we have to take special measures, we can't just take the average of the block.
 
-In older versions this was the case, and in photos where you printed color and had borders you usually had color leaking on some characters.
+In older versions this was the case, and in photos with borders you usually had color leaking on some characters, from one side of the border to the other.
 
-This happens because there are pixels that are not shown in the character from one side of the border whose color is registered.
+This happens because one character spans over the two areas, mixing both colors.
 
-We can fix this by only taking into consideration the color where the character has a bright pixel and the block has a bright pixel.
+We can fix this by only taking into consideration the color of the pixels where the character and the block are bright.
 
 This way only the color of the pixels that took the decision is printed.
