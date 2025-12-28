@@ -80,11 +80,11 @@ pub struct Args {
     )]
     pub black_and_white: bool,
 
-    /// Threshold value for the black and white conversion (from 0 to 255)
+    /// Threshold value for the black and white conversion (from 0 to 1)
     #[arg(short, long, default_value_t = 0.5, help_heading = "Image Processing")]
     pub threshold: f32,
 
-    /// Makes transparent pixels visible
+    /// Makes transparent pixels white instead of black
     #[arg(
         short,
         long,
@@ -93,7 +93,7 @@ pub struct Args {
     )]
     pub visible: bool,
 
-    /// Saturate the image
+    /// Saturate each pixel of the image while keeping the dark pixels dark
     #[arg(
         short = 's',
         long,
@@ -132,7 +132,7 @@ pub struct Args {
     )]
     pub height_in_chars: Option<NonZeroU32>,
 
-    /// Actual width of the image
+    /// Width of the image in pixels
     #[arg(
         short = 'W',
         long = "width-pixels",
@@ -140,7 +140,7 @@ pub struct Args {
     )]
     pub width_in_pixels: Option<NonZeroU32>,
 
-    /// Actual height of the image
+    /// Height of the image in pixels
     #[arg(
         short = 'H',
         long = "height-pixels",
@@ -157,7 +157,7 @@ pub struct Args {
     )]
     pub padding: usize,
 
-    /// Padding of the width of the image
+    /// Horizontal padding
     #[arg(
         short = 'X',
         long = "padx",
@@ -166,7 +166,7 @@ pub struct Args {
     )]
     pub padding_x: usize,
 
-    /// Padding of the height of the image
+    /// Vertical padding
     #[arg(
         short = 'Y',
         long = "pady",
@@ -198,7 +198,7 @@ pub struct Args {
     #[arg(short, long = "borders", num_args = 1.., value_delimiter = ',', value_enum, help_heading = "Borders and Colors")]
     pub border_criteria: Option<Vec<BorderCriteria>>,
 
-    /// Border thickness. (optional, default: width of the block)
+    /// Border thickness. (optional, default: width of the character)
     #[arg(short = 'k', long = "thickness", help_heading = "Borders and Colors")]
     pub border_thickness: Option<NonZeroU32>,
 
