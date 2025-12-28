@@ -51,7 +51,7 @@ fn main() -> io::Result<()> {
 
     // Apply the padding (after resizing) (before borders so borders are included in the padding)
     // (also before saturate and negative so the padding is affected by them)
-    if args.padding_x != 0 || args.padding_y != 0 {
+    if args.padding != 0 || args.padding_x != 0 || args.padding_y != 0 {
         add_padding(&mut img, &args);
     }
 

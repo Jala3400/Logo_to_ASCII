@@ -148,6 +148,15 @@ pub struct Args {
     )]
     pub height_in_pixels: Option<NonZeroU32>,
 
+    /// Padding of the image on all sides
+    #[arg(
+        short = 'P',
+        long = "pad",
+        default_value_t = 0,
+        help_heading = "Dimensions and Padding"
+    )]
+    pub padding: usize,
+
     /// Padding of the width of the image
     #[arg(
         short = 'X',
@@ -166,7 +175,7 @@ pub struct Args {
     )]
     pub padding_y: usize,
 
-    /// Center the image in respect to the characters by adjusting the padding
+    /// Center the image relative to the size of all the characters by adjusting the padding
     #[arg(
         short = 'C',
         long,

@@ -59,8 +59,10 @@ pub fn center_image(img: &RgbaImage, args: &mut Args, font: &FontBitmap) {
 pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     // Calculate dimensions
     let (img_width, img_height) = img.dimensions();
-    let new_width = img_width + (args.padding_x * 2) as u32;
-    let new_height = img_height + (args.padding_y * 2) as u32;
+    let padding_x = args.padding_x + args.padding;
+    let padding_y = args.padding_y + args.padding;
+    let new_width = img_width + (padding_x * 2) as u32;
+    let new_height = img_height + (padding_y * 2) as u32;
     let pixel_bytes = 4;
 
     // The pixels should be transparent
@@ -72,8 +74,8 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     for y in 0..img_height {
         let src_start = (y * img_width) as usize * pixel_bytes;
         let src_end = src_start + (img_width as usize * pixel_bytes);
-        let dst_start = ((y + args.padding_y as u32) * new_width + args.padding_x as u32) as usize
-            * pixel_bytes;
+        let dst_start =
+            ((y + padding_y as u32) * new_width + padding_x as u32) as usize * pixel_bytes;
 
         new_bytes[dst_start..dst_start + (img_width as usize * pixel_bytes)]
             .copy_from_slice(&original_bytes[src_start..src_end]);
@@ -83,7 +85,7 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
         .expect("Failed to create padding image");
 
     if args.verbose {
-        println!("Applied padding of {}x{}", args.padding_x, args.padding_y);
+        println!("Applied padding of {}x{}", padding_x, padding_y);
     }
 }
 

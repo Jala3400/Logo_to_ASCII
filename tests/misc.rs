@@ -140,3 +140,33 @@ dddddddddddddddddddddddddddddddddddddd888888888888888888888888888888888888888888
 
     assert_eq!(stdout.trim(), expected.trim());
 }
+
+#[test]
+fn test_padding() {
+    let output1 = Command::new("cargo")
+        .arg("run")
+        .arg("--")
+        .arg("./images/sources/Cross_Calatrava.png")
+        .arg("--verbose")
+        .arg("--pad")
+        .arg("10")
+        .output()
+        .expect("Failed to execute command");
+
+    let output2 = Command::new("cargo")
+        .arg("run")
+        .arg("--")
+        .arg("./images/sources/Cross_Calatrava.png")
+        .arg("--verbose")
+        .arg("--padx")
+        .arg("10")
+        .arg("--pady")
+        .arg("10")
+        .output()
+        .expect("Failed to execute command");
+
+    let stdout1 = String::from_utf8_lossy(&output1.stdout);
+    let stdout2 = String::from_utf8_lossy(&output2.stdout);
+
+    assert_eq!(stdout1.trim(), stdout2.trim());
+}
