@@ -1,14 +1,15 @@
-use crate::types::{Algorithm, FontBitmap};
+use crate::types::{Algorithm, CharInfo, FontBitmap};
 
 // Matches a block of pixels with a character
-pub fn match_block_with_char(
+pub fn match_block_with_char<'a>(
     block: &[f32],
-    font: &FontBitmap,
+    font: &'a FontBitmap,
     bright_pixels: usize,
+    full_pixels: usize,
     algorithm: &Algorithm,
-) -> char {
+) -> &'a CharInfo {
     match algorithm {
-        Algorithm::MaxProd => max_prod(block, font, bright_pixels),
+        Algorithm::MaxProd => max_prod(block, font, bright_pixels, full_pixels),
         Algorithm::MinDiff => min_diff(block, font),
         Algorithm::MinDiffSq => min_diff_sq(block, font),
         Algorithm::Gradient => gradient(block, font),
@@ -19,8 +20,18 @@ pub fn match_block_with_char(
 
 /// Maximum Product algorithm for matching a block of pixels with a character
 /// Custom algorithm that multiplies the brightness values of the block and the character
-fn max_prod(block: &[f32], font: &FontBitmap, bright_pixels: usize) -> char {
-    let mut best_match = font.data[0].char;
+fn max_prod<'a>(
+    block: &[f32],
+    font: &'a FontBitmap,
+    bright_pixels: usize,
+    full_pixels: usize,
+) -> &'a CharInfo {
+    // If the block is full, return the fullest character
+    if full_pixels == block.len() {
+        return font.data.last().unwrap();
+    }
+
+    let mut best_match = &font.data[0];
     let mut best_match_value = f32::MIN;
     let cell_size = font.cell_size();
 
@@ -42,7 +53,7 @@ fn max_prod(block: &[f32], font: &FontBitmap, bright_pixels: usize) -> char {
         // If the match value is greater than the best match value, update the best match
         if match_value > best_match_value {
             best_match_value = match_value;
-            best_match = char.char;
+            best_match = char;
         }
     }
 
@@ -51,8 +62,8 @@ fn max_prod(block: &[f32], font: &FontBitmap, bright_pixels: usize) -> char {
 
 /// Minimum Difference algorithm for matching a block of pixels with a character
 /// Takes into account the absolute differences between pixel brightness values
-fn min_diff(block: &[f32], font: &FontBitmap) -> char {
-    let mut best_match = font.data[0].char;
+fn min_diff<'a>(block: &[f32], font: &'a FontBitmap) -> &'a CharInfo {
+    let mut best_match = &font.data[0];
     let mut less_difference = f32::MAX;
     let cell_size = font.cell_size();
 
@@ -64,7 +75,7 @@ fn min_diff(block: &[f32], font: &FontBitmap) -> char {
 
         if match_value < less_difference {
             less_difference = match_value;
-            best_match = char.char;
+            best_match = char;
         }
     }
 
@@ -73,8 +84,8 @@ fn min_diff(block: &[f32], font: &FontBitmap) -> char {
 
 /// Minimum Squared Difference algorithm for matching a block of pixels with a character
 /// Takes into account the squared differences between pixel brightness values
-fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
-    let mut best_match = font.data[0].char;
+fn min_diff_sq<'a>(block: &[f32], font: &'a FontBitmap) -> &'a CharInfo {
+    let mut best_match = &font.data[0];
     let mut less_difference = f32::MAX;
     let cell_size = font.cell_size();
 
@@ -87,7 +98,7 @@ fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
 
         if match_value < less_difference {
             less_difference = match_value;
-            best_match = char.char;
+            best_match = char;
         }
     }
 
@@ -96,8 +107,8 @@ fn min_diff_sq(block: &[f32], font: &FontBitmap) -> char {
 
 /// Correlation algorithm for matching a block of pixels with a character
 /// Takes into account only the pattern structure, not the brightness level
-fn correlation(block: &[f32], font: &FontBitmap) -> char {
-    let mut best_match = font.data[0].char;
+fn correlation<'a>(block: &[f32], font: &'a FontBitmap) -> &'a CharInfo {
+    let mut best_match = &font.data[0];
     let mut best_correlation = f32::MIN;
     let cell_size = font.cell_size();
     let cell_size_f = cell_size as f32;
@@ -109,7 +120,7 @@ fn correlation(block: &[f32], font: &FontBitmap) -> char {
 
     // Skip if block has no variance (all pixels same value)
     if block_std == 0.0 {
-        return font.data[0].char;
+        return &font.data[0];
     }
 
     for char in &font.data {
@@ -127,7 +138,7 @@ fn correlation(block: &[f32], font: &FontBitmap) -> char {
 
         if correlation > best_correlation {
             best_correlation = correlation;
-            best_match = char.char;
+            best_match = char;
         }
     }
 
@@ -136,8 +147,8 @@ fn correlation(block: &[f32], font: &FontBitmap) -> char {
 
 /// Normalized Cross-Correlation (NCC) algorithm for matching a block of pixels with a character
 /// Different from correlation as it takes into account the brightness level, not only the pattern structure
-fn ncc(block: &[f32], font: &FontBitmap) -> char {
-    let mut best_match = font.data[0].char;
+fn ncc<'a>(block: &[f32], font: &'a FontBitmap) -> &'a CharInfo {
+    let mut best_match = &font.data[0];
     let mut best_ncc = f32::MIN;
     let cell_size = font.cell_size();
 
@@ -146,7 +157,7 @@ fn ncc(block: &[f32], font: &FontBitmap) -> char {
 
     // Skip if block has zero magnitude
     if block_norm == 0.0 {
-        return font.data[0].char;
+        return &font.data[0];
     }
 
     for char in &font.data {
@@ -164,7 +175,7 @@ fn ncc(block: &[f32], font: &FontBitmap) -> char {
 
         if ncc_value > best_ncc {
             best_ncc = ncc_value;
-            best_match = char.char;
+            best_match = char;
         }
     }
 
@@ -173,7 +184,7 @@ fn ncc(block: &[f32], font: &FontBitmap) -> char {
 
 /// Gradient algorithm for matching a block of pixels with a character
 /// Takes into account only the average brightness of the block
-fn gradient(block: &[f32], font: &FontBitmap) -> char {
+fn gradient<'a>(block: &[f32], font: &'a FontBitmap) -> &'a CharInfo {
     let max_char_brightness = font.data[font.data.len() - 1].avg_brightness;
     let min_char_brightness = font.data[0].avg_brightness;
     let cell_size = font.cell_size() as f32;
@@ -184,7 +195,7 @@ fn gradient(block: &[f32], font: &FontBitmap) -> char {
     // we let the user adjust the brightness level by changing midpoint_brightness
     let avg_block_brightness: f32 = block.iter().sum::<f32>() / cell_size + 0.5;
 
-    let mut best_match = font.data[0].char;
+    let mut best_match = &font.data[0];
     let mut best_score = f32::MIN;
 
     for char in &font.data {
@@ -195,9 +206,42 @@ fn gradient(block: &[f32], font: &FontBitmap) -> char {
 
         if score > best_score {
             best_score = score;
-            best_match = char.char;
+            best_match = char;
         }
     }
 
     best_match
+}
+
+/// Gets the color that best matches a block of pixels given a character
+pub fn get_color_for_block(
+    block: &[(u8, u8, u8)],
+    block_bitmap: &[f32],
+    char_info: &CharInfo,
+) -> (u8, u8, u8) {
+    // For each pixel in the character, get the color of the block multiplied by the brightness value
+    let mut r = 0usize;
+    let mut g = 0usize;
+    let mut b = 0usize;
+    let mut count = 0usize;
+    let bitmap = &char_info.data;
+
+    for i in 0..bitmap.len() {
+        // Only record color if both the block and the character have brightness in that pixel
+        // The character must be bright to only consider visible pixels
+        // The block must be bright to avoid considering dark pixels
+        if bitmap[i] > 0.0 && block_bitmap[i] > 0.0 {
+            let (br, bg, bb) = block[i];
+            r += br as usize;
+            g += bg as usize;
+            b += bb as usize;
+            count += 1;
+        }
+    }
+
+    if count == 0 {
+        (0, 0, 0)
+    } else {
+        ((r / count) as u8, (g / count) as u8, (b / count) as u8)
+    }
 }
