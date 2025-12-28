@@ -123,10 +123,10 @@ l2a .\images\tentacles.png -b all -c
 You can combine multiple options for more complex results:
 
 ```bash
-l2a .\images\Cross_Calatrava.png -cvb all
+l2a .\images\Cross_Calatrava.png -cvb all -X4
 ```
 
-![Cross of Calatrava combined](../images/ascii/cross_cvb_all.png)
+![Cross of Calatrava combined](../images/ascii/cross_cvb_all_X4.png)
 
 ## Images with a lot of details.
 

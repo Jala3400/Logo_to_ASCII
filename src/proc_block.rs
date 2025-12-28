@@ -224,13 +224,13 @@ pub fn get_color_for_block(
     let mut g = 0usize;
     let mut b = 0usize;
     let mut count = 0usize;
-    let bitmap = &char_info.data;
+    let char_bitmap = &char_info.data;
 
-    for i in 0..bitmap.len() {
+    for i in 0..char_bitmap.len() {
         // Only record color if both the block and the character have brightness in that pixel
         // The character must be bright to only consider visible pixels
         // The block must be bright to avoid considering dark pixels
-        if bitmap[i] > 0.0 && block_bitmap[i] > 0.0 {
+        if char_bitmap[i] > 0.0 && block_bitmap[i] > 0.0 {
             let (br, bg, bb) = block[i];
             r += br as usize;
             g += bg as usize;
