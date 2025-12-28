@@ -142,6 +142,14 @@ fn process_block_pixels(
                     1.0 - args.midpoint_brightness
                 } else {
                     -args.midpoint_brightness
+                };
+
+                if let Some(color_block) = color_block {
+                    if args.visible != args.negative {
+                        color_block[cords_block] = (255, 255, 255);
+                    } else {
+                        color_block[cords_block] = (0, 0, 0);
+                    }
                 }
             }
         }

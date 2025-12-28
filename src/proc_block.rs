@@ -215,7 +215,7 @@ fn gradient<'a>(block: &[f32], font: &'a FontBitmap) -> &'a CharInfo {
 
 /// Gets the color that best matches a block of pixels given a character
 pub fn get_color_for_block(
-    block: &[(u8, u8, u8)],
+    block_colors: &[(u8, u8, u8)],
     block_bitmap: &[f32],
     char_info: &CharInfo,
 ) -> (u8, u8, u8) {
@@ -226,12 +226,15 @@ pub fn get_color_for_block(
     let mut count = 0usize;
     let char_bitmap = &char_info.data;
 
+    // The block bitmap might be larger than the character bitmap
+    // so only iterate over the character bitmap length
+    // We do not need to take other measures because both are the same width.
     for i in 0..char_bitmap.len() {
         // Only record color if both the block and the character have brightness in that pixel
         // The character must be bright to only consider visible pixels
         // The block must be bright to avoid considering dark pixels
         if char_bitmap[i] > 0.0 && block_bitmap[i] > 0.0 {
-            let (br, bg, bb) = block[i];
+            let (br, bg, bb) = block_colors[i];
             r += br as usize;
             g += bg as usize;
             b += bb as usize;
