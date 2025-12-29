@@ -9,11 +9,11 @@ But, before applying the algorithm, a few steps are needed.
 1. Process the characters we want to use
 2. Preprocess the image (if necessary), as it is weird that an image fits perfectly the first time.
 
-You can jump directly to the [explanation of the algorithm](#3-convert-blocks-to-character) if you want, but to understand how this app works you will the two first steps.
+You can jump directly to the [explanation of the algorithm](#3-convert-blocks-to-character) if you want, but to understand how this app works you will the first two steps.
 
 ## 1. Characters
 
-After this step we will have the dimensions of the blocks and a bitmap of each character including the brightness of its pixels.
+After this step we will have the dimensions of the blocks and a bitmap of each character (including the brightness of its pixels).
 
 1. **Dimensions of the block**
 
@@ -29,7 +29,7 @@ The dimensions of the block are (char_width)x(char_height + line_gap)
 
 2. **Character bitmap**
 
-We iterate over every pixel and calculate is brightness.
+We iterate over every pixel and calculate its brightness.
 
 When calculating brightness, a value from 0 to 1 is obtained. It is important to subtract 0.5, because the algorithm only works with positive and negative values. This will make sense later.
 
@@ -47,19 +47,19 @@ If the dimension has been given in characters, calculate its equivalent in pixel
 
 Little explanation here, just resize the image.
 
-3. **Center the image**:
+2. **Center the image**:
 
 Sometimes the image doesn't fully fill the right or bottom blocks. In this step we add enough padding so the image does fill them.
 
-4. **Add padding**:
+3. **Add padding**:
 
 Add more padding to the image on top of the previous one, if there is any. It is drawn as transparent.
 
-5. **Saturate the image**:
+4. **Saturate the image**:
 
 Increases the color saturation of each pixel if it is brighter than the midpoint brightness and decreases it if it isn't.
 
-6. **Draw borders**:
+5. **Draw borders**:
 
 You can detect borders by hue, brightness, alpha (transparencies) or a mix of them.
 
@@ -67,24 +67,21 @@ A border is detected by comparing a pixel with its right and bottom neighbor. If
 
 When all the borders have been identified, there is a second pass on the image that draws them. It draws a square with a specific thickness on each position.
 
-When dealing with transparent pixels we have to take some aspects into consideration that the transparent color is weird.
+One las thing we have to take into consideration: the transparent pixels also have a hue, and a brightness. This is because the alpha is a separate channel. A transparent pixels is usually black, but it can have an arbitrary color. This means that it can interact in unexpected ways when detecting borders by hue or brightness.
 
-- It usually shares hue with red, as it is the hue for black and white.
-- It is usually black but it can have an arbitrary brightness.
+To stop transparencies with interfering with hue or brightness, we multiply the difference between them by the alpha of the two pixels (the alpha should be between 0 and 1). This way the more transparent they are the less difference between them.
 
-To stop transparencies with interfering with hue or brightness, we multiply the difference by the alpha of the two pixels (the alpha should be between 0 and 1). This way the more transparent they are the less difference between them.
-
-1. **Treat transparent pixels** (always applied):
+6. **Treat transparent pixels** (always applied):
 
 The algorithm doesn't work with alpha values, it can only see brightness.
 
-Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white if the arguments say so) in proportion to its alpha.
+Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white, if the arguments say so) in proportion to its alpha.
 
 7. **Apply negative effect**:
 
 Inverts the brightness of the image keeping the hue.
 
-It takes into consideration how brightness is measured (see [calculating brightness](#calculating-brightness))
+It takes into consideration how brightness is measured (see [calculating brightness](#calculating-brightness)), so you actually see the inverted image.
 
 8. **Convert to grayscale**:
 
@@ -95,13 +92,13 @@ It consists of two steps.
 
 9. **Convert to black and white**:
 
-For each pixel, if it brightness is over a threshold, make it white. Otherwise, make it black.
+For each pixel, if its brightness is over a threshold, make it white. Otherwise, make it black.
 
 ## 3. Convert Blocks to Character
 
 After this step we will have a string with the characters that match the image the best.
 
-First, the image is divided into blocks with the same measures as the characters and compared with all characters.
+First, the image is divided into blocks, and then each block is compared to each character.
 
 After processing a block, we should have the character that fits it best.
 
@@ -157,7 +154,7 @@ The first one is called `max_prod` and it is the one we have explained before. N
 
 ### Brightness formula
 
-In the following sections, when calculating the brightness from an rgb value, we use the following formula:
+In the previous sections, when calculating the brightness from an rgb value, we have used the following formula:
 
 sqrt(0.299 \* r + 0.587 \* g + 0.114 \* b)
 

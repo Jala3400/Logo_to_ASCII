@@ -15,7 +15,9 @@ The best one is the default one by far (except for `cnn`, which acts in a really
 
 ## Algorithm Explanations
 
-The `min_diff` and `min_diff_sq` algorithms operate pixel by pixel, producing results similar to `max_prod` but less defined.
+All of the algorithms work pixel by pixel except the gradient one.
+
+The `min_diff` and `min_diff_sq` produce results similar to `max_prod` but less defined.
 
 `corr` and `ncc` measure correlation and normalized cross-correlation respectively. These consider how similar the variations are between a block and a character, with `ncc` also accounting for magnitude differences.
 
@@ -25,13 +27,13 @@ You can see a more technical explanation on the algorithms in [this](../how-it-w
 
 ## Gradient Algorithm Details
 
-Even if it operates with the average brightness of a block, it still has a few advantages:
+Even if it operates with the average brightness of a block, it still has a few advantages over classical converters:
 
 The `gradient` algorithm normalizes the brightness of the characters, so the darkest character has a brightness o 0 and the brightest a 1. However it doesn't normalize the image.
 
-This means that adding or removing characters changes the ranges of brightness assigned to each character, and that in dark images the bright characters might not appear.
+This means that adding or removing characters changes the ranges of brightness assigned to each character, but that in dark images the bright characters might not appear.
 
-To normalize the brightness of the image you should use the `-g, --grayscale` flag, which converts the image to grayscale and normalizes the brightness so the brightest point in the image becomes white and the darkest black.
+To normalize the brightness of the image you should use the `-g, --grayscale` flag, which converts the image to grayscale and normalizes the brightness, so the brightest point in the image becomes white and the darkest black.
 
 ## Examples
 
@@ -52,6 +54,8 @@ l2a .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " " -v
 ```
 
 ![Adjusted gradient](../../images/ascii/gradient_aeou@.png)
+
+We can see that the lighter part of the image is now occupied by the character `@` instead of the `8`.
 
 ## Choosing an Algorithm
 

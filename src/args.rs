@@ -116,7 +116,7 @@ pub struct Args {
     pub midpoint_brightness: f32,
 
     // Dimensions and Padding
-    /// Number of characters in the width of the end image
+    /// Number of characters in the final image width
     #[arg(
         short = 'w',
         long = "width-chars",
@@ -124,7 +124,7 @@ pub struct Args {
     )]
     pub width_in_chars: Option<NonZeroU32>,
 
-    /// Number of characters in the height of the end image
+    /// Number of characters in the final image height
     #[arg(
         short = 'h',
         long = "height-chars",
@@ -132,7 +132,7 @@ pub struct Args {
     )]
     pub height_in_chars: Option<NonZeroU32>,
 
-    /// Width of the image in pixels
+    /// Width of the final image in pixels
     #[arg(
         short = 'W',
         long = "width-pixels",
@@ -140,7 +140,7 @@ pub struct Args {
     )]
     pub width_in_pixels: Option<NonZeroU32>,
 
-    /// Height of the image in pixels
+    /// Height of the final image in pixels
     #[arg(
         short = 'H',
         long = "height-pixels",

@@ -41,8 +41,8 @@ Usage: l2a.exe [OPTIONS] <PATH>
 
 ### Dimensions and Padding
 
--   `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the width of the end image
--   `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the height of the end image
+-   `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the final image width
+-   `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the final image height
 -   `-W, --width-pixels <WIDTH_IN_PIXELS>`: Width of the image in pixels
 -   `-H, --height-pixels <HEIGHT_IN_PIXELS>`: Height of the image in pixels
 -   `-P, --pad <PADDING>`: Padding of the image on all sides [default: 0]

@@ -6,10 +6,10 @@ It is weird that the image that you have fits perfectly where you want and how y
 
 There are multiple options to change the size of the final result:
 
--   `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the width of the end image
--   `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the height of the end image
--   `-W, --width-pixels <WIDTH_IN_PIXELS>`: Actual width of the image in pixels
--   `-H, --height-pixels <HEIGHT_IN_PIXELS>`: Actual height of the image in pixels
+-   `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the final image width.
+-   `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the final image height.
+-   `-W, --width-pixels <WIDTH_IN_PIXELS>`: Width of the final image in pixels
+-   `-H, --height-pixels <HEIGHT_IN_PIXELS>`: Height of the final image in pixels
 
 Specifying size in characters overrides the size in pixels, and if you only change one dimension, the aspect ratio will be kept.
 
@@ -33,7 +33,7 @@ Lets revisit the example of the tentacles:
 
 ![Tentacles](../../images/sources/tentacles.png)
 
-This image fill the characters perfectly, there is no need to center it, but when we render it we might notice a character that seems out of place on the left part of the photo:
+This image fills the characters perfectly, there is no need to center it, but when we render it we might notice a character that seems out of place on the left part of the photo:
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c
@@ -56,7 +56,7 @@ The border of the red tentacle is touching the left border of the image, so no b
 We can fix this by adding padding in the x axis.
 
 ```bash
-l2a '.\images\tentacles.png' -b all -c --padx 1 -o
+l2a '.\images\tentacles.png' -b all -c --padx 1
 ```
 
 ![Tentacles padx1](../../images/ascii/tentacles_b_all_c_padx1.png)
@@ -69,6 +69,6 @@ l2a '.\images\tentacles.png' -b all -c --padx 1 -o test2.png
 
 ![Tentacles final padx1](../../images/final/old_tentacles_b_all_padx1.png)
 
-We can see that those borders have been detected.
+We can see that those borders have been detected because the image had more space.
 
 However, if you look at the bottom there are still borders that have not been detected. Fixing it is left as an exercise to the reader.

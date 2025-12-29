@@ -11,3 +11,6 @@
 
 -   **Can we mix multiple character sets (dicts)?**
     Yes, you can use multiple dicts separated by a comma: `-d box_all,blocks`.
+
+-   **The edges look a bit cloudy**
+    You can give a higher value to `-m`, like 0.9 or 0.99, which results in sharper edges. This is usually a problem with really bright images.

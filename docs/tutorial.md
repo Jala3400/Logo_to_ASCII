@@ -1,6 +1,6 @@
 # Tutorial
 
-This tutorial will guide you through the basic workflow of converting images to ASCII art while exploring a few options. We'll start with simple logos and progress to more complex examples.
+This tutorial will guide you through a basic workflow of converting images to ASCII art while exploring a few options. We'll start with simple logos and progress to more complex examples.
 
 ## Table of Contents
 
@@ -82,7 +82,7 @@ If we just used the app it would probably look horrible, so lets skip to the goo
 -   To draw borders between colors, use `-b, --borders all`. This detects color, brightness and transparency changes and draws black borders.
 
 > [!Warning]
-> Here we use `--borders all` instead of `--borders color` because the background color is transparent. If we only detected the borders between the tentacles they would have a strange shape. we could have also used `--borders color, alpha`, as we do not need to look for brightness.
+> Here we use `--borders all` instead of `--borders color` because the background color is transparent. If we only detected the borders between the tentacles they would have a strange shape. We could have also used `--borders color, alpha`, as we do not need to look for brightness.
 
 ```bash
 l2a '.\images\tentacles.png' -b all
@@ -90,7 +90,7 @@ l2a '.\images\tentacles.png' -b all
 
 ![Tentacles](../images/ascii/tentacles_b_all.png)
 
--   Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to show only the borders.
+-   Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to only show the borders.
 
 ```bash
 l2a '.\images\tentacles.png' --borders all -nv
@@ -130,7 +130,7 @@ l2a .\images\Cross_Calatrava.png -cvb all -X1
 
 ## Images with a lot of details.
 
-It is not recommended to convert an image with a lot of details. However, you can "trick" the algorithm by setting the midpoint brightness to 0, so the brightest character is always used and then print the colors.
+It is not recommended to convert an image with a lot of details. However, you can "trick" the algorithm by setting the midpoint brightness to 0, so the brightest character is always used (or only use one character) and then print the colors.
 
 ```bash
 l2a palm.jpg -c -m 0 --center --chars "8"
@@ -158,6 +158,7 @@ Unfilled space: 0x11 pixels
 
 -   `-o, --output <OUTPUT>`: Saves the image after all the transformations.
 -   `--alg <ALGORITHM>`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
+- If you image is too bright and looks cloudy, you can use `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>` to change how bright it looks. It goes from 0 to 1. Use higher values like 0.9 or 0.99 to get sharper edges.
 
 Other important tutorials:
 

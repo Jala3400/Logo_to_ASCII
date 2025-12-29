@@ -18,13 +18,13 @@ And then there is the option `all`, which uses all of them.
 
 It is recommended to use `all`, specially if dealing with transparencies.
 
-If you want to use multiple criteria, but not all of them, you can write them separated with commas, like this:
+If you want to use multiple criteria, but not all of them, you can write them separated by a comma, like this:
 
 `-b color, brightness`. This will detect borders between colors and brightness, but not alpha.
 
 ### Border thickness
 
-`-k, --thickness <BORDER_THICKNESS>`: Border thickness (default: width of the block)
+`-k, --thickness <BORDER_THICKNESS>`: Specifies the thickness of a border.
 
 If not specified its default value is the width of a block.
 
@@ -40,4 +40,4 @@ There is one threshold for color and other for brightness.
 
 If there are borders close the to the actual borders of the image there might be artifacts. You should check out [repositioning](tutorial-size-position.md#practical-example).
 
-If the image is symmetrical, usually a padding of 1 (with `-P 1`) can make the image look better. This is because the borders are detected by comparing a pixel with the one below and at its right, but you should always test.
+If the image is symmetrical, usually a padding of 1 (with `-P 1`) can make the image look better. This is because the borders are detected by comparing a pixel with the one below and the one to its right, but you should always test.
