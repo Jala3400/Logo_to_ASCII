@@ -17,7 +17,7 @@ However, sometimes it can be a little bit limiting.
 
 With the option `-d, --dict <DICTS>` you can specify a different default character set. It will override the ones in `--chars`, but you can still use `-a, --add-chars` and `-x, --except` to customize it.
 
-We provide a list with the characters, but you can know which ones are used with the `--verbose` option. Moreover, it will be sorted from less bright to more bright.
+We provide a list with the characters, but you can know which ones are used with the `--verbose` option. Moreover, it will be sorted from less bright to brighter.
 
 You can specify multiple sets by separating them with a comma, like `-d box_all, nerd`
 

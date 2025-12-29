@@ -1,6 +1,6 @@
 # Tutorial
 
-This tutorial will guide you through a basic workflow of converting images to ASCII art while exploring a few options. We'll start with simple logos and progress to more complex examples.
+This tutorial will guide you through a basic workflow of converting images to ASCII art while exploring a few options. We will start with simple logos and progress to more complex examples.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ l2a Cross_Calatrava.png -d all
 
 -   It is also possible to change the size of the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for more.
 
-For the moment lets use `-w`, which sets the width in characters the end result will have.
+For the moment lest use `-w`, which sets the width in characters the end result will have.
 
 ```bash
 l2a Cross_Calatrava.png -w 100
@@ -63,7 +63,7 @@ This image is 100 characters wide.
 
 For alignment issues we can add padding or use `--center`. See the [size and position tutorial](tutorial/tutorial-size-position.md) for a deeper explanation.
 
-Here we apply a padding in the x-axis and y-axis of half a block, so the points looks pointier (you can get information about the block size and more using `--verbose`, check out [this section](#other)).
+Here we apply a padding in the x-axis and y-axis of half a block, so the points look pointier (you can get information about the block size and more using `--verbose`, check out [this section](#other)).
 
 ```bash
 l2a .\images\Cross_Calatrava.png --padx 4 --pady 8
@@ -77,7 +77,7 @@ Now let's try with a colored logo:
 
 ![Tentacles](../images/sources/tentacles.png)
 
-If we just used the app it would probably look horrible, so lets skip to the good part.
+If we just used the app normally, it would probably look horrible, so let's skip to the good part.
 
 -   To draw borders between colors, use `-b, --borders all`. This detects color, brightness and transparency changes and draws black borders.
 

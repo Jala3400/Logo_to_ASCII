@@ -31,7 +31,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 
 ### Image Processing
 
--   `-n, --negative`: Invert the brightness of the image (transparent is never printed)
+-   `-n, --negative`: Invert the brightness of the image
 -   `-B, --black-white`: Turn the image into black and white
 -   `-t, --threshold <THRESHOLD>`: Threshold value for the black and white conversion (from 0 to 1) [default: 0.5]
 -   `-v, --visible`: Make transparent pixels visible

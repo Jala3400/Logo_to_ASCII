@@ -29,7 +29,7 @@ The padding will be treated in the same way as a transparent color, and the padd
 > ![Warning]
 > This case takes place in a version where you could not detect border by transparency, but it is still useful, as it might happen with other images.
 
-Lets revisit the example of the tentacles:
+Let's revisit the example of the tentacles:
 
 ![Tentacles](../../images/sources/tentacles.png)
 
@@ -43,7 +43,7 @@ l2a '.\images\tentacles.png' -b all -c
 
 That letter `d` is sticking a bit too much.
 
-Lets have a look behind the scenes by saving the final image.
+Let's have a look behind the scenes by saving the final image.
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c -o test.png
@@ -61,7 +61,7 @@ l2a '.\images\tentacles.png' -b all -c --padx 1
 
 ![Tentacles padx1](../../images/ascii/tentacles_b_all_c_padx1.png)
 
-The `d` has disappeared. Lets check the final image again
+The `d` has disappeared. Let's check the final image again.
 
 ```bash
 l2a '.\images\tentacles.png' -b all -c --padx 1 -o test2.png

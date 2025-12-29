@@ -30,7 +30,7 @@ If not specified its default value is the width of a block.
 
 ### Thresholds
 
-There is one threshold for color and other for brightness.
+There is one threshold for color and another for brightness.
 
 -   `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360)
 -   `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1)
@@ -38,6 +38,6 @@ There is one threshold for color and other for brightness.
 
 ## Recommendations
 
-If there are borders close the to the actual borders of the image there might be artifacts. You should check out [repositioning](tutorial-size-position.md#practical-example).
+If there are borders close to the actual borders of the image there might be artifacts. You should check out [repositioning](tutorial-size-position.md#practical-example).
 
 If the image is symmetrical, usually a padding of 1 (with `-P 1`) can make the image look better. This is because the borders are detected by comparing a pixel with the one below and the one to its right, but you should always test.

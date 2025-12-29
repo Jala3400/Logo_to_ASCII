@@ -29,7 +29,7 @@ You can see a more technical explanation on the algorithms in [this](../how-it-w
 
 Even if it operates with the average brightness of a block, it still has a few advantages over classical converters:
 
-The `gradient` algorithm normalizes the brightness of the characters, so the darkest character has a brightness o 0 and the brightest a 1. However it doesn't normalize the image.
+The `gradient` algorithm normalizes the brightness of the characters, so the darkest character has a brightness o 0 and the brightest a 1. However, it doesn't normalize the image.
 
 This means that adding or removing characters changes the ranges of brightness assigned to each character, but that in dark images the bright characters might not appear.
 
@@ -47,7 +47,7 @@ l2a .\images\gradient.jpg -w 80 --alg gradient --chars aeou -v
 
 ![Normal gradient](../../images/ascii/gradient_aeou.png)
 
-By adding an @ and removing the space, darker blocks use the next darker character and brighter blocks use brighter characters:
+By adding an @ and removing the space, darker blocks use the next darker character, and brighter blocks use brighter characters:
 
 ```bash
 l2a .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " " -v

@@ -1,6 +1,6 @@
 # How It Works
 
-The idea came from a video where an image was converted to ASCII. However, a lot of information was lost and the characters didn't have the shape they should.
+The idea came from a video where an image was converted to ASCII. However, a lot of information was lost, and the characters didn't have the shape they should.
 
 This algorithm operates on pixels instead of blocks.
 
@@ -9,7 +9,7 @@ But, before applying the algorithm, a few steps are needed.
 1. Process the characters we want to use
 2. Preprocess the image (if necessary), as it is weird that an image fits perfectly the first time.
 
-You can jump directly to the [explanation of the algorithm](#3-convert-blocks-to-character) if you want, but to understand how this app works you will the first two steps.
+You can jump directly to the [explanation of the algorithm](#3-convert-blocks-to-character) if you want, but to understand how this app works you will need the first two steps.
 
 ## 1. Characters
 
@@ -39,7 +39,7 @@ We also collect statistical information on each character to work with different
 
 After this step we will have the final image to be converted.
 
-This steps are only executed if the flags say so
+These steps are only executed if the flags say so.
 
 1. **Resize the image**:
 
@@ -67,7 +67,7 @@ A border is detected by comparing a pixel with its right and bottom neighbor. If
 
 When all the borders have been identified, there is a second pass on the image that draws them. It draws a square with a specific thickness on each position.
 
-One las thing we have to take into consideration: the transparent pixels also have a hue, and a brightness. This is because the alpha is a separate channel. A transparent pixels is usually black, but it can have an arbitrary color. This means that it can interact in unexpected ways when detecting borders by hue or brightness.
+One las thing we have to take into consideration: the transparent pixels also have a hue, and a brightness. This is because the alpha is a separate channel. A transparent pixel is usually black, but it can have an arbitrary color. This means that it can interact in unexpected ways when detecting borders by hue or brightness.
 
 To stop transparencies with interfering with hue or brightness, we multiply the difference between them by the alpha of the two pixels (the alpha should be between 0 and 1). This way the more transparent they are the less difference between them.
 
@@ -118,11 +118,11 @@ The character with the highest score is the one that matches the best.
 
 **Optimization:**
 
-It only applies with this algorithm when the first character is a space (i think there can be a general solution, but i do not have it yet).
+It only applies with this algorithm when the first character is a space (I think there can be a general solution, but I do not have it yet).
 
 In this step, the number of bright pixels in the block is also counted. With bright I mean with a brightness higher than the midpoint brightness, as we subtract the midpoint brightness to the original brightness.
 
-The base case is simple. If it doesn't have bright pixels then the best match is always the space. It doesn't matter that there is other character with a similar shape, because when multiplying the space has the greatest values, so it will have the highest result.
+The base case is simple. If it doesn't have bright pixels, then the best match is always the space. It doesn't matter that there are other characters with a similar shape, because when multiplying the space has the greatest values, so it will have the highest result.
 
 Now comes a complicated phrase, but in the following paragraph we give an example. This is the main logic for the optimization:
 
@@ -130,7 +130,7 @@ A character is only considered for printing if half of its bright pixels are at 
 
 The sentence is complicated to understand, but in summary, if a character has 10 bright pixels, a character will only be considered if it has at least 5 bright pixels. If it had less than 5, there would be no scenario where that character would be chosen before the space. If there is no space, the character with the fewest illuminated pixels is chosen.
 
-Additionally, if all pixels are completely illuminated, the brightest character can be printed directly. Notice that if they where not completely illuminated there might be combinations where other character fits best.
+Additionally, if all pixels are completely illuminated, the brightest character can be printed directly. Notice that if they were not completely illuminated there might be combinations where other character fits best.
 
 ## Other algorithms
 
@@ -154,7 +154,7 @@ The first one is called `max_prod` and it is the one we have explained before. N
 
 ### Brightness formula
 
-In the previous sections, when calculating the brightness from an rgb value, we have used the following formula:
+In the previous sections, when calculating the brightness from a rgb value, we have used the following formula:
 
 sqrt(0.299 \* r + 0.587 \* g + 0.114 \* b)
 
@@ -164,7 +164,7 @@ We do the square root because the human eye does not perceive the brightness lin
 
 It is the same as before but you subtract 0.5 (or other value of your liking). The point is that you need negative and positive values.
 
-If the brightness range is from 0 to 1, when you multiply you can only increase the score, so a brighter character will have a higher value than the darker ones. Even if it was a completely dark block it will have a score of 0 with every character.
+If the brightness range is from 0 to 1, when you multiply you can only increase the score, so a brighter character will have a higher value than the darker ones. Even if it was a completely dark block it would have a score of 0 with every character.
 
 It is only when you have negative values that you can punish mismatches.
 

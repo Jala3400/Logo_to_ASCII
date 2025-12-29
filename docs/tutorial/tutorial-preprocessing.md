@@ -1,6 +1,6 @@
 # Tutorial: Preprocessing
 
-There are more transformations you can do to the image before transforming it:
+There are more transformations you can apply to the image before transforming it:
 
 -   `-n, --negative` Invert the brightness of the image.
 -   `-B, --black-white` Turn the image into black and white
@@ -15,6 +15,6 @@ There is also a special argument that doesn't fit anywhere else:
 
 -   `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>`: Because of [how the app works](../how-it-works.md) we need the brightness to have positive and negative values, so we subtract this value from the brightness.
 
-Lower values will have cloudier edges and more colors of the image will be visible, and higher values will have sharper edges and less colors will be shown.
+Higher values will have sharper edges and less colors from the image will be visible; and lower values will have cloudier edges, and more colors will be shown.
 
 It can also be used to print images with a lot of details like [this](../tutorial.md#images-with-a-lot-of-details).
