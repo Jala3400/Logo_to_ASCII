@@ -33,10 +33,7 @@ fn main() -> io::Result<()> {
         ));
     }
 
-    // Always treat transparent pixels
-    treat_transparent(&mut img, &args);
-
-    // Resize the image (after transparent treatment because of artifacts)
+    // Resize the image (the first thing to do so everything else is with the right dimensions)
     if let Some(w_nz) = args.width_in_chars {
         args.width_in_pixels = NonZeroU32::new(w_nz.get() * font.width as u32);
     }
@@ -54,7 +51,7 @@ fn main() -> io::Result<()> {
 
     // Apply the padding (after resizing) (before borders so borders are included in the padding)
     // (also before saturate and negative so the padding is affected by them)
-    if args.padding_x != 0 || args.padding_y != 0 {
+    if args.padding != 0 || args.padding_x != 0 || args.padding_y != 0 {
         add_padding(&mut img, &args);
     }
 
@@ -71,6 +68,9 @@ fn main() -> io::Result<()> {
             args.border_thickness.map_or(font.width as u32, |t| t.get()),
         );
     }
+
+    // Always treat transparent pixels (before negative so transparent pixels are visible)
+    treat_transparent(&mut img, &args);
 
     // Apply the negative effect
     if args.negative {

@@ -66,11 +66,23 @@ pub fn calc_hue(pixel: &Rgba<u8>) -> u16 {
 
 // Calculate the difference between the brightness of two pixels
 pub fn brightness_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
-    (calculate_brightness(pixel1) - calculate_brightness(pixel2)).abs()
+    let alpha1 = pixel1[3] as f32 / 255.0;
+    let alpha2 = pixel2[3] as f32 / 255.0;
+    (calculate_brightness(pixel1) - calculate_brightness(pixel2)).abs() * alpha1 * alpha2
 }
 
 // Calculate the difference between the hue of two pixels
-pub fn hue_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> u16 {
-    let diff = calc_hue(pixel1).abs_diff(calc_hue(pixel2));
-    diff.min(360_u16.abs_diff(diff))
+pub fn hue_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
+    let alpha1 = pixel1[3] as f32 / 255.0;
+    let alpha2 = pixel2[3] as f32 / 255.0;
+    let diff = calc_hue(pixel1).abs_diff(calc_hue(pixel2)) as f32;
+    let min_diff = diff.min(360.0 - diff);
+    min_diff * alpha1 * alpha2
+}
+
+// Calculate the difference between the alpha values of two pixels
+pub fn alpha_difference(pixel1: &Rgba<u8>, pixel2: &Rgba<u8>) -> f32 {
+    let alpha1 = pixel1[3] as f32 / 255.0;
+    let alpha2 = pixel2[3] as f32 / 255.0;
+    (alpha1 - alpha2).abs()
 }

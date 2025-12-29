@@ -7,4 +7,4 @@ It is not recommended to have details smaller than one of these blocks, unless t
 Make vector drawings (.svg) and then convert it to an image.
 Draw defined edges and wide surfaces.
 
-To facilitate design, you can use a grid and ensure that the edges of the drawing always coincide with the edges and corners of a block. The default font makes 8x16 blocks, but you should check it with `--verbose`
+To facilitate design, you can use a grid and ensure that the edges of the drawing always coincide with the edges and corners of a block. The default font makes 8x16 blocks, but you should check it with the `--verbose` argument.

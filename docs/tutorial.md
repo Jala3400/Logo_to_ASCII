@@ -1,6 +1,6 @@
 # Tutorial
 
-This tutorial will guide you through the basic workflow of converting images to ASCII art while exploring a few options. We'll start with simple logos and progress to more complex examples.
+This tutorial will guide you through a basic workflow of converting images to ASCII art while exploring a few options. We will start with simple logos and progress to more complex examples.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ l2a Cross_Calatrava.png -d all
 
 -   It is also possible to change the size of the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for more.
 
-For the moment lets use `-w`, which sets the width in characters the end result will have.
+For the moment lest use `-w`, which sets the width in characters the end result will have.
 
 ```bash
 l2a Cross_Calatrava.png -w 100
@@ -63,7 +63,7 @@ This image is 100 characters wide.
 
 For alignment issues we can add padding or use `--center`. See the [size and position tutorial](tutorial/tutorial-size-position.md) for a deeper explanation.
 
-Here we apply a padding in the x-axis and y-axis of half a block, so the points looks pointier (you can get information about the block size and more using `--verbose`, check out [this section](#other)).
+Here we apply a padding in the x-axis and y-axis of half a block, so the points look pointier (you can get information about the block size and more using `--verbose`, check out [this section](#other)).
 
 ```bash
 l2a .\images\Cross_Calatrava.png --padx 4 --pady 8
@@ -77,12 +77,12 @@ Now let's try with a colored logo:
 
 ![Tentacles](../images/sources/tentacles.png)
 
-If we just used the app it would probably look horrible, so lets skip to the good part.
+If we just used the app normally, it would probably look horrible, so let's skip to the good part.
 
--   To draw borders between colors, use `-b, --borders all`. This detects color and brightness changes and draws black borders.
+-   To draw borders between colors, use `-b, --borders all`. This detects color, brightness and transparency changes and draws black borders.
 
 > [!Warning]
-> Here we use `--borders all` instead of `--borders color` because the background color is transparent. Because of [how this app works](how-it-works.md), the transparent pixels are transformed into black, which shares the same hue as red, so just checking for color will not detect the border between the red tentacle and the background.
+> Here we use `--borders all` instead of `--borders color` because the background color is transparent. If we only detected the borders between the tentacles they would have a strange shape. We could have also used `--borders color, alpha`, as we do not need to look for brightness.
 
 ```bash
 l2a '.\images\tentacles.png' -b all
@@ -90,7 +90,7 @@ l2a '.\images\tentacles.png' -b all
 
 ![Tentacles](../images/ascii/tentacles_b_all.png)
 
--   Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to show only the borders.
+-   Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to only show the borders.
 
 ```bash
 l2a '.\images\tentacles.png' --borders all -nv
@@ -123,14 +123,14 @@ l2a .\images\tentacles.png -b all -c
 You can combine multiple options for more complex results:
 
 ```bash
-l2a .\images\Cross_Calatrava.png -cvb all
+l2a .\images\Cross_Calatrava.png -cvb all -X1
 ```
 
-![Cross of Calatrava combined](../images/ascii/cross_cvb_all.png)
+![Cross of Calatrava combined](../images/ascii/cross_cvb_all_X1.png)
 
 ## Images with a lot of details.
 
-It is not recommended to convert an image with a lot of details. However, you can "trick" the algorithm by setting the midpoint brightness to 0, so the brightest character is always used and then print the colors.
+It is not recommended to convert an image with a lot of details. However, you can "trick" the algorithm by setting the midpoint brightness to 0, so the brightest character is always used (or only use one character) and then print the colors.
 
 ```bash
 l2a palm.jpg -c -m 0 --center --chars "8"
@@ -158,6 +158,7 @@ Unfilled space: 0x11 pixels
 
 -   `-o, --output <OUTPUT>`: Saves the image after all the transformations.
 -   `--alg <ALGORITHM>`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
+- If you image is too bright and looks cloudy, you can use `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>` to change how bright it looks. It goes from 0 to 1. Use higher values like 0.9 or 0.99 to get sharper edges.
 
 Other important tutorials:
 

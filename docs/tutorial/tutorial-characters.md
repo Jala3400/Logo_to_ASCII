@@ -4,7 +4,7 @@ In this tutorial we will go over how to change the characters used.
 
 The default character set is `8dbqp'·. ` (including the space). It was chosen because the characters are symmetrical or have a mirrored one.
 
-However, it can feel a bit limiting.
+However, sometimes it can be a little bit limiting.
 
 ## Customize the character set
 
@@ -17,9 +17,9 @@ However, it can feel a bit limiting.
 
 With the option `-d, --dict <DICTS>` you can specify a different default character set. It will override the ones in `--chars`, but you can still use `-a, --add-chars` and `-x, --except` to customize it.
 
-We provide a list with the characters, but you can know which ones are used with the `--verbose` option. Moreover, it will be sorted from less bright to more bright.
+We provide a list with the characters, but you can know which ones are used with the `--verbose` option. Moreover, it will be sorted from less bright to brighter.
 
-You can specify multiple sets by separating them with a comma, like `-d box_all,nerd`
+You can specify multiple sets by separating them with a comma, like `-d box_all, nerd`
 
 The possible dicts are:
 

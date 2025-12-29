@@ -8,31 +8,36 @@ Here is an explanation about which parameters can be used and some recommendatio
 
 ### Border policy
 
-The argument `-b, --borders <BORDER_CRITERIA>` decides how borders are identified. There are 3 possibilities:
+The argument `-b, --borders <BORDER_CRITERIA>..` decides how borders are identified. There are 3 possibilities:
 
 -   `color`: Measures by hue difference.
 -   `brightness`: Measures the brightness difference.
--   `all`: Checks for both of them.
+-   `alpha`: Measures the alpha difference.
+
+And then there is the option `all`, which uses all of them.
 
 It is recommended to use `all`, specially if dealing with transparencies.
 
-When working with transparent images, the first thing the app does it convert the transparent pixels to black (or white with the `-v, --visible` flag), and if you calculate the hue of the black color it is the same as the red color, so it will not detect borders there.
+If you want to use multiple criteria, but not all of them, you can write them separated by a comma, like this:
 
-Something similar happens when working with black logos and brightness, but you can detect the borders by using the `-v, --visible` flag.
+`-b color, brightness`. This will detect borders between colors and brightness, but not alpha.
 
 ### Border thickness
 
-`-k, --thick <BORDER_THICKNESS>` receives a number. It is the thickness of the borders that will be drawn.
+`-k, --thickness <BORDER_THICKNESS>`: Specifies the thickness of a border.
 
 If not specified its default value is the width of a block.
 
 ### Thresholds
 
-There is one threshold for color and other for brightness.
+There is one threshold for color and another for brightness.
 
--   `--color-diff <COLOR_DIFF>`: From 0 to 360, enforced by using the remainder of COLOR_DIFF by 360 (modulus operation).
--   `--brightness-diff <BRIGHTNESS_DIFF>`: From 0 to 1, it is a number with decimals.
+-   `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360)
+-   `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1)
+-   `--alpha-diff <ALPHA_DIFF>`: Threshold for the brightness difference (from 0 to 1)
 
 ## Recommendations
 
-If there are borders close the to the actual borders of the image there might be artifacts. You should check out [repositioning](tutorial-size-position.md#practical-example).
+If there are borders close to the actual borders of the image there might be artifacts. You should check out [repositioning](tutorial-size-position.md#practical-example).
+
+If the image is symmetrical, usually a padding of 1 (with `-P 1`) can make the image look better. This is because the borders are detected by comparing a pixel with the one below and the one to its right, but you should always test.
