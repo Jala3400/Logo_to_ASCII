@@ -1,5 +1,6 @@
 use crate::{
     args::Args,
+    errors::L2aError,
     proc_pixel::{
         alpha_difference, brightness_difference, calculate_brightness, calculate_linear_brightness,
         hue_difference,
@@ -12,6 +13,7 @@ use std::num::NonZeroU32;
 // Resizes an image
 pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     let (orig_width, orig_height) = img.dimensions();
+
     if args.verbose {
         println!("Original dimensions {}x{}", orig_width, orig_height);
     }
@@ -56,7 +58,7 @@ pub fn center_image(img: &RgbaImage, args: &mut Args, font: &FontBitmap) {
 }
 
 // Adds padding to an image
-pub fn add_padding(img: &mut RgbaImage, args: &Args) {
+pub fn add_padding(img: &mut RgbaImage, args: &Args) -> Result<(), L2aError> {
     // Calculate dimensions
     let (img_width, img_height) = img.dimensions();
     let padding_x = args.padding_x + args.padding;
@@ -82,11 +84,13 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) {
     }
 
     *img = image::RgbaImage::from_raw(new_width, new_height, new_bytes)
-        .expect("Failed to create padding image");
+        .ok_or(L2aError::Font("Failed to create padding image".to_string()))?;
 
     if args.verbose {
         println!("Applied padding of {}x{}", padding_x, padding_y);
     }
+
+    Ok(())
 }
 
 // Saturates an image

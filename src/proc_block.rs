@@ -28,7 +28,7 @@ fn max_prod<'a>(
 ) -> &'a CharInfo {
     // If the block is full, return the fullest character
     if full_pixels == block.len() {
-        return font.data.last().unwrap();
+        return &font.data[font.data.len() - 1];
     }
 
     let mut best_match = &font.data[0];

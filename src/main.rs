@@ -8,29 +8,24 @@ use l2a::{
         treat_transparent,
     },
     proc_image::convert_image,
+    errors::L2aError,
 };
-use std::io;
 use std::num::NonZeroU32;
 
-fn main() -> io::Result<()> {
+fn main() -> Result<(), L2aError> {
     // Parse the command line arguments
     let mut args: Args = Args::parse();
 
     // Load the image
-    let mut img = image::open(&args.path)
-        .unwrap_or_else(|e| panic!("Failed to open image: {}", e))
-        .to_rgba8();
+    let mut img = image::open(&args.path)?.to_rgba8();
 
     process_characters(&mut args);
 
     // Get the font
-    let font = font::get_font(&args);
+    let font = font::get_font(&args)?;
 
     if font.data.is_empty() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            "No characters available to convert the image.".to_string(),
-        ));
+        return Err(L2aError::NoCharacters);
     }
 
     // Resize the image (the first thing to do so everything else is with the right dimensions)
@@ -52,7 +47,7 @@ fn main() -> io::Result<()> {
     // Apply the padding (after resizing) (before borders so borders are included in the padding)
     // (also before saturate and negative so the padding is affected by them)
     if args.padding != 0 || args.padding_x != 0 || args.padding_y != 0 {
-        add_padding(&mut img, &args);
+        add_padding(&mut img, &args)?;
     }
 
     // Saturate the image (before borders so borders are more visible and before negative so it is not inverted)
@@ -97,9 +92,7 @@ fn main() -> io::Result<()> {
             Ok(format) => img.save_with_format(output, format),
             Err(_) => img.save_with_format(output.to_owned() + ".png", image::ImageFormat::Png),
         }
-        .map_err(|e| {
-            io::Error::new(io::ErrorKind::Other, format!("Failed to save image: {}", e))
-        })?;
+        .map_err(|e| L2aError::Image(e))?;
     }
 
     Ok(())

@@ -11,7 +11,9 @@ use image::RgbaImage;
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
     // Enable colors
     if args.print_color {
-        enable_ansi_support().unwrap();
+        if let Err(e) = enable_ansi_support() {
+            eprintln!("Warning: Could not enable ANSI support: {}", e);
+        }
     }
 
     // Get font dimensions
@@ -75,9 +77,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
 
             // If the color flag is set, print the color of the character
             if args.print_color {
-                let (r, g, b) =
-                    get_color_for_block(color_block.as_ref().unwrap(), &block, char_info);
-                result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
+                if let Some(color_block) = color_block.as_ref() {
+                    let (r, g, b) = get_color_for_block(color_block, &block, char_info);
+                    result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
+                }
             }
 
             // Append the character
@@ -91,7 +94,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
 }
 
 /// Process a single block of pixels and return statistics
-/// Returns: (bright_pixels, high_pixels, full_pixels, r, g, b)
+/// Returns: (bright_pixels, high_pixels)
 #[inline]
 fn process_block_pixels(
     img: &RgbaImage,

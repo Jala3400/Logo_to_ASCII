@@ -1,7 +1,6 @@
-use std::vec;
-
 use crate::{
     args::Args,
+    errors::L2aError,
     proc_pixel::calculate_brightness,
     types::{CharInfo, FontBitmap},
 };
@@ -9,23 +8,24 @@ use font_kit::{family_name::FamilyName, properties::Properties, source::SystemSo
 use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
+use std::vec;
 
 /// Returns a FontBitmap with the characters and their brightness values
-pub fn get_font(args: &Args) -> FontBitmap {
+pub fn get_font(args: &Args) -> Result<FontBitmap, L2aError> {
     // Load or create an image
     let mut img;
 
     // Load a font
     let font: Font<'_>;
     if let Some(font_path) = args.font_path.as_ref() {
-        let font_data =
-            std::fs::read(&font_path).expect(&format!("Failed to read font file {font_path}"));
+        let font_data = std::fs::read(&font_path).map_err(|e| L2aError::Io(e))?;
 
         if args.verbose {
             println!("Loaded font from path: {}", font_path);
         }
 
-        font = Font::try_from_vec(font_data).expect("Failed to load font");
+        font =
+            Font::try_from_vec(font_data).ok_or(L2aError::Font("Invalid font data".to_owned()))?;
     } else if let Some(font_name) = args.font_name.as_ref() {
         // Use font-kit to look up the font by name
         let source = SystemSource::new();
@@ -34,13 +34,13 @@ pub fn get_font(args: &Args) -> FontBitmap {
                 &[FamilyName::Title(font_name.clone())],
                 &Properties::default(),
             )
-            .expect(&format!("Failed to find font: {}", font_name));
+            .map_err(|e| L2aError::Font(format!("Failed to find font: {}", e)))?;
 
         let font_data = handle
             .load()
-            .expect("Failed to load font data")
+            .map_err(|e| L2aError::Font(format!("Failed to load font data: {}", e)))?
             .copy_font_data()
-            .expect("Failed to copy font data");
+            .ok_or(L2aError::Font("Failed to copy font data".to_string()))?;
 
         if args.verbose {
             match handle {
@@ -53,12 +53,13 @@ pub fn get_font(args: &Args) -> FontBitmap {
             }
         }
 
-        font = Font::try_from_vec(font_data.to_vec()).expect("Failed to parse font");
+        font = Font::try_from_vec(font_data.to_vec())
+            .ok_or(L2aError::Font("Invalid font data".to_owned()))?;
     } else {
         font = Font::try_from_bytes(include_bytes!(
             "../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf"
         ))
-        .unwrap();
+        .ok_or(L2aError::Font("Invalid font data".to_owned()))?;
     }
 
     // Define text properties
@@ -168,5 +169,5 @@ pub fn get_font(args: &Args) -> FontBitmap {
         );
     }
 
-    final_font
+    Ok(final_font)
 }

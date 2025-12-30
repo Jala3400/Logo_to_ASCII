@@ -569,6 +569,7 @@ dependencies = [
  "image",
  "imageproc",
  "rusttype",
+ "thiserror",
 ]
 
 [[package]]
