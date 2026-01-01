@@ -1,96 +1,95 @@
 use clap::Parser;
-use logo_to_ascii::{
-    abc,
+use l2a::{
     args::Args,
+    characters::process_characters,
+    font,
     image_ops::{
-        add_offset, borders_image, bw_filter, grayscale, negative, resize, saturate,
+        add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
     },
     proc_image::convert_image,
+    errors::L2aError,
 };
-use std::io;
+use std::num::NonZeroU32;
 
-fn main() -> io::Result<()> {
+fn main() {
+    if let Err(e) = run() {
+        eprintln!("\n{}\n", e);
+        std::process::exit(1);
+    }
+}
+
+fn run() -> Result<(), L2aError> {
     // Parse the command line arguments
     let mut args: Args = Args::parse();
-    args.difference = args.difference % 360;
 
     // Load the image
-    let mut img = image::open(&args.path)
-        .unwrap_or_else(|e| panic!("Failed to open image: {}", e))
-        .to_rgba8();
+    let mut img = image::open(&args.path)?.to_rgba8();
 
-    // If the flag indicates it, use all ASCII characters
-    if args.all {
-        args.chars = (32..=126).map(|c| c as u8 as char).collect::<String>();
-    }
-
-    // Add the additional characters
-    args.chars.push_str(&args.add_chars);
-
-    // Remove the excluded characters
-    args.chars = args
-        .chars
-        .chars()
-        .filter(|c| !args.except.contains(*c))
-        .collect();
-
-    if args.chars.is_empty() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            "No characters to use. Please provide valid characters.",
-        ));
-    }
+    process_characters(&mut args);
 
     // Get the font
-    let font = abc::get_dict(&args);
+    let font = font::get_font(&args)?;
 
-    // Resize the image
-    if args.char_width > 0 {
-        args.pixel_width = args.char_width * 8;
+    if font.data.is_empty() {
+        return Err(L2aError::NoCharacters);
     }
-    if args.char_height > 0 {
-        args.pixel_height = args.char_height * 16;
+
+    // Resize the image (the first thing to do so everything else is with the right dimensions)
+    if let Some(w_nz) = args.width_in_chars {
+        args.width_in_pixels = NonZeroU32::new(w_nz.get() * font.width as u32);
     }
-    if args.pixel_height > 0 || args.pixel_width > 0 {
+    if let Some(h_nz) = args.height_in_chars {
+        args.height_in_pixels = NonZeroU32::new(h_nz.get() * font.vertical_step as u32);
+    }
+    if args.height_in_pixels.is_some() || args.width_in_pixels.is_some() {
         resize(&mut img, &mut args);
     }
 
-    // Apply the offset
-    if args.offsetx != 0 || args.offsety != 0 {
-        add_offset(&mut img, &args);
+    // Adjust padding to center the image (after resizing, so it is centered with the final size)
+    if args.center {
+        center_image(&img, &mut args, &font);
     }
 
-    // Saturate the image
+    // Apply the padding (after resizing) (before borders so borders are included in the padding)
+    // (also before saturate and negative so the padding is affected by them)
+    if args.padding != 0 || args.padding_x != 0 || args.padding_y != 0 {
+        add_padding(&mut img, &args)?;
+    }
+
+    // Saturate the image (before borders so borders are more visible and before negative so it is not inverted)
     if args.saturate {
         saturate(&mut img, &args);
     }
 
-    // Add borders
-    if args.color_borders || args.border != 0 {
-        borders_image(&mut img, &args);
+    // Add borders (before negative effect so borders are visible)
+    if args.border_criteria.is_some() {
+        borders_image(
+            &mut img,
+            &args,
+            args.border_thickness.map_or(font.width as u32, |t| t.get()),
+        );
     }
+
+    // Always treat transparent pixels (before negative so transparent pixels are visible)
+    treat_transparent(&mut img, &args);
 
     // Apply the negative effect
     if args.negative {
         negative(&mut img);
     }
 
-    // Always treat transparent pixels, because it makes them visible when printing color
-    treat_transparent(&mut img, &args);
-
-    // Grayscale and brighten the image
+    // Grayscale and brighten the image (after saturate, negative and transparent so it is applied to the final colors)
     if args.grayscale {
         grayscale(&mut img);
     }
 
-    // Apply the black and white filter
+    // Apply the black and white filter (after saturate, negative and transparent so it is applied to the final colors)
     if args.black_and_white {
         bw_filter(&mut img, &args);
     }
-
     // Convert the image to ASCII
-    println!("{}", convert_image(&img, &font, &args));
+    print!("{}", convert_image(&img, &font, &args));
 
     // Save the image
     if let Some(output) = &args.output {
@@ -100,9 +99,7 @@ fn main() -> io::Result<()> {
             Ok(format) => img.save_with_format(output, format),
             Err(_) => img.save_with_format(output.to_owned() + ".png", image::ImageFormat::Png),
         }
-        .map_err(|e| {
-            io::Error::new(io::ErrorKind::Other, format!("Failed to save image: {}", e))
-        })?;
+        .map_err(|e| L2aError::Image(e))?;
     }
 
     Ok(())

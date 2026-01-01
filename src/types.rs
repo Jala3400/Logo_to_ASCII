@@ -1,20 +1,5 @@
 use clap::ValueEnum;
 
-/// A structure representing a bitmap image with brightness values.
-///
-/// # Fields
-///
-/// * `data` - A vector containing brightness values of each pixel in the image
-/// * `width` - The width of the image in pixels
-/// * `height` - The height of the image in pixels
-/// * `max_brightness` - The maximum brightness value found in the image data
-pub struct Bitmap {
-    pub data: Vec<f32>,
-    pub width: usize,
-    pub height: usize,
-    pub max_brightness: f32,
-}
-
 /// A structure representing a bitmap font, containing character information
 ///
 /// The font bitmap stores character data in a vector, ordered by their minimum
@@ -25,8 +10,13 @@ pub struct Bitmap {
 ///
 /// * `data` - A vector of character information entries ([`CharInfo`]),
 ///            ordered by minimum pixel value in descending order
+/// * `width` - The width of each character cell in pixels
+/// * `height` - The height of each character cell in pixels
 pub struct FontBitmap {
     pub data: Vec<CharInfo>, // It is ordered by the min value, from highest to lowest
+    pub width: usize,
+    pub height: usize,
+    pub vertical_step: usize,
 }
 
 /// Inserts a character information into the bitmap in ascending order based on minimum value.
@@ -43,7 +33,18 @@ impl FontBitmap {
         while i < self.data.len() && self.data[i].avg_brightness < char_info.avg_brightness {
             i += 1;
         }
+
+        // If the character already exists, do not insert it again
+        if i < self.data.len() && self.data[i].char == char_info.char {
+            return;
+        }
+
         self.data.insert(i, char_info);
+    }
+
+    /// Returns the total number of pixels in each character cell
+    pub fn cell_size(&self) -> usize {
+        self.width * self.height
     }
 }
 
@@ -52,7 +53,7 @@ impl FontBitmap {
 /// # Fields:
 ///
 /// * char - The character itself
-/// * data - The bitmap of the character, represented as an array of 8x16 elements
+/// * data - The bitmap of the character as a vector of brightness values
 /// * min - The minimum brightness threshold for this character, calculated as half of the total bright blocks
 /// * avg_brightness - The average brightness of the character, used for gradient-based algorithms. Ranges from 0 to 1.
 /// * norm - The L2 norm (magnitude) of the character data, used for NCC algorithm
@@ -60,12 +61,90 @@ impl FontBitmap {
 /// * std - The standard deviation of the character data, used for correlation algorithm
 pub struct CharInfo {
     pub char: char,
-    pub data: [f32; 8 * 16],
+    pub data: Vec<f32>,
     pub min: usize,
     pub avg_brightness: f32,
     pub norm: f32,
     pub mean: f32,
     pub std: f32,
+}
+
+/// Criteria for detecting borders in the image.
+///
+/// This enum defines the different criteria that can be used to identify borders
+/// in the image during the ASCII art generation process.
+///
+/// # Variants
+///
+/// * `Color` - Detect borders based on color differences.
+/// * `Brightness` - Detect borders based on brightness differences.
+/// * `Alpha` - Detect borders based on alpha (transparency) differences.
+/// * `All` - Detect borders using all criteria (color, brightness, and alpha).
+#[derive(Debug, Clone, ValueEnum)]
+pub enum BorderCriteria {
+    #[value(name = "color")]
+    Color,
+    #[value(name = "brightness")]
+    Brightness,
+    #[value(name = "alpha")]
+    Alpha,
+    #[value(name = "all")]
+    All,
+}
+
+/// Built in character sets for ASCII art generation.
+///
+/// This enum defines different predefined character sets that can be used
+/// to generate ASCII art from bitmap images.
+///
+/// # Variants
+///
+/// * `Default` - The default character set, a balanced selection of characters
+/// * `All` - All printable ASCII characters from 32 to 126
+/// * `Symbols` - A small set of symbols
+/// /// There is no good monospace font with braille characters included by default
+/// /// Might work on this later
+/// /// * `Braille` - A set of Braille characters for detailed patterns.
+/// * `Blocks` - A set of block characters for more solid representations.
+/// * `BlocksAll` - A larger set of block characters including partial blocks.
+/// * `Box` - A set of box drawing characters for line-based art.
+/// * `BoxAll` - A larger set of box drawing characters including diagonal lines.
+/// * `BoxDouble` - A set of double-line box drawing characters.
+/// * `BoxDoubleAll` - A larger set of double-line box drawing characters including diagonal lines.
+/// * `Nerd` - A set of Nerd Font characters for enhanced visual detail.
+/// * `Math` - A set of mathematical symbols.
+/// * `Numbers` - A set of numeric characters (0-9).
+/// * `Letters` - A set of alphabetic characters (A-Z, a-z).
+#[derive(Debug, Clone, ValueEnum)]
+pub enum BuiltInCharSet {
+    #[value(name = "default")]
+    Default,
+    #[value(name = "all")]
+    All,
+    #[value(name = "symbols")]
+    Symbols,
+    #[value(name = "blocks")]
+    // #[value(name = "braille")]
+    // Braille,
+    Blocks,
+    #[value(name = "blocks_all")]
+    BlocksAll,
+    #[value(name = "box")]
+    Box,
+    #[value(name = "box_all")]
+    BoxAll,
+    #[value(name = "box_double")]
+    BoxDouble,
+    #[value(name = "box_double_all")]
+    BoxDoubleAll,
+    #[value(name = "nerd")]
+    Nerd,
+    #[value(name = "math")]
+    Math,
+    #[value(name = "numbers")]
+    Numbers,
+    #[value(name = "letters")]
+    Letters,
 }
 
 /// Algorithm enumeration for ASCII art generation methods.
