@@ -36,6 +36,14 @@ jobs:
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
+      - name: Rename binary
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            mv target/${{ matrix.target }}/release/l2a.exe target/${{ matrix.target }}/release/${{ matrix.name }}
+          else
+            mv target/${{ matrix.target }}/release/l2a target/${{ matrix.target }}/release/${{ matrix.name }}
+          fi
+
       - name: Generate checksums
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
