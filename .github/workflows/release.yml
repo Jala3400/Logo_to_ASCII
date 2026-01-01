@@ -39,6 +39,7 @@ jobs:
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Rename binary
+        shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
             mv target/${{ matrix.target }}/release/l2a.exe target/${{ matrix.target }}/release/${{ matrix.name }}
@@ -46,19 +47,10 @@ jobs:
             mv target/${{ matrix.target }}/release/l2a target/${{ matrix.target }}/release/${{ matrix.name }}
           fi
 
-      - name: Generate checksums
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            Get-FileHash target/${{ matrix.target }}/release/${{ matrix.name }} -Algorithm SHA256 | Out-File -FilePath ${{ matrix.name }}.sha256
-          else
-            sha256sum target/${{ matrix.target }}/release/${{ matrix.name }} > ${{ matrix.name }}.sha256
-          fi
-
       - name: Upload binary to release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             target/${{ matrix.target }}/release/${{ matrix.name }}
-            ${{ matrix.name }}.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
