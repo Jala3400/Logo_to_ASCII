@@ -12,7 +12,14 @@ use l2a::{
 };
 use std::num::NonZeroU32;
 
-fn main() -> Result<(), L2aError> {
+fn main() {
+    if let Err(e) = run() {
+        eprintln!("\n{}\n", e);
+        std::process::exit(1);
+    }
+}
+
+fn run() -> Result<(), L2aError> {
     // Parse the command line arguments
     let mut args: Args = Args::parse();
 

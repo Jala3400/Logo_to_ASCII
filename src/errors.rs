@@ -4,10 +4,10 @@ use thiserror::Error;
 pub enum L2aError {
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
-    #[error("Image error: {0}")]
+    #[error("Failed to process image: {0}")]
     Image(#[from] image::ImageError),
-    #[error("Font loading error: {0}")]
+    #[error("Failed to load font: {0}")]
     Font(String),
-    #[error("No characters available for conversion")]
+    #[error("No characters available for conversion. Provide characters and check if they are supported by the font.")]
     NoCharacters,
 }
