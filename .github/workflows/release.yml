@@ -29,6 +29,10 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig-dev libjpeg-dev libpng-dev libtiff-dev libgif-dev
+
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
