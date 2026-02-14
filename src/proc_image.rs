@@ -2,7 +2,7 @@ use crate::{
     args::Args,
     proc_block::{get_color_for_block, match_block_with_char},
     proc_pixel::calc_custom_brightness,
-    types::{FontBitmap, OutputFormat},
+    types::{CharInfo, FontBitmap, OutputFormat},
 };
 use enable_ansi_support::enable_ansi_support;
 use image::RgbaImage;
@@ -19,7 +19,6 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     // Get font dimensions
     let cell_size = font.cell_size();
     let font_width = font.width;
-    let font_height = font.height;
     let vertical_step = font.vertical_step;
 
     // Precalculate needed values
@@ -62,6 +61,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         };
         result.push_str(&format!("<pre style=\"font-family:{}\">", font_family));
     }
+
     let mut block = vec![0f32; cell_size];
     let mut color_block = if args.print_color {
         Some(vec![(0u8, 0u8, 0u8); cell_size])
@@ -72,53 +72,16 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     // Iterate over the blocks of pixels and print each character
     for y in 0..num_blocks_y {
         for x in 0..num_blocks_x {
-            let (bright_pixels, full_pixels) = process_block_pixels(
+            process_block_pixels(
                 img,
+                font,
                 x,
                 y,
-                font_width,
-                font_height,
-                vertical_step,
-                width,
-                height,
                 args,
                 &mut block,
                 &mut color_block,
+                &mut result,
             );
-
-            let char_info =
-                match_block_with_char(&block, font, bright_pixels, full_pixels, &args.algorithm);
-
-            // If the color flag is set, print the color of the character
-            if args.print_color {
-                if let Some(color_block) = color_block.as_ref() {
-                    let (r, g, b) = get_color_for_block(color_block, &block, char_info);
-                    match args.out_format {
-                        OutputFormat::Ansi => {
-                            result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
-                            result.push(char_info.char);
-                        }
-                        OutputFormat::Html => {
-                            let ch = match char_info.char {
-                                '<' => "&lt;".to_string(),
-                                '>' => "&gt;".to_string(),
-                                '&' => "&amp;".to_string(),
-                                '"' => "&quot;".to_string(),
-                                c => c.to_string(),
-                            };
-                            result.push_str(&format!(
-                                "<span style=\"color:rgb({},{},{})\">{}</span>",
-                                r, g, b, ch
-                            ));
-                        }
-                    }
-                } else {
-                    result.push(char_info.char);
-                }
-            } else {
-                // Append the character
-                result.push(char_info.char);
-            }
         }
         result.push('\n');
     }
@@ -136,24 +99,26 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     result
 }
 
-/// Process a single block of pixels and return statistics
-/// Returns: (bright_pixels, high_pixels)
+/// Process a single block of pixels, match it with a character and push it to the result
 #[inline]
 fn process_block_pixels(
     img: &RgbaImage,
+    font: &FontBitmap,
     x: usize,
     y: usize,
-    font_width: usize,
-    font_height: usize,
-    vertical_step: usize,
-    width: usize,
-    height: usize,
     args: &Args,
     block: &mut [f32],
     color_block: &mut Option<Vec<(u8, u8, u8)>>,
-) -> (usize, usize) {
+    result: &mut String,
+) {
     let mut bright_pixels = 0;
     let mut full_pixels = 0;
+
+    let font_width = font.width;
+    let font_height = font.height;
+    let vertical_step = font.vertical_step;
+    let width = img.width() as usize;
+    let height = img.height() as usize;
 
     // For each pixel in the block generate the brightness value and store the color
     // The block height might be greater than the character height, so iterate by the
@@ -201,5 +166,47 @@ fn process_block_pixels(
         }
     }
 
-    (bright_pixels, full_pixels)
+    let char_info = match_block_with_char(block, font, bright_pixels, full_pixels, &args.algorithm);
+
+    push_formatted_character(&char_info, result, color_block.as_ref(), block, args);
+}
+
+#[inline]
+fn push_formatted_character(
+    char_info: &CharInfo,
+    result: &mut String,
+    color_block: Option<&Vec<(u8, u8, u8)>>,
+    block: &[f32],
+    args: &Args,
+) {
+    // If the color flag is set, print the color of the character
+    if args.print_color {
+        if let Some(color_block) = color_block.as_ref() {
+            let (r, g, b) = get_color_for_block(color_block, &block, char_info);
+            match args.out_format {
+                OutputFormat::Ansi => {
+                    result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
+                    result.push(char_info.char);
+                }
+                OutputFormat::Html => {
+                    let ch = match char_info.char {
+                        '<' => "&lt;".to_string(),
+                        '>' => "&gt;".to_string(),
+                        '&' => "&amp;".to_string(),
+                        '"' => "&quot;".to_string(),
+                        c => c.to_string(),
+                    };
+                    result.push_str(&format!(
+                        "<span style=\"color:rgb({},{},{})\">{}</span>",
+                        r, g, b, ch
+                    ));
+                }
+            }
+        } else {
+            result.push(char_info.char);
+        }
+    } else {
+        // Append the character
+        result.push(char_info.char);
+    }
 }
