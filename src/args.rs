@@ -1,4 +1,4 @@
-use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet};
+use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet, OutputFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;
@@ -38,6 +38,10 @@ pub struct Args {
     /// Path of the font to use (optional)
     #[arg(short = 'F', long, help_heading = "Input/Output")]
     pub font_path: Option<String>,
+
+    /// Output format for colored output (ansi for terminal, html for web pages)
+    #[arg(long = "out-format", value_enum, default_value_t = OutputFormat::Ansi, help_heading = "Input/Output")]
+    pub out_format: OutputFormat,
 
     // Character Set
     /// Characters used to convert the image

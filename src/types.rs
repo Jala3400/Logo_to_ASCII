@@ -147,6 +147,20 @@ pub enum BuiltInCharSet {
     Letters,
 }
 
+/// Output format for the ASCII art.
+///
+/// # Variants
+///
+/// * `Ansi` - Use ANSI escape codes for terminal color output.
+/// * `Html` - Use HTML `<span>` tags with inline styles for web color output.
+#[derive(Debug, Clone, ValueEnum)]
+pub enum OutputFormat {
+    #[value(name = "ansi")]
+    Ansi,
+    #[value(name = "html")]
+    Html,
+}
+
 /// Algorithm enumeration for ASCII art generation methods.
 ///
 /// This enum defines different algorithms that can be used to convert

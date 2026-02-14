@@ -2,7 +2,7 @@ use crate::{
     args::Args,
     proc_block::{get_color_for_block, match_block_with_char},
     proc_pixel::calc_custom_brightness,
-    types::FontBitmap,
+    types::{FontBitmap, OutputFormat},
 };
 use enable_ansi_support::enable_ansi_support;
 use image::RgbaImage;
@@ -46,8 +46,22 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         }
     }
 
-    let string_capacity = num_blocks_x * num_blocks_y * if args.print_color { 22 } else { 1 };
+    let color_overhead = match args.out_format {
+        OutputFormat::Ansi => 22,
+        OutputFormat::Html => 60,
+    };
+    let string_capacity =
+        num_blocks_x * num_blocks_y * if args.print_color { color_overhead } else { 1 };
     let mut result = String::with_capacity(string_capacity);
+
+    // HTML preamble
+    if args.print_color && matches!(args.out_format, OutputFormat::Html) {
+        let font_family = match &args.font_name {
+            Some(name) => format!("'{}', monospace", name),
+            None => "monospace".to_string(),
+        };
+        result.push_str(&format!("<pre style=\"font-family:{}\">", font_family));
+    }
     let mut block = vec![0f32; cell_size];
     let mut color_block = if args.print_color {
         Some(vec![(0u8, 0u8, 0u8); cell_size])
@@ -79,16 +93,45 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
             if args.print_color {
                 if let Some(color_block) = color_block.as_ref() {
                     let (r, g, b) = get_color_for_block(color_block, &block, char_info);
-                    result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
+                    match args.out_format {
+                        OutputFormat::Ansi => {
+                            result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
+                            result.push(char_info.char);
+                        }
+                        OutputFormat::Html => {
+                            let ch = match char_info.char {
+                                '<' => "&lt;".to_string(),
+                                '>' => "&gt;".to_string(),
+                                '&' => "&amp;".to_string(),
+                                '"' => "&quot;".to_string(),
+                                c => c.to_string(),
+                            };
+                            result.push_str(&format!(
+                                "<span style=\"color:rgb({},{},{})\">{}</span>",
+                                r, g, b, ch
+                            ));
+                        }
+                    }
+                } else {
+                    result.push(char_info.char);
                 }
+            } else {
+                // Append the character
+                result.push(char_info.char);
             }
-
-            // Append the character
-            result.push(char_info.char);
         }
         result.push('\n');
     }
-    result.push_str("\x1b[0m");
+
+    // Closing
+    match args.out_format {
+        OutputFormat::Ansi => result.push_str("\x1b[0m"),
+        OutputFormat::Html => {
+            if args.print_color {
+                result.push_str("</pre>");
+            }
+        }
+    }
 
     result
 }
