@@ -60,6 +60,7 @@ For more options, see the [Tutorial](docs/tutorial.md).
   - [Characters](docs/tutorial/tutorial-characters.md)
   - [Preprocessing](docs/tutorial/tutorial-preprocessing.md)
   - [Size and Position](docs/tutorial/tutorial-size-position.md)
+  - [Format tutorial](docs/tutorial/tutorial-format.md)
 - [How It Works](docs/how-it-works.md)
 - [FAQ](docs/faq.md)
 - [Full Usage Reference](docs/usage.md)

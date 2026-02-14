@@ -164,3 +164,4 @@ Other important tutorials:
 
 - To adapt the result to your specific font you should check out the [font tutorial](tutorial/tutorial-font.md)
 - In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do to the image before converting it.
+- You can learn other formats of printing the colors (like one you can use in html), in the [format tutorial](tutorial/tutorial-format.md)

@@ -20,6 +20,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 - `-f, --font-name <FONT_NAME>`: Name of the font to use (optional)
 - `-F, --font-path <FONT_PATH>`: Path of the font to use (optional)
 - `<PATH>`: Path of the image to process
+- `--format <FORMAT>`: Output format for colored output (ansi for terminal, html for web pages) [default: ansi] [possible values: ansi, html]
 
 ### Character Set
 

@@ -1,5 +1,8 @@
 # Frequently Asked Questions
 
+- **How can i print colors that work on the web**
+    Use `--format html`, it will print html format.
+
 - **How to print a black logo?**
     It's only a problem when the background is transparent. You should add `-nv` to make the transparent pixels white and print the negative version.
 
@@ -12,5 +15,7 @@
 - **Can we mix multiple character sets (dicts)?**
     Yes, you can use multiple dicts separated by a comma: `-d box_all,blocks`.
 
-- **The edges look a bit cloudy**
-    You can give a higher value to `-m`, like 0.9 or 0.99, which results in sharper edges. This is usually a problem with really bright images.
+- **The result is not detailed**
+    There are a few solutions
+  - Use `--dict all` to use all the ASCII characters.
+  - Give a higher value to `-m`, like 0.9 or 0.99, which can results in sharper edges in black and white images. This is usually a problem with really bright images.
