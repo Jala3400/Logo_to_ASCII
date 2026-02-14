@@ -10,7 +10,7 @@ This tutorial will guide you through a basic workflow of converting images to AS
   - [Colored Logo](#colored-logo)
   - [Printing Colors](#printing-colors)
   - [Putting It All Together](#putting-it-all-together)
-  - [Images with a lot of details.](#images-with-a-lot-of-details)
+  - [Images with a lot of details](#images-with-a-lot-of-details)
   - [Other](#other)
 
 ## Simple Logo
@@ -27,7 +27,7 @@ l2a Cross_Calatrava.png
 
 ![Cross of Calatrava](../images/ascii/cross.png)
 
--   To print the image in negative we add `-n` for `--negative`.
+- To print the image in negative we add `-n` for `--negative`.
 
 ```bash
 l2a Cross_Calatrava.png -n
@@ -35,7 +35,7 @@ l2a Cross_Calatrava.png -n
 
 ![Cross of Calatrava negative](../images/ascii/cross_n.png)
 
--   In case the default character set is not enough:
+- In case the default character set is not enough:
 
 There are many ways to change the characters used to transform the image, all of them explained in the [characters tutorial](tutorial/tutorial-characters).
 
@@ -47,7 +47,7 @@ l2a Cross_Calatrava.png -d all
 
 ![Cross of Calatrava with all characters](../images/ascii/cross_dict_all.png)
 
--   It is also possible to change the size of the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for more.
+- It is also possible to change the size of the image. See the [size and position tutorial](tutorial/tutorial-size-position.md) for more.
 
 For the moment lest use `-w`, which sets the width in characters the end result will have.
 
@@ -59,7 +59,7 @@ This image is 100 characters wide.
 
 ![Cross of Calatrava with 100 characters width](../images/ascii/cross_w100.png)
 
--   Sometimes the image will not line up perfectly with the characters we have.
+- Sometimes the image will not line up perfectly with the characters we have.
 
 For alignment issues we can add padding or use `--center`. See the [size and position tutorial](tutorial/tutorial-size-position.md) for a deeper explanation.
 
@@ -79,7 +79,7 @@ Now let's try with a colored logo:
 
 If we just used the app normally, it would probably look horrible, so let's skip to the good part.
 
--   To draw borders between colors, use `-b, --borders all`. This detects color, brightness and transparency changes and draws black borders.
+- To draw borders between colors, use `-b, --borders all`. This detects color, brightness and transparency changes and draws black borders.
 
 > [!Warning]
 > Here we use `--borders all` instead of `--borders color` because the background color is transparent. If we only detected the borders between the tentacles they would have a strange shape. We could have also used `--borders color, alpha`, as we do not need to look for brightness.
@@ -90,7 +90,7 @@ l2a '.\images\tentacles.png' -b all
 
 ![Tentacles](../images/ascii/tentacles_b_all.png)
 
--   Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to only show the borders.
+- Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to only show the borders.
 
 ```bash
 l2a '.\images\tentacles.png' --borders all -nv
@@ -104,7 +104,7 @@ You can further customize the borders in the [border tutorial](tutorial/tutorial
 
 ## Printing Colors
 
--   To print the image with colors, use the argument `-c, --print-color`.
+- To print the image with colors, use the argument `-c, --print-color`.
 
 ```bash
 l2a .\images\Cross_Calatrava.png -c
@@ -128,7 +128,7 @@ l2a .\images\Cross_Calatrava.png -cvb all -X1
 
 ![Cross of Calatrava combined](../images/ascii/cross_cvb_all_X1.png)
 
-## Images with a lot of details.
+## Images with a lot of details
 
 It is not recommended to convert an image with a lot of details. However, you can "trick" the algorithm by setting the midpoint brightness to 0, so the brightest character is always used (or only use one character) and then print the colors.
 
@@ -142,7 +142,7 @@ l2a palm.jpg -c -m 0 --center --chars "8"
 
 Other important arguments are:
 
--   `--verbose`: Will give you information about the characters used and the image.
+- `--verbose`: Will give you information about the characters used and the image.
 
 An example of this is:
 
@@ -156,11 +156,12 @@ Number of characters: 80x34
 Unfilled space: 0x11 pixels
 ```
 
--   `-o, --output <OUTPUT>`: Saves the image after all the transformations.
--   `--alg <ALGORITHM>`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
+- `-o, --output <OUTPUT>`: Saves the image after all the transformations.
+- `--alg <ALGORITHM>`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
 - If you image is too bright and looks cloudy, you can use `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>` to change how bright it looks. It goes from 0 to 1. Use higher values like 0.9 or 0.99 to get sharper edges.
 
 Other important tutorials:
 
--   To adapt the result to your specific font you should check out the [font tutorial](tutorial/tutorial-font.md)
--   In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do to the image before converting it.
+- To adapt the result to your specific font you should check out the [font tutorial](tutorial/tutorial-font.md)
+- In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do to the image before converting it.
+- You can learn other formats of printing the colors (like one you can use in html), in the [format tutorial](tutorial/tutorial-format.md)

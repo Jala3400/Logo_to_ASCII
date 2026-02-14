@@ -10,9 +10,9 @@ Here is an explanation about which parameters can be used and some recommendatio
 
 The argument `-b, --borders <BORDER_CRITERIA>..` decides how borders are identified. There are 3 possibilities:
 
--   `color`: Measures by hue difference.
--   `brightness`: Measures the brightness difference.
--   `alpha`: Measures the alpha difference.
+- `color`: Measures by hue difference.
+- `brightness`: Measures the brightness difference.
+- `alpha`: Measures the alpha difference.
 
 And then there is the option `all`, which uses all of them.
 
@@ -32,9 +32,9 @@ If not specified its default value is the width of a block.
 
 There is one threshold for color and another for brightness.
 
--   `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360)
--   `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1)
--   `--alpha-diff <ALPHA_DIFF>`: Threshold for the brightness difference (from 0 to 1)
+- `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360)
+- `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1)
+- `--alpha-diff <ALPHA_DIFF>`: Threshold for the brightness difference (from 0 to 1)
 
 ## Recommendations
 

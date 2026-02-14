@@ -6,6 +6,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write
     strategy:
       matrix:
         include:
@@ -29,15 +31,20 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig-dev libjpeg-dev libpng-dev libtiff-dev libgif-dev
+
       - name: Build release binary
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Generate checksums
+      - name: Rename binary
+        shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            Get-FileHash target/${{ matrix.target }}/release/${{ matrix.name }} -Algorithm SHA256 | Out-File -FilePath ${{ matrix.name }}.sha256
+            mv target/${{ matrix.target }}/release/l2a.exe target/${{ matrix.target }}/release/${{ matrix.name }}
           else
-            sha256sum target/${{ matrix.target }}/release/${{ matrix.name }} > ${{ matrix.name }}.sha256
+            mv target/${{ matrix.target }}/release/l2a target/${{ matrix.target }}/release/${{ matrix.name }}
           fi
 
       - name: Upload binary to release
@@ -45,6 +52,5 @@ jobs:
         with:
           files: |
             target/${{ matrix.target }}/release/${{ matrix.name }}
-            ${{ matrix.name }}.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

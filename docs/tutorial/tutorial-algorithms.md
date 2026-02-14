@@ -6,12 +6,12 @@ The best one is the default one by far (except for `cnn`, which acts in a really
 
 ## Available Algorithms
 
--   `max_prod` (default)
--   `min_diff`
--   `min_diff_sq`
--   `gradient`
--   `corr`
--   `ncc`
+- `max_prod` (default)
+- `min_diff`
+- `min_diff_sq`
+- `gradient`
+- `corr`
+- `ncc`
 
 ## Algorithm Explanations
 
@@ -59,8 +59,8 @@ We can see that the lighter part of the image is now occupied by the character `
 
 ## Choosing an Algorithm
 
--   Use `max_prod`
--   Try `gradient` for photos or images with smooth gradients
--   Experiment with the other ones, but with little hope
+- Use `max_prod`
+- Try `gradient` for photos or images with smooth gradients
+- Experiment with the other ones, but with little hope
 
 For more algorithm details, see the [How It Works](../how-it-works.md) page.
