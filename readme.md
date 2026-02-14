@@ -29,7 +29,7 @@ Pre-built binaries for Windows, Linux, and macOS are available on the [releases 
 
 ### Clone the repo
 
--   Prerequisites: [Rust](https://www.rust-lang.org/tools/install), [Git](https://git-scm.com/downloads)
+- Prerequisites: [Rust](https://www.rust-lang.org/tools/install), [Git](https://git-scm.com/downloads)
 
 1. Clone the repository:
 
@@ -38,6 +38,7 @@ Pre-built binaries for Windows, Linux, and macOS are available on the [releases 
     ```
 
 2. Build:
+
     ```bash
     cargo build --release
     ```
@@ -52,14 +53,14 @@ For more options, see the [Tutorial](docs/tutorial.md).
 
 ## Documentation
 
--   [Detailed Installation](docs/installation.md)
--   [Tutorial](docs/tutorial.md)
-    -   [Algorithms](docs/tutorial/tutorial-algorithms.md)
-    -   [Borders](docs/tutorial/tutorial-borders.md)
-    -   [Characters](docs/tutorial/tutorial-characters.md)
-    -   [Preprocessing](docs/tutorial/tutorial-preprocessing.md)
-    -   [Size and Position](docs/tutorial/tutorial-size-position.md)
--   [How It Works](docs/how-it-works.md)
--   [FAQ](docs/faq.md)
--   [Full Usage Reference](docs/usage.md)
--   [Tips for Creating Images](docs/tips.md)
+- [Detailed Installation](docs/installation.md)
+- [Tutorial](docs/tutorial.md)
+  - [Algorithms](docs/tutorial/tutorial-algorithms.md)
+  - [Borders](docs/tutorial/tutorial-borders.md)
+  - [Characters](docs/tutorial/tutorial-characters.md)
+  - [Preprocessing](docs/tutorial/tutorial-preprocessing.md)
+  - [Size and Position](docs/tutorial/tutorial-size-position.md)
+- [How It Works](docs/how-it-works.md)
+- [FAQ](docs/faq.md)
+- [Full Usage Reference](docs/usage.md)
+- [Tips for Creating Images](docs/tips.md)

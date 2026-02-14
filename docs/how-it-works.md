@@ -17,23 +17,23 @@ After this step we will have the dimensions of the blocks and a bitmap of each c
 
 1. **Dimensions of the block**
 
-We assume a monospaced font.
+    We assume a monospaced font.
 
-The dimensions of the blocks need to be calculated because different fonts have different proportions and different gaps between lines.
+    The dimensions of the blocks need to be calculated because different fonts have different proportions and different gaps between lines.
 
-Also, the width changes depending on the height of the character.
+    Also, the width changes depending on the height of the character.
 
-The default font used here is `UbuntuMono Nerd Font` with a default height of 16px, which results in 8x16 characters with no line gap.
+    The default font used here is `UbuntuMono Nerd Font` with a default height of 16px, which results in 8x16 characters with no line gap.
 
-The dimensions of the block are (char_width)x(char_height + line_gap)
+    The dimensions of the block are (char_width)x(char_height + line_gap)
 
 2. **Character bitmap**
 
-We iterate over every pixel and calculate its brightness.
+    We iterate over every pixel and calculate its brightness.
 
-When calculating brightness, a value from 0 to 1 is obtained. It is important to subtract 0.5, because the algorithm only works with positive and negative values. This will make sense later.
+    When calculating brightness, a value from 0 to 1 is obtained. It is important to subtract 0.5, because the algorithm only works with positive and negative values. This will make sense later.
 
-We also collect statistical information on each character to work with different algorithms.
+    We also collect statistical information on each character to work with different algorithms.
 
 ## 2. Preprocessing (if any)
 
@@ -43,56 +43,56 @@ These steps are only executed if the flags say so.
 
 1. **Resize the image**:
 
-If the dimension has been given in characters, calculate its equivalent in pixels.
+    If the dimension has been given in characters, calculate its equivalent in pixels.
 
-Little explanation here, just resize the image.
+    Little explanation here, just resize the image.
 
 2. **Center the image**:
 
-Sometimes the image doesn't fully fill the right or bottom blocks. In this step we add enough padding so the image does fill them.
+    Sometimes the image doesn't fully fill the right or bottom blocks. In this step we add enough padding so the image does fill them.
 
 3. **Add padding**:
 
-Add more padding to the image on top of the previous one, if there is any. It is drawn as transparent.
+    Add more padding to the image on top of the previous one, if there is any. It is drawn as transparent.
 
 4. **Saturate the image**:
 
-Increases the color saturation of each pixel if it is brighter than the midpoint brightness and decreases it if it isn't.
+    Increases the color saturation of each pixel if it is brighter than the midpoint brightness and decreases it if it isn't.
 
 5. **Draw borders**:
 
-You can detect borders by hue, brightness, alpha (transparencies) or a mix of them.
+    You can detect borders by hue, brightness, alpha (transparencies) or a mix of them.
 
-A border is detected by comparing a pixel with its right and bottom neighbor. If its difference is higher than a threshold, it records that position.
+    A border is detected by comparing a pixel with its right and bottom neighbor. If its difference is higher than a threshold, it records that position.
 
-When all the borders have been identified, there is a second pass on the image that draws them. It draws a square with a specific thickness on each position.
+    When all the borders have been identified, there is a second pass on the image that draws them. It draws a square with a specific thickness on each position.
 
-One las thing we have to take into consideration: the transparent pixels also have a hue, and a brightness. This is because the alpha is a separate channel. A transparent pixel is usually black, but it can have an arbitrary color. This means that it can interact in unexpected ways when detecting borders by hue or brightness.
+    One las thing we have to take into consideration: the transparent pixels also have a hue, and a brightness. This is because the alpha is a separate channel. A transparent pixel is usually black, but it can have an arbitrary color. This means that it can interact in unexpected ways when detecting borders by hue or brightness.
 
-To stop transparencies with interfering with hue or brightness, we multiply the difference between them by the alpha of the two pixels (the alpha should be between 0 and 1). This way the more transparent they are the less difference between them.
+    To stop transparencies with interfering with hue or brightness, we multiply the difference between them by the alpha of the two pixels (the alpha should be between 0 and 1). This way the more transparent they are the less difference between them.
 
 6. **Treat transparent pixels** (always applied):
 
-The algorithm doesn't work with alpha values, it can only see brightness.
+    The algorithm doesn't work with alpha values, it can only see brightness.
 
-Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white, if the arguments say so) in proportion to its alpha.
+    Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white, if the arguments say so) in proportion to its alpha.
 
 7. **Apply negative effect**:
 
-Inverts the brightness of the image keeping the hue.
+    Inverts the brightness of the image keeping the hue.
 
-It takes into consideration how brightness is measured (see [calculating brightness](#calculating-brightness)), so you actually see the inverted image.
+    It takes into consideration how brightness is measured (see [calculating brightness](#calculating-brightness)), so you actually see the inverted image.
 
 8. **Convert to grayscale**:
 
-It consists of two steps.
+    It consists of two steps.
 
--   Convert the colors to their equivalent in grayscale.
--   Normalize the brightness: The min is 0 and the max is 1.
+    - Convert the colors to their equivalent in grayscale.
+    - Normalize the brightness: The min is 0 and the max is 1.
 
 9. **Convert to black and white**:
 
-For each pixel, if its brightness is over a threshold, make it white. Otherwise, make it black.
+    For each pixel, if its brightness is over a threshold, make it white. Otherwise, make it black.
 
 ## 3. Convert Blocks to Character
 
@@ -104,33 +104,33 @@ After processing a block, we should have the character that fits it best.
 
 1. **Preprocessing a block**
 
-We have a bitmap of each character, and a bitmap of the block.
+    We have a bitmap of each character, and a bitmap of the block.
 
-We get the bitmap of the block in the same way as the characters. We calculate the brightness of each pixel and then subtract 0.5 (this value can be changed in this app).
+    We get the bitmap of the block in the same way as the characters. We calculate the brightness of each pixel and then subtract 0.5 (this value can be changed in this app).
 
 2. **Finding the best match**
 
-For each character, each pixel is multiplied by its equivalent in the block, and all values are added (`[0][0] * [0][0] + [0][1] * [0][1] + ... + [n][m] * [n][m]`).
+    For each character, each pixel is multiplied by its equivalent in the block, and all values are added (`[0][0] * [0][0] + [0][1] * [0][1] + ... + [n][m] * [n][m]`).
 
-This works because it rewards matching pixels (both with positive or negative brightness) and punishes mismatching ones (one positive and the other negative).
+    This works because it rewards matching pixels (both with positive or negative brightness) and punishes mismatching ones (one positive and the other negative).
 
-The character with the highest score is the one that matches the best.
+    The character with the highest score is the one that matches the best.
 
-**Optimization:**
+    **Optimization:**
 
-It only applies with this algorithm when the first character is a space (I think there can be a general solution, but I do not have it yet).
+    It only applies with this algorithm when the first character is a space (I think there can be a general solution, but I do not have it yet).
 
-In this step, the number of bright pixels in the block is also counted. With bright I mean with a brightness higher than the midpoint brightness, as we subtract the midpoint brightness to the original brightness.
+    In this step, the number of bright pixels in the block is also counted. With bright I mean with a brightness higher than the midpoint brightness, as we subtract the midpoint brightness to the original brightness.
 
-The base case is simple. If it doesn't have bright pixels, then the best match is always the space. It doesn't matter that there are other characters with a similar shape, because when multiplying the space has the greatest values, so it will have the highest result.
+    The base case is simple. If it doesn't have bright pixels, then the best match is always the space. It doesn't matter that there are other characters with a similar shape, because when multiplying the space has the greatest values, so it will have the highest result.
 
-Now comes a complicated phrase, but in the following paragraph we give an example. This is the main logic for the optimization:
+    Now comes a complicated phrase, but in the following paragraph we give an example. This is the main logic for the optimization:
 
-A character is only considered for printing if half of its bright pixels are at least the number of illuminated pixels in the block.
+    A character is only considered for printing if half of its bright pixels are at least the number of illuminated pixels in the block.
 
-The sentence is complicated to understand, but in summary, if a character has 10 bright pixels, a character will only be considered if it has at least 5 bright pixels. If it had less than 5, there would be no scenario where that character would be chosen before the space. If there is no space, the character with the fewest illuminated pixels is chosen.
+    The sentence is complicated to understand, but in summary, if a character has 10 bright pixels, a character will only be considered if it has at least 5 bright pixels. If it had less than 5, there would be no scenario where that character would be chosen before the space. If there is no space, the character with the fewest illuminated pixels is chosen.
 
-Additionally, if all pixels are completely illuminated, the brightest character can be printed directly. Notice that if they were not completely illuminated there might be combinations where other character fits best.
+    Additionally, if all pixels are completely illuminated, the brightest character can be printed directly. Notice that if they were not completely illuminated there might be combinations where other character fits best.
 
 ## Other algorithms
 
@@ -138,17 +138,17 @@ This app has other algorithms that can match a block:
 
 The first one is called `max_prod` and it is the one we have explained before. None of the others can match the results of this one except `ncc`, which acts in a similar way, so the results are practically the same.
 
--   **Maximum Product (`max_prod`)**: The default algorithm described in step 3.2. Multiplies each pixel of the character with its equivalent in the block and sums all values (`block[0] * char[0] + block[1] * char[1] + ...`). The character with the highest score wins. This rewards matching pixels (both bright or both dark) and punishes mismatches.
+- **Maximum Product (`max_prod`)**: The default algorithm described in step 3.2. Multiplies each pixel of the character with its equivalent in the block and sums all values (`block[0] * char[0] + block[1] * char[1] + ...`). The character with the highest score wins. This rewards matching pixels (both bright or both dark) and punishes mismatches.
 
--   **Minimum Difference (`min_diff`)**: Calculates the absolute difference between each pixel of the character and the block, then sums them (`|block[0] - char[0]| + |block[1] - char[1]| + ...`). The character with the lowest total difference is selected.
+- **Minimum Difference (`min_diff`)**: Calculates the absolute difference between each pixel of the character and the block, then sums them (`|block[0] - char[0]| + |block[1] - char[1]| + ...`). The character with the lowest total difference is selected.
 
--   **Minimum Squared Difference (`min_diff_sq`)**: Like `min_diff`, but squares each difference before summing (`(block[0] - char[0])² + (block[1] - char[1])² + ...`). This penalizes larger differences more heavily. The character with the lowest total is selected.
+- **Minimum Squared Difference (`min_diff_sq`)**: Like `min_diff`, but squares each difference before summing (`(block[0] - char[0])² + (block[1] - char[1])² + ...`). This penalizes larger differences more heavily. The character with the lowest total is selected.
 
--   **Correlation (`correlation`)**: Calculates the Pearson correlation coefficient between the block and each character. This algorithm focuses on pattern structure, not brightness level. It measures how similar the shape is, regardless of how bright or dark the overall block is. Returns the character with the highest correlation.
+- **Correlation (`correlation`)**: Calculates the Pearson correlation coefficient between the block and each character. This algorithm focuses on pattern structure, not brightness level. It measures how similar the shape is, regardless of how bright or dark the overall block is. Returns the character with the highest correlation.
 
--   **Normalized Cross-Correlation (`ncc`)**: Similar to correlation, but takes brightness level into account. It normalizes the dot product by the magnitudes of both vectors (`Σ(block * char) / (||block|| * ||char||)`). This measures both pattern similarity and brightness matching. The character with the highest NCC value is selected.
+- **Normalized Cross-Correlation (`ncc`)**: Similar to correlation, but takes brightness level into account. It normalizes the dot product by the magnitudes of both vectors (`Σ(block * char) / (||block|| * ||char||)`). This measures both pattern similarity and brightness matching. The character with the highest NCC value is selected.
 
--   **Gradient (`gradient`)**: Takes into account only the average brightness of the block, ignoring pixel patterns. It calculates the mean brightness of the block and compares it with the average brightness of each character. The character with the closest average brightness wins.
+- **Gradient (`gradient`)**: Takes into account only the average brightness of the block, ignoring pixel patterns. It calculates the mean brightness of the block and compares it with the average brightness of each character. The character with the closest average brightness wins.
 
 ## Calculating brightness
 

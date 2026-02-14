@@ -6,14 +6,14 @@ There are two main ways you can install this app: Downloading the executable fro
 
 Pre-built binaries for Windows, Linux, and macOS are available on the [releases page](https://github.com/Jala3400/Logo_to_ASCII/releases).
 
-Once downloaded you can [finish the setup](#environment-variables)
+Once downloaded you can [finish the setup](#finish-the-setup)
 
 ## Clone the repo
 
 ### Prerequisites
 
--   [Rust](https://www.rust-lang.org/tools/install)
--   [Git](https://git-scm.com/downloads)
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Git](https://git-scm.com/downloads)
 
 ### Steps
 

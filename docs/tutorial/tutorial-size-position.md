@@ -6,10 +6,10 @@ It is weird that the image that you have fits perfectly where you want and how y
 
 There are multiple options to change the size of the final result:
 
--   `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the final image width.
--   `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the final image height.
--   `-W, --width-pixels <WIDTH_IN_PIXELS>`: Width of the final image in pixels
--   `-H, --height-pixels <HEIGHT_IN_PIXELS>`: Height of the final image in pixels
+- `-w, --width-chars <WIDTH_IN_CHARS>`: Number of characters in the final image width.
+- `-h, --height-chars <HEIGHT_IN_CHARS>`: Number of characters in the final image height.
+- `-W, --width-pixels <WIDTH_IN_PIXELS>`: Width of the final image in pixels
+- `-H, --height-pixels <HEIGHT_IN_PIXELS>`: Height of the final image in pixels
 
 Specifying size in characters overrides the size in pixels, and if you only change one dimension, the aspect ratio will be kept.
 
@@ -17,10 +17,10 @@ Specifying size in characters overrides the size in pixels, and if you only chan
 
 Sometimes the image is not in the position we want. To fix it we can change the padding.
 
--   `-C, --center`: Center the image in respect to the characters by adjusting the padding
--   `-P, --pad <PADDING>`: Padding on all sides [default: 0]
--   `-X, --padx <PADDING_X>`: Horizontal padding [default: 0]
--   `-Y, --pady <PADDING_Y>`: Vertical padding [default: 0]
+- `-C, --center`: Center the image in respect to the characters by adjusting the padding
+- `-P, --pad <PADDING>`: Padding on all sides [default: 0]
+- `-X, --padx <PADDING_X>`: Horizontal padding [default: 0]
+- `-Y, --pady <PADDING_Y>`: Vertical padding [default: 0]
 
 The padding will be treated in the same way as a transparent color, and the padding you specify manually will be added to the one calculated on `--center`.
 
