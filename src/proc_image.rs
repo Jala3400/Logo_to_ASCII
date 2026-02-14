@@ -45,7 +45,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         }
     }
 
-    let color_overhead = match args.out_format {
+    let color_overhead = match args.format {
         OutputFormat::Ansi => 22,
         OutputFormat::Html => 60,
     };
@@ -54,7 +54,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     let mut result = String::with_capacity(string_capacity);
 
     // HTML preamble
-    if args.print_color && matches!(args.out_format, OutputFormat::Html) {
+    if args.print_color && matches!(args.format, OutputFormat::Html) {
         let font_family = match &args.font_name {
             Some(name) => format!("'{}', monospace", name),
             None => "monospace".to_string(),
@@ -87,7 +87,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     }
 
     // Closing
-    match args.out_format {
+    match args.format {
         OutputFormat::Ansi => result.push_str("\x1b[0m"),
         OutputFormat::Html => {
             if args.print_color {
@@ -183,7 +183,7 @@ fn push_formatted_character(
     if args.print_color {
         if let Some(color_block) = color_block.as_ref() {
             let (r, g, b) = get_color_for_block(color_block, &block, char_info);
-            match args.out_format {
+            match args.format {
                 OutputFormat::Ansi => {
                     result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
                     result.push(char_info.char);

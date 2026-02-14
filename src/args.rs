@@ -40,8 +40,8 @@ pub struct Args {
     pub font_path: Option<String>,
 
     /// Output format for colored output (ansi for terminal, html for web pages)
-    #[arg(long = "out-format", value_enum, default_value_t = OutputFormat::Ansi, help_heading = "Input/Output")]
-    pub out_format: OutputFormat,
+    #[arg(long, value_enum, default_value_t = OutputFormat::Ansi, help_heading = "Input/Output")]
+    pub format: OutputFormat,
 
     // Character Set
     /// Characters used to convert the image
