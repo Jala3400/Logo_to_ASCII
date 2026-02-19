@@ -204,21 +204,18 @@ fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness
     }
 }
 
-// Make transparent pixels visible
+// Flattens the image to remove transparency using a background color
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
+    // Background color determined based on the arguments
+    let bg_color = args.transparent_color;
+
     for pixel in img.pixels_mut() {
         let alpha = pixel[3];
-        if !args.visible {
-            let factor = alpha as f32 / 255.0;
-            pixel[0] = (pixel[0] as f32 * factor) as u8;
-            pixel[1] = (pixel[1] as f32 * factor) as u8;
-            pixel[2] = (pixel[2] as f32 * factor) as u8;
-        } else {
-            let factor = alpha as f32 / 255.0;
-            pixel[0] = (pixel[0] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-            pixel[1] = (pixel[1] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-            pixel[2] = (pixel[2] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-        }
+        let factor = alpha as f32 / 255.0;
+        let inverse_factor = 1.0 - factor;
+        pixel[0] = (pixel[0] as f32 * factor + bg_color[0] as f32 * inverse_factor) as u8;
+        pixel[1] = (pixel[1] as f32 * factor + bg_color[1] as f32 * inverse_factor) as u8;
+        pixel[2] = (pixel[2] as f32 * factor + bg_color[2] as f32 * inverse_factor) as u8;
         pixel[3] = 255;
     }
 }
@@ -226,19 +223,24 @@ pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
 // Applies the negative effect to an image
 pub fn negative(img: &mut RgbaImage) {
     for pixel in img.pixels_mut() {
-        let pixel_brightness = calculate_brightness(&pixel);
-        let target_brightness = 1.0 - pixel_brightness;
-        if pixel_brightness == 0.0 {
-            pixel[0] = 255;
-            pixel[1] = 255;
-            pixel[2] = 255;
-        } else {
-            // Apply the negative effect (it is squared to make it more visible)
-            let factor = (target_brightness / pixel_brightness).powf(2.0);
-            pixel[0] = (pixel[0] as f32 * factor).round() as u8;
-            pixel[1] = (pixel[1] as f32 * factor).round() as u8;
-            pixel[2] = (pixel[2] as f32 * factor).round() as u8;
-        }
+        apply_negative_to_pixel(pixel);
+    }
+}
+
+// Applies the negative effect to a single pixel
+#[inline]
+pub fn apply_negative_to_pixel(pixel: &mut image::Rgba<u8>) {
+    let pixel_brightness = calculate_brightness(pixel);
+    let target_brightness = 1.0 - pixel_brightness;
+    if pixel_brightness == 0.0 {
+        pixel[0] = 255;
+        pixel[1] = 255;
+        pixel[2] = 255;
+    } else {
+        let factor = (target_brightness / pixel_brightness).powf(2.0);
+        pixel[0] = (pixel[0] as f32 * factor).round() as u8;
+        pixel[1] = (pixel[1] as f32 * factor).round() as u8;
+        pixel[2] = (pixel[2] as f32 * factor).round() as u8;
     }
 }
 

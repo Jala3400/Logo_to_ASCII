@@ -88,14 +88,9 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0.5, help_heading = "Image Processing")]
     pub threshold: f32,
 
-    /// Makes transparent pixels white instead of black
-    #[arg(
-        short,
-        long,
-        default_value_t = false,
-        help_heading = "Image Processing"
-    )]
-    pub visible: bool,
+    /// Color to use for transparent pixels (hex format, e.g., FFFFFF)
+    #[arg(long, value_parser = parse_hex_color, default_value = "000000", help_heading = "Image Processing")]
+    pub transparent_color: [u8; 3],
 
     /// Saturate each pixel of the image while keeping the dark pixels dark
     #[arg(
@@ -238,4 +233,20 @@ pub struct Args {
     /// Print information about the image
     #[arg(long, default_value_t = false, help_heading = "Algorithm and Misc")]
     pub verbose: bool,
+}
+
+fn parse_hex_color(s: &str) -> Result<[u8; 3], String> {
+    if s.len() == 3 {
+        let r = u8::from_str_radix(&s[0..1], 16).map_err(|e| e.to_string())?;
+        let g = u8::from_str_radix(&s[1..2], 16).map_err(|e| e.to_string())?;
+        let b = u8::from_str_radix(&s[2..3], 16).map_err(|e| e.to_string())?;
+        return Ok([r * 17, g * 17, b * 17]);
+    }
+    if s.len() == 6 {
+        let r = u8::from_str_radix(&s[0..2], 16).map_err(|e| e.to_string())?;
+        let g = u8::from_str_radix(&s[2..4], 16).map_err(|e| e.to_string())?;
+        let b = u8::from_str_radix(&s[4..6], 16).map_err(|e| e.to_string())?;
+        return Ok([r, g, b]);
+    }
+    Err(format!("Hex color must be 3 or 6 characters long: {}", s))
 }

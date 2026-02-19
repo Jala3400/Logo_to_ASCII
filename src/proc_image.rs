@@ -1,11 +1,12 @@
 use crate::{
     args::Args,
+    image_ops::apply_negative_to_pixel,
     proc_block::{get_color_for_block, match_block_with_char},
     proc_pixel::calc_custom_brightness,
     types::{CharInfo, FontBitmap, OutputFormat},
 };
 use enable_ansi_support::enable_ansi_support;
-use image::RgbaImage;
+use image::{Rgba, RgbaImage};
 
 // Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
@@ -147,19 +148,26 @@ fn process_block_pixels(
                     }
                 }
             } else {
-                // Transparent pixels are only visible when (visible xor negative)
-                block[cords_block] = if args.visible != args.negative {
-                    full_pixels += 1;
-                    1.0 - args.midpoint_brightness
-                } else {
-                    -args.midpoint_brightness
-                };
+                // Out-of-bounds (the pixel in the image is transparent)
+                // Use background color and apply negative effect if needed
+                let bg_color = args.transparent_color;
+                let mut bg_pixel = Rgba([bg_color[0], bg_color[1], bg_color[2], 255]);
+
+                if args.negative {
+                    apply_negative_to_pixel(&mut bg_pixel);
+                }
+
+                let brightness = calc_custom_brightness(&bg_pixel, args);
+                block[cords_block] = brightness;
 
                 if let Some(color_block) = color_block {
-                    if args.visible != args.negative {
-                        color_block[cords_block] = (255, 255, 255);
-                    } else {
-                        color_block[cords_block] = (0, 0, 0);
+                    color_block[cords_block] = (bg_pixel[0], bg_pixel[1], bg_pixel[2]);
+                }
+
+                if brightness > -args.midpoint_brightness {
+                    bright_pixels += 1;
+                    if brightness >= 0.0 {
+                        full_pixels += (brightness == 1.0 - args.midpoint_brightness) as usize;
                     }
                 }
             }
