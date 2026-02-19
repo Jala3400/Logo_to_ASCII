@@ -22,7 +22,7 @@ Sometimes the image is not in the position we want. To fix it we can change the 
 - `-X, --padx <PADDING_X>`: Horizontal padding [default: 0]
 - `-Y, --pady <PADDING_Y>`: Vertical padding [default: 0]
 
-The padding will be treated in the same way as a transparent color, and the padding you specify manually will be added to the one calculated on `--center`.
+The padding will be treated in the same way as the background color (specified via `--transparent-color`), and the padding you specify manually will be added to the one calculated on `--center`.
 
 ## Practical example
 
@@ -36,7 +36,7 @@ Let's revisit the example of the tentacles:
 This image fills the characters perfectly, there is no need to center it, but when we render it we might notice a character that seems out of place on the left part of the photo:
 
 ```bash
-l2a '.\images\tentacles.png' -b all -c
+l2a '.\images\sources\tentacles.png' -b all -c
 ```
 
 ![Tentacles](../../images/old/tentacles_b_all_c.png)
@@ -46,7 +46,7 @@ That letter `d` is sticking a bit too much.
 Let's have a look behind the scenes by saving the final image.
 
 ```bash
-l2a '.\images\tentacles.png' -b all -c -o test.png
+l2a '.\images\sources\tentacles.png' -b all -c -o test.png
 ```
 
 ![Tentacles final](../../images/final/old_tentacles_b_all.png)
@@ -56,7 +56,7 @@ The border of the red tentacle is touching the left border of the image, so no b
 We can fix this by adding padding in the x axis.
 
 ```bash
-l2a '.\images\tentacles.png' -b all -c --padx 1
+l2a '.\images\sources\tentacles.png' -b all -c --padx 1
 ```
 
 ![Tentacles padx1](../../images/ascii/tentacles_b_all_c_padx1.png)
@@ -64,7 +64,7 @@ l2a '.\images\tentacles.png' -b all -c --padx 1
 The `d` has disappeared. Let's check the final image again.
 
 ```bash
-l2a '.\images\tentacles.png' -b all -c --padx 1 -o test2.png
+l2a '.\images\sources\tentacles.png' -b all -c --padx 1 -o test2.png
 ```
 
 ![Tentacles final padx1](../../images/final/old_tentacles_b_all_padx1.png)

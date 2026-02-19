@@ -35,7 +35,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 - `-n, --negative`: Invert the brightness of the image
 - `-B, --black-white`: Turn the image into black and white
 - `-t, --threshold <THRESHOLD>`: Threshold value for the black and white conversion (from 0 to 1) [default: 0.5]
-- `-v, --visible`: Make transparent pixels visible
+- `--transparent-color <TRANSPARENT_COLOR>`: Color to use for transparent pixels (hex format, e.g., FFFFFF) [default: 000000]
 - `-s, --saturate`: Saturate the pixels of the image while keeping the dark pixels dark
 - `-g, --grayscale`: Convert the image to grayscale and normalize the brightness
 - `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>`: Midpoint of the brightness spectrum [default: 0.5]

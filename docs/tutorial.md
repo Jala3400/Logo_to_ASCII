@@ -22,7 +22,7 @@ The basic case consists of treating single-color logos. We will use the followin
 To convert it, we run the program from the console. The first argument must be the image path.
 
 ```bash
-l2a Cross_Calatrava.png
+l2a ./images/sources/Cross_Calatrava.png
 ```
 
 ![Cross of Calatrava](../images/ascii/cross.png)
@@ -30,7 +30,7 @@ l2a Cross_Calatrava.png
 - To print the image in negative we add `-n` for `--negative`.
 
 ```bash
-l2a Cross_Calatrava.png -n
+l2a ./images/sources/Cross_Calatrava.png -n
 ```
 
 ![Cross of Calatrava negative](../images/ascii/cross_n.png)
@@ -42,7 +42,7 @@ There are many ways to change the characters used to transform the image, all of
 In this case we will use all the printable ASCII characters by using a prebuilt dict.
 
 ```bash
-l2a Cross_Calatrava.png -d all
+l2a ./images/sources/Cross_Calatrava.png -d all
 ```
 
 ![Cross of Calatrava with all characters](../images/ascii/cross_dict_all.png)
@@ -52,12 +52,12 @@ l2a Cross_Calatrava.png -d all
 For the moment lest use `-w`, which sets the width in characters the end result will have.
 
 ```bash
-l2a Cross_Calatrava.png -w 100
+l2a ./images/sources/Cross_Calatrava.png -w 100
 ```
 
 This image is 100 characters wide.
 
-![Cross of Calatrava with 100 characters width](../images/ascii/cross_w100.png)
+![Cross of Calatrava with 100 characters width](../images/ascii/cross_w100.md)
 
 - Sometimes the image will not line up perfectly with the characters we have.
 
@@ -66,10 +66,10 @@ For alignment issues we can add padding or use `--center`. See the [size and pos
 Here we apply a padding in the x-axis and y-axis of half a block, so the points look pointier (you can get information about the block size and more using `--verbose`, check out [this section](#other)).
 
 ```bash
-l2a .\images\Cross_Calatrava.png --padx 4 --pady 8
+l2a .\images\sources\Cross_Calatrava.png --padx 4 --pady 8
 ```
 
-![Cross of Calatrava with offset](../images/ascii/cross_padx4_pady8.png)
+![Cross of Calatrava with offset](../images/ascii/cross_padx4_pady8.md)
 
 ## Colored Logo
 
@@ -85,20 +85,20 @@ If we just used the app normally, it would probably look horrible, so let's skip
 > Here we use `--borders all` instead of `--borders color` because the background color is transparent. If we only detected the borders between the tentacles they would have a strange shape. We could have also used `--borders color, alpha`, as we do not need to look for brightness.
 
 ```bash
-l2a '.\images\tentacles.png' -b all
+l2a '.\images\sources\tentacles.png' -b all
 ```
 
 ![Tentacles](../images/ascii/tentacles_b_all.png)
 
-- Combine with `-n` and `-v` (for `--visible`, which makes transparent pixels white) to only show the borders.
+- Combine with `-n` and `--transparent-color FFF` to only show the borders.
 
 ```bash
-l2a '.\images\tentacles.png' --borders all -nv
+l2a '.\images\sources\tentacles.png' --borders all -n --transparent-color FFF
 ```
 
 ![Tentacles border](../images/ascii/tentacles_nv.png)
 
-The other combinations of `-n` and `-v` are also interesting, you should always try them.
+The other combinations of `-n` and `--transparent-color` are also interesting, you should always try them.
 
 You can further customize the borders in the [border tutorial](tutorial/tutorial-borders.md)
 
@@ -107,13 +107,13 @@ You can further customize the borders in the [border tutorial](tutorial/tutorial
 - To print the image with colors, use the argument `-c, --print-color`.
 
 ```bash
-l2a .\images\Cross_Calatrava.png -c
+l2a .\images\sources\Cross_Calatrava.png -c
 ```
 
 ![Cross of Calatrava with colors](../images/ascii/cross_c.png)
 
 ```bash
-l2a .\images\tentacles.png -b all -c
+l2a .\images\sources\tentacles.png -b all -c
 ```
 
 ![Tentacles with colors](../images/ascii/tentacles_b_all_c.png)
@@ -123,7 +123,7 @@ l2a .\images\tentacles.png -b all -c
 You can combine multiple options for more complex results:
 
 ```bash
-l2a .\images\Cross_Calatrava.png -cvb all -X1
+l2a .\images\sources\Cross_Calatrava.png -cvb all -X1
 ```
 
 ![Cross of Calatrava combined](../images/ascii/cross_cvb_all_X1.png)
