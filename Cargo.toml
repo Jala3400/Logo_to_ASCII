@@ -4,10 +4,10 @@ version = "0.6.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.16", features = ["derive"] }
+clap = { version = "4.5.60", features = ["derive"] }
 enable-ansi-support = "0.3.1"
 font-kit = "0.14"
 image = "0.24.6"
 imageproc = "0.23.0"
 rusttype = "0.9.3"
-thiserror = "2.0.17"
+thiserror = "2.0.18"
