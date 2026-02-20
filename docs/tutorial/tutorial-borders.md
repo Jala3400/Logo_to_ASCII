@@ -28,6 +28,14 @@ If you want to use multiple criteria, but not all of them, you can write them se
 
 If not specified its default value is the width of a block.
 
+### Border color
+
+`--border-color <HEX_COLOR>`: Specifies the color of the border.
+
+The color must be in hex format, e.g., `FF0000` (red), or `0000FF80` (semi-transparent blue).
+
+If not specified, its default value is black.
+
 ### Thresholds
 
 There is one threshold for color and another for brightness.

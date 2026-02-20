@@ -113,13 +113,13 @@ pub fn saturate(img: &mut RgbaImage, args: &Args) {
     }
 }
 
-// Detects the borders of an image and paints them black
+// Detects the borders of an image and paints them with the specified color
 pub fn borders_image(img: &mut RgbaImage, args: &Args, thickness: u32) {
     // Get the borders (difference color or brightness)
     let borders = detect_borders(&img, args);
 
     // Paint the borders
-    paint_borders(img, borders, thickness);
+    paint_borders(img, borders, thickness, args.border_color);
 }
 
 // Detects the borders of an image
@@ -181,12 +181,17 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
     borders
 }
 
-// Paints the borders of an image black
-fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness: u32) {
+// Paints the borders of an image with the specified color
+fn paint_borders(
+    img: &mut image::RgbaImage,
+    borders: Vec<(u32, u32)>,
+    thickness: u32,
+    color: [u8; 4],
+) {
     let half_t = thickness / 2;
     let width = img.width();
     let height = img.height();
-    let black_pixel = image::Rgba([0, 0, 0, 255]);
+    let border_pixel = image::Rgba(color);
 
     for (x, y) in borders {
         // Pre-calculate bounds
@@ -198,7 +203,7 @@ fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness
         // Direct iteration over valid coordinates
         for ny in y_start..y_end {
             for nx in x_start..x_end {
-                img.put_pixel(nx, ny, black_pixel);
+                img.put_pixel(nx, ny, border_pixel);
             }
         }
     }
