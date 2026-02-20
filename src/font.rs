@@ -10,22 +10,32 @@ use imageproc::drawing::draw_text_mut;
 use rusttype::{Font, Scale};
 use std::vec;
 
-/// Returns a FontBitmap with the characters and their brightness values
-pub fn get_font(config: &ImageConfig) -> Result<FontBitmap, L2aError> {
-    // Load or create an image
-    let mut img;
+/// The raw bytes of the embedded default font, baked into the binary at compile time.
+pub const DEFAULT_FONT_BYTES: &[u8] =
+    include_bytes!("../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf");
 
-    // Load a font
-    let font: Font<'_>;
+/// Returns the embedded default font as a `Font<'static>`.
+
+pub fn default_font() -> Result<Font<'static>, L2aError> {
+    Font::try_from_bytes(DEFAULT_FONT_BYTES)
+        .ok_or_else(|| L2aError::Font("Built-in font data is invalid".to_owned()))
+}
+
+/// **CLI only.** Loads a font according to the configuration:
+/// - `config.font_path` — read from a file path
+/// - `config.font_name` — look up via the system font registry
+/// - neither — falls back to the embedded [`default_font`]
+///
+/// Returns a `Font<'static>` so it can outlive the config and be passed freely.
+pub fn load_font(config: &ImageConfig) -> Result<Font<'static>, L2aError> {
     if let Some(font_path) = config.font_path.as_ref() {
-        let font_data = std::fs::read(&font_path).map_err(|e| L2aError::Io(e))?;
+        let font_data = std::fs::read(font_path).map_err(L2aError::Io)?;
 
         if config.verbose {
             println!("Loaded font from path: {}", font_path);
         }
 
-        font =
-            Font::try_from_vec(font_data).ok_or(L2aError::Font("Invalid font data".to_owned()))?;
+        Font::try_from_vec(font_data).ok_or_else(|| L2aError::Font("Invalid font data".to_owned()))
     } else if let Some(font_name) = config.font_name.as_ref() {
         // Use font-kit to look up the font by name
         let source = SystemSource::new();
@@ -40,7 +50,7 @@ pub fn get_font(config: &ImageConfig) -> Result<FontBitmap, L2aError> {
             .load()
             .map_err(|e| L2aError::Font(format!("Failed to load font data: {}", e)))?
             .copy_font_data()
-            .ok_or(L2aError::Font("Failed to copy font data".to_string()))?;
+            .ok_or_else(|| L2aError::Font("Failed to copy font data".to_string()))?;
 
         if config.verbose {
             match handle {
@@ -53,14 +63,22 @@ pub fn get_font(config: &ImageConfig) -> Result<FontBitmap, L2aError> {
             }
         }
 
-        font = Font::try_from_vec(font_data.to_vec())
-            .ok_or(L2aError::Font("Invalid font data".to_owned()))?;
+        Font::try_from_vec(font_data.to_vec())
+            .ok_or_else(|| L2aError::Font("Invalid font data".to_owned()))
     } else {
-        font = Font::try_from_bytes(include_bytes!(
-            "../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf"
-        ))
-        .ok_or(L2aError::Font("Invalid font data".to_owned()))?;
+        default_font()
     }
+}
+
+/// Builds a [`FontBitmap`] by rendering each character in `config.chars` using
+/// the supplied font.
+///
+/// This is an I/O-free step
+/// The caller is responsible for supplying an appropriate font:
+/// - **CLI**: obtain one from [`load_font`]
+/// - **WASM**: obtain the embedded font from [`default_font`]
+pub fn build_font_bitmap(font: &Font<'_>, config: &ImageConfig) -> Result<FontBitmap, L2aError> {
+    let mut img;
 
     // Define text properties
     let scale = Scale::uniform(config.char_size.get() as f32);

@@ -28,7 +28,8 @@ pub fn process_image(
 
     characters::process_characters(&mut cfg);
 
-    let font = font::get_font(&cfg)?;
+    let font_obj = font::load_font(&cfg)?;
+    let font = font::build_font_bitmap(&font_obj, &cfg)?;
 
     if font.data.is_empty() {
         return Err(errors::L2aError::NoCharacters);
