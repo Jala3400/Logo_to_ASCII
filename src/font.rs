@@ -1,5 +1,5 @@
 use crate::{
-    args::Args,
+    config::ImageConfig,
     errors::L2aError,
     proc_pixel::calculate_brightness,
     types::{CharInfo, FontBitmap},
@@ -11,22 +11,22 @@ use rusttype::{Font, Scale};
 use std::vec;
 
 /// Returns a FontBitmap with the characters and their brightness values
-pub fn get_font(args: &Args) -> Result<FontBitmap, L2aError> {
+pub fn get_font(config: &ImageConfig) -> Result<FontBitmap, L2aError> {
     // Load or create an image
     let mut img;
 
     // Load a font
     let font: Font<'_>;
-    if let Some(font_path) = args.font_path.as_ref() {
+    if let Some(font_path) = config.font_path.as_ref() {
         let font_data = std::fs::read(&font_path).map_err(|e| L2aError::Io(e))?;
 
-        if args.verbose {
+        if config.verbose {
             println!("Loaded font from path: {}", font_path);
         }
 
         font =
             Font::try_from_vec(font_data).ok_or(L2aError::Font("Invalid font data".to_owned()))?;
-    } else if let Some(font_name) = args.font_name.as_ref() {
+    } else if let Some(font_name) = config.font_name.as_ref() {
         // Use font-kit to look up the font by name
         let source = SystemSource::new();
         let handle = source
@@ -42,7 +42,7 @@ pub fn get_font(args: &Args) -> Result<FontBitmap, L2aError> {
             .copy_font_data()
             .ok_or(L2aError::Font("Failed to copy font data".to_string()))?;
 
-        if args.verbose {
+        if config.verbose {
             match handle {
                 font_kit::handle::Handle::Path { path, .. } => {
                     println!("Loaded font from path: {}", path.display());
@@ -63,7 +63,7 @@ pub fn get_font(args: &Args) -> Result<FontBitmap, L2aError> {
     }
 
     // Define text properties
-    let scale = Scale::uniform(args.char_size.get() as f32);
+    let scale = Scale::uniform(config.char_size.get() as f32);
     let color = Rgba([255, 255, 255, 255]);
 
     // Get font metrics to determine character dimensions
@@ -76,7 +76,7 @@ pub fn get_font(args: &Args) -> Result<FontBitmap, L2aError> {
     let width = glyph.h_metrics().advance_width.ceil() as usize;
 
     // Create a vector of characters directly from the input string
-    let characters: Vec<char> = args.chars.chars().collect();
+    let characters: Vec<char> = config.chars.chars().collect();
 
     let pixel_count = (width * height) as f32;
     let mut final_font = FontBitmap {
@@ -153,7 +153,7 @@ pub fn get_font(args: &Args) -> Result<FontBitmap, L2aError> {
     }
 
     // Print all characters in the final font (ordered)
-    if args.verbose {
+    if config.verbose {
         print!("Characters: ");
         for char_info in &final_font.data {
             print!("{}", char_info.char);

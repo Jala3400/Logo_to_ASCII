@@ -1,5 +1,5 @@
 use crate::{
-    args::Args,
+    config::ImageConfig,
     errors::L2aError,
     proc_pixel::{
         alpha_difference, brightness_difference, calculate_brightness, calculate_linear_brightness,
@@ -11,17 +11,17 @@ use image::{imageops, EncodableLayout, RgbaImage};
 use std::num::NonZeroU32;
 
 // Resizes an image
-pub fn resize(img: &mut RgbaImage, args: &mut Args) {
+pub fn resize(img: &mut RgbaImage, config: &mut ImageConfig) {
     let (orig_width, orig_height) = img.dimensions();
 
-    if args.verbose {
+    if config.verbose {
         println!("Original dimensions {}x{}", orig_width, orig_height);
     }
 
     // Calculate dimensions once upfront
     let (target_width, target_height) = match (
-        args.width_in_pixels.map(|nz| nz.get()),
-        args.height_in_pixels.map(|nz| nz.get()),
+        config.width_in_pixels.map(|nz| nz.get()),
+        config.height_in_pixels.map(|nz| nz.get()),
     ) {
         (None, Some(h)) => {
             let ratio = h as f32 / orig_height as f32;
@@ -35,8 +35,8 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
         (None, None) => (orig_width, orig_height),
     };
 
-    args.width_in_pixels = NonZeroU32::new(target_width);
-    args.height_in_pixels = NonZeroU32::new(target_height);
+    config.width_in_pixels = NonZeroU32::new(target_width);
+    config.height_in_pixels = NonZeroU32::new(target_height);
 
     // Resize the image
     *img = imageops::resize(
@@ -47,22 +47,22 @@ pub fn resize(img: &mut RgbaImage, args: &mut Args) {
     );
 }
 
-pub fn center_image(img: &RgbaImage, args: &mut Args, font: &FontBitmap) {
+pub fn center_image(img: &RgbaImage, config: &mut ImageConfig, font: &FontBitmap) {
     let (img_width, img_height) = img.dimensions();
     let num_blocks_x = ((img_width as usize + font.width - 1) / font.width) as u32;
     let num_blocks_y = ((img_height as usize + font.vertical_step - 1) / font.vertical_step) as u32;
     let target_width = num_blocks_x * font.width as u32;
     let target_height = num_blocks_y * font.vertical_step as u32;
-    args.padding_x += ((target_width - img_width) / 2) as usize;
-    args.padding_y += ((target_height - img_height) / 2) as usize;
+    config.padding_x += ((target_width - img_width) / 2) as usize;
+    config.padding_y += ((target_height - img_height) / 2) as usize;
 }
 
 // Adds padding to an image
-pub fn add_padding(img: &mut RgbaImage, args: &Args) -> Result<(), L2aError> {
+pub fn add_padding(img: &mut RgbaImage, config: &ImageConfig) -> Result<(), L2aError> {
     // Calculate dimensions
     let (img_width, img_height) = img.dimensions();
-    let padding_x = args.padding_x + args.padding;
-    let padding_y = args.padding_y + args.padding;
+    let padding_x = config.padding_x + config.padding;
+    let padding_y = config.padding_y + config.padding;
     let new_width = img_width + (padding_x * 2) as u32;
     let new_height = img_height + (padding_y * 2) as u32;
     let pixel_bytes = 4;
@@ -86,7 +86,7 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) -> Result<(), L2aError> {
     *img = image::RgbaImage::from_raw(new_width, new_height, new_bytes)
         .ok_or(L2aError::Font("Failed to create padding image".to_string()))?;
 
-    if args.verbose {
+    if config.verbose {
         println!("Applied padding of {}x{}", padding_x, padding_y);
     }
 
@@ -94,14 +94,14 @@ pub fn add_padding(img: &mut RgbaImage, args: &Args) -> Result<(), L2aError> {
 }
 
 // Saturates an image
-pub fn saturate(img: &mut RgbaImage, args: &Args) {
+pub fn saturate(img: &mut RgbaImage, config: &ImageConfig) {
     for pixel in img.pixels_mut() {
         let (r, g, b) = (pixel[0], pixel[1], pixel[2]);
         let max = r.max(g).max(b);
         let factor = 255.0 / max as f32;
 
         // Only saturate if the pixel is bright enough
-        if calculate_brightness(pixel) > args.midpoint_brightness {
+        if calculate_brightness(pixel) > config.midpoint_brightness {
             pixel[0] = (r as f32 * factor).round() as u8;
             pixel[1] = (g as f32 * factor).round() as u8;
             pixel[2] = (b as f32 * factor).round() as u8;
@@ -114,19 +114,19 @@ pub fn saturate(img: &mut RgbaImage, args: &Args) {
 }
 
 // Detects the borders of an image and paints them with the specified color
-pub fn borders_image(img: &mut RgbaImage, args: &Args, thickness: u32) {
+pub fn borders_image(img: &mut RgbaImage, config: &ImageConfig, thickness: u32) {
     // Get the borders (difference color or brightness)
-    let borders = detect_borders(&img, args);
+    let borders = detect_borders(&img, config);
 
     // Paint the borders
-    paint_borders(img, borders, thickness, args.border_color);
+    paint_borders(img, borders, thickness, config.border_color);
 }
 
 // Detects the borders of an image
 // Unified function that handles all detection modes
-fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
+fn detect_borders(img: &image::RgbaImage, config: &ImageConfig) -> Vec<(u32, u32)> {
     // Return empty if no border criteria is set
-    let Some(criteria_list) = &args.border_criteria else {
+    let Some(criteria_list) = &config.border_criteria else {
         return Vec::new();
     };
 
@@ -150,9 +150,9 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
 
     let mut borders = Vec::new();
     let (width, height) = img.dimensions();
-    let b_threshold = args.brightness_diff;
-    let hue_threshold = args.color_diff % 360.0;
-    let alpha_threshold = args.alpha_diff;
+    let b_threshold = config.brightness_diff;
+    let hue_threshold = config.color_diff % 360.0;
+    let alpha_threshold = config.alpha_diff;
 
     // Compares a pixel to the one on its right and below
     for y in 0..height - 1 {
@@ -210,9 +210,9 @@ fn paint_borders(
 }
 
 // Flattens the image to remove transparency using a background color
-pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
+pub fn treat_transparent(img: &mut RgbaImage, config: &ImageConfig) {
     // Background color determined based on the arguments
-    let bg_color = args.transparent_color;
+    let bg_color = config.transparent_color;
 
     for pixel in img.pixels_mut() {
         let alpha = pixel[3];
@@ -282,11 +282,11 @@ pub fn grayscale(img: &mut RgbaImage) {
 }
 
 // Preprocesses an image to black and white
-pub fn bw_filter(img: &mut RgbaImage, args: &Args) {
+pub fn bw_filter(img: &mut RgbaImage, config: &ImageConfig) {
     // Convert the image to black and white applying a threshold
     for pixel in img.pixels_mut() {
         let pixel_brightness = calculate_brightness(&pixel);
-        let value = if pixel_brightness > args.threshold {
+        let value = if pixel_brightness > config.threshold {
             255
         } else {
             0
