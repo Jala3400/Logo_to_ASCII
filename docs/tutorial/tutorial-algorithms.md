@@ -39,10 +39,10 @@ To normalize the brightness of the image you should use the `-g, --grayscale` fl
 
 Using a gradient image to demonstrate:
 
-(The `-v, --visible` flag is added to make the transparent pixels white, because the image doesn't fill perfectly the bottom part)
+(The `--transparent-color FFF` flag is added to make the transparent pixels white, because the image doesn't fill perfectly the bottom part)
 
 ```bash
-l2a .\images\gradient.jpg -w 80 --alg gradient --chars aeou -v
+l2a .\images\sources\gradient.jpg -w 80 --alg gradient -a aeou --transparent-color FFF
 ```
 
 ![Normal gradient](../../images/ascii/gradient_aeou.png)
@@ -50,7 +50,7 @@ l2a .\images\gradient.jpg -w 80 --alg gradient --chars aeou -v
 By adding an @ and removing the space, darker blocks use the next darker character, and brighter blocks use brighter characters:
 
 ```bash
-l2a .\images\gradient.jpg -w 80 --algo gradient -a ouae@ -x " " -v
+l2a .\images\sources\gradient.jpg -w 80 --alg gradient -a ouae@ -x " " --transparent-color FFF
 ```
 
 ![Adjusted gradient](../../images/ascii/gradient_aeou@.png)

@@ -35,7 +35,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 - `-n, --negative`: Invert the brightness of the image
 - `-B, --black-white`: Turn the image into black and white
 - `-t, --threshold <THRESHOLD>`: Threshold value for the black and white conversion (from 0 to 1) [default: 0.5]
-- `-v, --visible`: Make transparent pixels visible
+- `--transparent-color <TRANSPARENT_COLOR>`: Color to use for transparent pixels (hex format, e.g., FFFFFF) [default: 000000]
 - `-s, --saturate`: Saturate the pixels of the image while keeping the dark pixels dark
 - `-g, --grayscale`: Convert the image to grayscale and normalize the brightness
 - `-m, --midpoint-brightness <MIDPOINT_BRIGHTNESS>`: Midpoint of the brightness spectrum [default: 0.5]
@@ -56,6 +56,7 @@ Usage: l2a.exe [OPTIONS] <PATH>
 - `-c, --print-color`: Print the image with colors
 - `-b, --borders <BORDER_CRITERIA>..`: Draws borders on the image according to the specified policy. You can specify the argument multiple times or as a comma separated list. [possible values: color, brightness, alpha, all]
 - `-k, --thickness <BORDER_THICKNESS>`: Border thickness (default: width of the character)
+- `--border-color <BORDER_COLOR>`: Border color (hex format, e.g., FFFFFF or FFFFFFFF for RGBA) [default: 000000FF]
 - `--color-diff <COLOR_DIFF>`: Threshold for the color difference (from 0 to 360, modulus 360) [default: 30]
 - `--brightness-diff <BRIGHTNESS_DIFF>`: Threshold for the brightness difference (from 0 to 1) [default: 0.1]
 - `--alpha-diff <ALPHA_DIFF>`: Threshold for the alpha difference (from 0 to 1) [default: 0.0]

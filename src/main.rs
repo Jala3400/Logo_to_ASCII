@@ -71,7 +71,7 @@ fn run() -> Result<(), L2aError> {
         );
     }
 
-    // Always treat transparent pixels (before negative so transparent pixels are visible)
+    // Always remove transparency using a background color (before negative so the color is inverted if needed)
     treat_transparent(&mut img, &args);
 
     // Apply the negative effect

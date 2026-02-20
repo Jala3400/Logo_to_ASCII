@@ -113,13 +113,13 @@ pub fn saturate(img: &mut RgbaImage, args: &Args) {
     }
 }
 
-// Detects the borders of an image and paints them black
+// Detects the borders of an image and paints them with the specified color
 pub fn borders_image(img: &mut RgbaImage, args: &Args, thickness: u32) {
     // Get the borders (difference color or brightness)
     let borders = detect_borders(&img, args);
 
     // Paint the borders
-    paint_borders(img, borders, thickness);
+    paint_borders(img, borders, thickness, args.border_color);
 }
 
 // Detects the borders of an image
@@ -181,12 +181,17 @@ fn detect_borders(img: &image::RgbaImage, args: &Args) -> Vec<(u32, u32)> {
     borders
 }
 
-// Paints the borders of an image black
-fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness: u32) {
+// Paints the borders of an image with the specified color
+fn paint_borders(
+    img: &mut image::RgbaImage,
+    borders: Vec<(u32, u32)>,
+    thickness: u32,
+    color: [u8; 4],
+) {
     let half_t = thickness / 2;
     let width = img.width();
     let height = img.height();
-    let black_pixel = image::Rgba([0, 0, 0, 255]);
+    let border_pixel = image::Rgba(color);
 
     for (x, y) in borders {
         // Pre-calculate bounds
@@ -198,27 +203,24 @@ fn paint_borders(img: &mut image::RgbaImage, borders: Vec<(u32, u32)>, thickness
         // Direct iteration over valid coordinates
         for ny in y_start..y_end {
             for nx in x_start..x_end {
-                img.put_pixel(nx, ny, black_pixel);
+                img.put_pixel(nx, ny, border_pixel);
             }
         }
     }
 }
 
-// Make transparent pixels visible
+// Flattens the image to remove transparency using a background color
 pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
+    // Background color determined based on the arguments
+    let bg_color = args.transparent_color;
+
     for pixel in img.pixels_mut() {
         let alpha = pixel[3];
-        if !args.visible {
-            let factor = alpha as f32 / 255.0;
-            pixel[0] = (pixel[0] as f32 * factor) as u8;
-            pixel[1] = (pixel[1] as f32 * factor) as u8;
-            pixel[2] = (pixel[2] as f32 * factor) as u8;
-        } else {
-            let factor = alpha as f32 / 255.0;
-            pixel[0] = (pixel[0] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-            pixel[1] = (pixel[1] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-            pixel[2] = (pixel[2] as f32 * factor + 255.0 * (1.0 - factor)) as u8;
-        }
+        let factor = alpha as f32 / 255.0;
+        let inverse_factor = 1.0 - factor;
+        pixel[0] = (pixel[0] as f32 * factor + bg_color[0] as f32 * inverse_factor) as u8;
+        pixel[1] = (pixel[1] as f32 * factor + bg_color[1] as f32 * inverse_factor) as u8;
+        pixel[2] = (pixel[2] as f32 * factor + bg_color[2] as f32 * inverse_factor) as u8;
         pixel[3] = 255;
     }
 }
@@ -226,19 +228,24 @@ pub fn treat_transparent(img: &mut RgbaImage, args: &Args) {
 // Applies the negative effect to an image
 pub fn negative(img: &mut RgbaImage) {
     for pixel in img.pixels_mut() {
-        let pixel_brightness = calculate_brightness(&pixel);
-        let target_brightness = 1.0 - pixel_brightness;
-        if pixel_brightness == 0.0 {
-            pixel[0] = 255;
-            pixel[1] = 255;
-            pixel[2] = 255;
-        } else {
-            // Apply the negative effect (it is squared to make it more visible)
-            let factor = (target_brightness / pixel_brightness).powf(2.0);
-            pixel[0] = (pixel[0] as f32 * factor).round() as u8;
-            pixel[1] = (pixel[1] as f32 * factor).round() as u8;
-            pixel[2] = (pixel[2] as f32 * factor).round() as u8;
-        }
+        apply_negative_to_pixel(pixel);
+    }
+}
+
+// Applies the negative effect to a single pixel
+#[inline]
+pub fn apply_negative_to_pixel(pixel: &mut image::Rgba<u8>) {
+    let pixel_brightness = calculate_brightness(pixel);
+    let target_brightness = 1.0 - pixel_brightness;
+    if pixel_brightness == 0.0 {
+        pixel[0] = 255;
+        pixel[1] = 255;
+        pixel[2] = 255;
+    } else {
+        let factor = (target_brightness / pixel_brightness).powf(2.0);
+        pixel[0] = (pixel[0] as f32 * factor).round() as u8;
+        pixel[1] = (pixel[1] as f32 * factor).round() as u8;
+        pixel[2] = (pixel[2] as f32 * factor).round() as u8;
     }
 }
 
