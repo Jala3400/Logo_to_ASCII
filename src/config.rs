@@ -6,6 +6,8 @@ use std::num::NonZeroU32;
 /// Unlike [`crate::args::Args`], this struct has no dependency on `clap` and
 /// can be constructed programmatically (e.g. from a web frontend via WASM).
 /// All CLI-specific fields (`path`, `output`) live only in `Args`.
+#[derive(serde::Serialize, serde::Deserialize)]
+#[serde(default)]
 pub struct ImageConfig {
     // Font
     pub font_name: Option<String>,
@@ -93,6 +95,7 @@ impl Default for ImageConfig {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl From<crate::args::Args> for ImageConfig {
     fn from(args: crate::args::Args) -> Self {
         ImageConfig {

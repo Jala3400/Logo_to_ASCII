@@ -1,3 +1,4 @@
+#[cfg(not(target_arch = "wasm32"))]
 pub mod args;
 pub mod characters;
 pub mod config;
@@ -8,6 +9,8 @@ pub mod proc_block;
 pub mod proc_image;
 pub mod proc_pixel;
 pub mod types;
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
 
 use image::RgbaImage;
 use std::num::NonZeroU32;
@@ -28,7 +31,10 @@ pub fn process_image(
 
     characters::process_characters(&mut cfg);
 
+    #[cfg(not(target_arch = "wasm32"))]
     let font_obj = font::load_font(&cfg)?;
+    #[cfg(target_arch = "wasm32")]
+    let font_obj = font::default_font()?;
     let font = font::build_font_bitmap(&font_obj, &cfg)?;
 
     if font.data.is_empty() {

@@ -5,12 +5,14 @@ use crate::{
     proc_pixel::calc_custom_brightness,
     types::{CharInfo, FontBitmap, OutputFormat},
 };
+#[cfg(not(target_arch = "wasm32"))]
 use enable_ansi_support::enable_ansi_support;
 use image::{Rgba, RgbaImage};
 
 // Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> String {
-    // Enable colors
+    // Enable colors (ANSI support is a Windows-only native concern; not needed in WASM)
+    #[cfg(not(target_arch = "wasm32"))]
     if config.print_color {
         if let Err(e) = enable_ansi_support() {
             eprintln!("Warning: Could not enable ANSI support: {}", e);

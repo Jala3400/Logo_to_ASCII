@@ -4,6 +4,7 @@ use crate::{
     proc_pixel::calculate_brightness,
     types::{CharInfo, FontBitmap},
 };
+#[cfg(not(target_arch = "wasm32"))]
 use font_kit::{family_name::FamilyName, properties::Properties, source::SystemSource};
 use image::{Rgba, RgbaImage};
 use imageproc::drawing::draw_text_mut;
@@ -21,6 +22,7 @@ pub fn default_font() -> Result<Font<'static>, L2aError> {
         .ok_or_else(|| L2aError::Font("Built-in font data is invalid".to_owned()))
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 /// **CLI only.** Loads a font according to the configuration:
 /// - `config.font_path` — read from a file path
 /// - `config.font_name` — look up via the system font registry
