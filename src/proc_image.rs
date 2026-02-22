@@ -62,7 +62,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
     let mut result = String::with_capacity(string_capacity);
 
     // HTML preamble
-    if config.print_color && matches!(config.format, OutputFormat::Html) {
+    if matches!(config.format, OutputFormat::Html) {
         let font_family = match &config.font_name {
             Some(name) => format!("'{}', monospace", name),
             None => "monospace".to_string(),
