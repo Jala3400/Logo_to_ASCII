@@ -2,21 +2,13 @@
     import { asciiOutput, processedImageUrl } from "$lib/stores";
     import Button from "../atoms/Button.svelte";
 
-    function getRawText() {
-        if (typeof document === 'undefined') return '';
-        const el = document.createElement('div');
-        el.innerHTML = $asciiOutput;
-        return el.innerText;
-    }
-
     async function copyToClipboard() {
         try {
-            const text = getRawText();
-            await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText($asciiOutput);
         } catch {
             // Fallback
             const el = document.createElement("textarea");
-            el.value = getRawText();
+            el.value = $asciiOutput;
             document.body.appendChild(el);
             el.select();
             document.execCommand("copy");
@@ -25,8 +17,8 @@
     }
 
     function downloadTxt() {
-        const text = getRawText();
-        const blob = new Blob([text], { type: "text/plain" });
+        // Prepare text content: if it's HTML, we should really just get the text for a .txt file
+        const blob = new Blob([$asciiOutput], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
