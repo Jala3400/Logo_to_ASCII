@@ -115,6 +115,7 @@
                                         src={$originalImageUrl}
                                         alt="Original"
                                         class="preview__image"
+                                        draggable="false"
                                     />
                                 {/if}
                             {:else if $processedImageUrl}
@@ -122,6 +123,7 @@
                                     src={$processedImageUrl}
                                     alt="Processed"
                                     class="preview__image"
+                                    draggable="false"
                                 />
                             {/if}
                         </div>
@@ -144,6 +146,7 @@
                             alt="Base"
                             class="preview__image preview__overlay-base"
                             style="opacity: {$overlayOpacity}"
+                            draggable="false"
                         />
                     {/if}
                     <div
@@ -366,6 +369,7 @@
         max-height: 100%;
         object-fit: contain;
         z-index: 1;
+        pointer-events: none;
     }
 
     .preview__overlay-ascii {
@@ -378,7 +382,6 @@
         align-items: center;
         justify-content: center;
         line-height: 1;
-        pointer-events: none;
         z-index: 2;
         font-family: "Ubuntu Mono", monospace;
     }
