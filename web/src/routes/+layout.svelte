@@ -1,7 +1,7 @@
 <script lang="ts">
-	import '../styles/global.css';
+    import "../styles/global.css";
 
-	let { children } = $props();
+    let { children } = $props();
 </script>
 
 {@render children()}

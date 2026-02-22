@@ -1,19 +1,19 @@
 <script lang="ts">
-    import ViewModeControls from "../molecules/ViewModeControls.svelte";
+    import { loadImage } from "$lib/converter";
     import {
         asciiOutput,
-        processedImageUrl,
-        originalImageUrl,
-        isConverting,
+        config,
         errorMessage,
         hasImage,
-        viewMode,
         imageDisplayMode,
+        isConverting,
+        originalImageUrl,
         overlayOpacity,
+        processedImageUrl,
+        viewMode,
         wasmReady,
-        config,
     } from "$lib/stores";
-    import { loadImage } from "$lib/converter";
+    import ViewModeControls from "../molecules/ViewModeControls.svelte";
 
     let imageUrl = $derived(
         $imageDisplayMode === "original"
@@ -343,7 +343,7 @@
         border: 1px solid var(--border);
         padding: var(--spacing-sm);
         line-height: 1;
-        font-family: 'Ubuntu Mono', monospace;
+        font-family: "Ubuntu Mono", monospace;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -380,7 +380,7 @@
         line-height: 1;
         pointer-events: none;
         z-index: 2;
-        font-family: 'Ubuntu Mono', monospace;
+        font-family: "Ubuntu Mono", monospace;
     }
 
     /* Ensure pre tags inside the ASCII output behave properly */

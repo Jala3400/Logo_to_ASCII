@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Button from "../atoms/Button.svelte";
     import { asciiOutput, processedImageUrl } from "$lib/stores";
+    import Button from "../atoms/Button.svelte";
 
     async function copyToClipboard() {
         try {
@@ -53,12 +53,15 @@
     <Button size="sm" onclick={copyToClipboard} title="Copy ASCII to clipboard">
         📋 Copy
     </Button>
+
     <Button size="sm" onclick={downloadTxt} title="Download as .txt">
         💾 .txt
     </Button>
+
     <Button size="sm" onclick={downloadHtml} title="Download as .html">
         🌐 .html
     </Button>
+
     <Button
         size="sm"
         onclick={downloadImage}

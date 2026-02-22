@@ -1,11 +1,10 @@
 <script lang="ts">
-    import Section from "../atoms/Section.svelte";
-    import TextInput from "../atoms/TextInput.svelte";
-    import Slider from "../atoms/Slider.svelte";
-    import Select from "../atoms/Select.svelte";
-    import { config } from "$lib/stores";
     import { updateConfig } from "$lib/converter";
+    import { config } from "$lib/stores";
     import { getFinalChars } from "$lib/wasm";
+    import Section from "../atoms/Section.svelte";
+    import Select from "../atoms/Select.svelte";
+    import TextInput from "../atoms/TextInput.svelte";
 
     const charSizeOptions = [
         { value: "8", label: "8px" },

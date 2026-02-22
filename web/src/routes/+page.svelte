@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import Header from "$lib/components/organisms/Header.svelte";
-    import Sidebar from "$lib/components/organisms/Sidebar.svelte";
-    import PreviewArea from "$lib/components/organisms/PreviewArea.svelte";
     import Button from "$lib/components/atoms/Button.svelte";
+    import Header from "$lib/components/organisms/Header.svelte";
+    import PreviewArea from "$lib/components/organisms/PreviewArea.svelte";
+    import Sidebar from "$lib/components/organisms/Sidebar.svelte";
     import { initialize } from "$lib/converter";
+    import { onMount } from "svelte";
 
     onMount(() => {
         initialize();

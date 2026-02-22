@@ -69,7 +69,7 @@ export const DEFAULT_CONFIG: L2aConfig = {
     chars: "8dbqp'·. ",
     add_chars: "",
     except: "",
-    dicts: ['default'],
+    dicts: ["default"],
     char_size: 16,
     format: "html",
     negative: false,

@@ -1,4 +1,4 @@
-import { writable, derived } from "svelte/store";
+import { derived, writable } from "svelte/store";
 import { DEFAULT_CONFIG, type L2aConfig } from "./wasm";
 
 /** Currently loaded image as raw bytes */

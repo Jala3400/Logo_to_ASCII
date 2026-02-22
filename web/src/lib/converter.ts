@@ -1,15 +1,15 @@
-import {
-    imageBytes,
-    config,
-    asciiOutput,
-    processedImageUrl,
-    isConverting,
-    errorMessage,
-    wasmReady,
-    originalImageUrl,
-} from "./stores";
-import { initWasm, convertImage, DEFAULT_CONFIG, type L2aConfig } from "./wasm";
 import { get } from "svelte/store";
+import {
+	asciiOutput,
+	config,
+	errorMessage,
+	imageBytes,
+	isConverting,
+	originalImageUrl,
+	processedImageUrl,
+	wasmReady,
+} from "./stores";
+import { convertImage, DEFAULT_CONFIG, initWasm, type L2aConfig } from "./wasm";
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 

@@ -1,15 +1,14 @@
 <script lang="ts">
-    import CharacterControls from "../molecules/CharacterControls.svelte";
-    import ImageControls from "../molecules/ImageControls.svelte";
-    import BorderControls from "../molecules/BorderControls.svelte";
-    import SizeControls from "../molecules/SizeControls.svelte";
-    import AlgorithmControls from "../molecules/AlgorithmControls.svelte";
-    import ExportControls from "../molecules/ExportControls.svelte";
-    import Button from "../atoms/Button.svelte";
-    import { hasImage, wasmReady } from "$lib/stores";
-    import { DEFAULT_CONFIG } from "$lib/wasm";
-    import { config } from "$lib/stores";
     import { runConversion } from "$lib/converter";
+    import { config } from "$lib/stores";
+    import { DEFAULT_CONFIG } from "$lib/wasm";
+    import Button from "../atoms/Button.svelte";
+    import AlgorithmControls from "../molecules/AlgorithmControls.svelte";
+    import BorderControls from "../molecules/BorderControls.svelte";
+    import CharacterControls from "../molecules/CharacterControls.svelte";
+    import ExportControls from "../molecules/ExportControls.svelte";
+    import ImageControls from "../molecules/ImageControls.svelte";
+    import SizeControls from "../molecules/SizeControls.svelte";
 
     function resetConfig() {
         config.set({ ...DEFAULT_CONFIG });
