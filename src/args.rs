@@ -88,14 +88,9 @@ pub struct Args {
     #[arg(short, long, default_value_t = 0.5, help_heading = "Image Processing")]
     pub threshold: f32,
 
-    /// Makes transparent pixels white instead of black
-    #[arg(
-        short,
-        long,
-        default_value_t = false,
-        help_heading = "Image Processing"
-    )]
-    pub visible: bool,
+    /// Color to use for transparent pixels (hex format, e.g., FFFFFF)
+    #[arg(long, value_parser = parse_hex_color, default_value = "000000", help_heading = "Image Processing")]
+    pub transparent_color: [u8; 3],
 
     /// Saturate each pixel of the image while keeping the dark pixels dark
     #[arg(
@@ -206,6 +201,10 @@ pub struct Args {
     #[arg(short = 'k', long = "thickness", help_heading = "Borders and Colors")]
     pub border_thickness: Option<NonZeroU32>,
 
+    /// Border color (hex format, e.g., FFFFFF or FFFFFFFF for RGBA)
+    #[arg(long, value_parser = parse_hex_color_alpha, default_value = "000000FF", help_heading = "Borders and Colors")]
+    pub border_color: [u8; 4],
+
     /// Threshold for the color difference (from 0 to 360, will be the remainder after division by 360)
     #[arg(
         long = "color-diff",
@@ -238,4 +237,45 @@ pub struct Args {
     /// Print information about the image
     #[arg(long, default_value_t = false, help_heading = "Algorithm and Misc")]
     pub verbose: bool,
+}
+
+fn parse_hex_color(s: &str) -> Result<[u8; 3], String> {
+    if s.len() == 3 {
+        let r = u8::from_str_radix(&s[0..1], 16).map_err(|e| e.to_string())?;
+        let g = u8::from_str_radix(&s[1..2], 16).map_err(|e| e.to_string())?;
+        let b = u8::from_str_radix(&s[2..3], 16).map_err(|e| e.to_string())?;
+        return Ok([r * 17, g * 17, b * 17]);
+    }
+    if s.len() == 6 {
+        let r = u8::from_str_radix(&s[0..2], 16).map_err(|e| e.to_string())?;
+        let g = u8::from_str_radix(&s[2..4], 16).map_err(|e| e.to_string())?;
+        let b = u8::from_str_radix(&s[4..6], 16).map_err(|e| e.to_string())?;
+        return Ok([r, g, b]);
+    }
+    Err(format!("Hex color must be 3 or 6 characters long: {}", s))
+}
+
+fn parse_hex_color_alpha(s: &str) -> Result<[u8; 4], String> {
+    if s.len() == 3 || s.len() == 6 {
+        let rgb = parse_hex_color(s)?;
+        return Ok([rgb[0], rgb[1], rgb[2], 255]);
+    }
+    if s.len() == 4 {
+        let r = u8::from_str_radix(&s[0..1], 16).map_err(|e| e.to_string())?;
+        let g = u8::from_str_radix(&s[1..2], 16).map_err(|e| e.to_string())?;
+        let b = u8::from_str_radix(&s[2..3], 16).map_err(|e| e.to_string())?;
+        let a = u8::from_str_radix(&s[3..4], 16).map_err(|e| e.to_string())?;
+        return Ok([r * 17, g * 17, b * 17, a * 17]);
+    }
+    if s.len() == 8 {
+        let r = u8::from_str_radix(&s[0..2], 16).map_err(|e| e.to_string())?;
+        let g = u8::from_str_radix(&s[2..4], 16).map_err(|e| e.to_string())?;
+        let b = u8::from_str_radix(&s[4..6], 16).map_err(|e| e.to_string())?;
+        let a = u8::from_str_radix(&s[6..8], 16).map_err(|e| e.to_string())?;
+        return Ok([r, g, b, a]);
+    }
+    Err(format!(
+        "Hex color must be 3, 4, 6 or 8 characters long: {}",
+        s
+    ))
 }

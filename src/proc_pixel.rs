@@ -1,9 +1,9 @@
-use crate::args::Args;
+use crate::config::ImageConfig;
 use image::Rgba;
 
 // Calculate the brightness and subtract the midpoint brightness
-pub fn calc_custom_brightness(pixel: &Rgba<u8>, args: &Args) -> f32 {
-    calculate_brightness(&pixel) - args.midpoint_brightness
+pub fn calc_custom_brightness(pixel: &Rgba<u8>, config: &ImageConfig) -> f32 {
+    calculate_brightness(&pixel) - config.midpoint_brightness
 }
 
 // Calculate the brightness of a pixel

@@ -1,13 +1,29 @@
 [package]
 name = "l2a"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 
+[lib]
+name = "logo_to_ascii"
+# cdylib is needed to produce a .wasm file for the WASM target;
+# rlib keeps the normal Rust library usable by the CLI binary.
+crate-type = ["cdylib", "rlib"]
+
+# Dependencies available on every target
 [dependencies]
-clap = { version = "4.5.16", features = ["derive"] }
-enable-ansi-support = "0.3.1"
-font-kit = "0.14"
 image = "0.24.6"
 imageproc = "0.23.0"
 rusttype = "0.9.3"
-thiserror = "2.0.17"
+thiserror = "2.0.18"
+serde = { version = "1", features = ["derive"] }
+
+# Dependencies only needed for the native CLI build
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+clap = { version = "4.5.60", features = ["derive"] }
+enable-ansi-support = "0.3.1"
+font-kit = "0.14"
+
+# Dependencies only needed for the WASM build
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+serde-wasm-bindgen = "0.6"

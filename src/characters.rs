@@ -1,56 +1,58 @@
-use crate::args::Args;
+use crate::config::ImageConfig;
 use crate::types::BuiltInCharSet;
 
-pub fn process_characters(args: &mut Args) {
+pub fn process_characters(config: &mut ImageConfig) {
     // If the flag indicates it, use all ASCII characters
-    if let Some(dicts) = &args.dicts {
-        args.chars.clear();
+    if let Some(dicts) = config.dicts.clone() {
+        config.chars.clear();
         for dict in dicts {
             match dict {
                 BuiltInCharSet::Default => {
-                    args.chars.push_str("8dbqp'·. ");
+                    config.chars.push_str("8dbqp'·. ");
                 }
                 BuiltInCharSet::All => {
-                    args.chars
+                    config
+                        .chars
                         .push_str(&(32..=126).map(|c| c as u8 as char).collect::<String>());
                 }
                 BuiltInCharSet::Symbols => {
-                    args.chars.push_str(" @!¡+=-:.'");
+                    config.chars.push_str(" @!¡+=-:.'");
                 }
                 // There is no good monospace font with braille characters included by default
                 // Might work on this later
                 // BuiltInCharSet::Braille => {
-                //     args.chars.push_str("⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿ ");
+                //     config.chars.push_str("⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿ ");
                 // }
                 BuiltInCharSet::Blocks => {
-                    args.chars.push_str(" █▓▒░");
+                    config.chars.push_str(" █▓▒░");
                 }
                 BuiltInCharSet::BlocksAll => {
-                    args.chars.push_str(" ▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟▏");
+                    config.chars.push_str(" ▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟▏");
                 }
                 BuiltInCharSet::Box => {
-                    args.chars.push_str("─│┌┐└┘├┤┬┴┼");
+                    config.chars.push_str("─│┌┐└┘├┤┬┴┼");
                 }
                 BuiltInCharSet::BoxAll => {
-                    args.chars.push_str("─│┌┐└┘├┤┬┴┼╱╲╳╭╮╰╯");
+                    config.chars.push_str("─│┌┐└┘├┤┬┴┼╱╲╳╭╮╰╯");
                 }
                 BuiltInCharSet::BoxDouble => {
-                    args.chars.push_str("═║╔╗╚╝╠╣╦╩╬");
+                    config.chars.push_str("═║╔╗╚╝╠╣╦╩╬");
                 }
                 BuiltInCharSet::BoxDoubleAll => {
-                    args.chars.push_str("═║╔╗╚╝╠╣╦╩╬╱╲╳╭╮╰╯");
+                    config.chars.push_str("═║╔╗╚╝╠╣╦╩╬╱╲╳╭╮╰╯");
                 }
                 BuiltInCharSet::Nerd => {
-                    args.chars.push_str(" ");
+                    config.chars.push_str(" ");
                 }
                 BuiltInCharSet::Math => {
-                    args.chars.push_str(" ±×÷≈≠≤≥∞∑∏√∫∂∆∇");
+                    config.chars.push_str(" ±×÷≈≠≤≥∞∑∏√∫∂∆∇");
                 }
                 BuiltInCharSet::Numbers => {
-                    args.chars.push_str(" 0123456789");
+                    config.chars.push_str(" 0123456789");
                 }
                 BuiltInCharSet::Letters => {
-                    args.chars
+                    config
+                        .chars
                         .push_str(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
                 }
             }
@@ -58,12 +60,12 @@ pub fn process_characters(args: &mut Args) {
     }
 
     // Add the additional characters
-    args.chars.push_str(&args.add_chars);
+    config.chars.push_str(&config.add_chars);
 
     // Remove the excluded characters
-    args.chars = args
+    config.chars = config
         .chars
         .chars()
-        .filter(|c| !args.except.contains(*c))
+        .filter(|c| !config.except.contains(*c))
         .collect();
 }

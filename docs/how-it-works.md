@@ -75,7 +75,7 @@ These steps are only executed if the flags say so.
 
     The algorithm doesn't work with alpha values, it can only see brightness.
 
-    Transparencies usually mean that a pixel is less visible, so a pixel is mixed with black (or white, if the arguments say so) in proportion to its alpha.
+    Transparencies usually mean that a pixel is less visible, so a pixel is mixed with its background color (black by default, or specified via `--transparent-color`) in proportion to its alpha.
 
 7. **Apply negative effect**:
 

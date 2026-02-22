@@ -2,10 +2,10 @@
 
 There are more transformations you can apply to the image before transforming it:
 
-- `-n, --negative` Invert the brightness of the image.
+- `-n, --negative` Invert the brightness of the image (hue is preserved).
 - `-B, --black-white` Turn the image into black and white
   - `-t, --threshold <THRESHOLD>`: Threshold for the black and white conversion.
-- `-v, --visible` Make transparent pixels visible
+- `--transparent-color <TRANSPARENT_COLOR>`: Color to use for transparent pixels (hex format, e.g., FFFFFF). [default: 000000]
 - `-s, --saturate` Saturate the bright pixels and do the opposite to the dark ones.
 - `-g, --grayscale` Convert the image to grayscale and normalizes the brightness (the darkest pixel will become black and the brightest will become white).
 
