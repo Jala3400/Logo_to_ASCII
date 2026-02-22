@@ -1,17 +1,19 @@
 use crate::{
-    args::Args,
+    config::ImageConfig,
     image_ops::apply_negative_to_pixel,
     proc_block::{get_color_for_block, match_block_with_char},
     proc_pixel::calc_custom_brightness,
     types::{CharInfo, FontBitmap, OutputFormat},
 };
+#[cfg(not(target_arch = "wasm32"))]
 use enable_ansi_support::enable_ansi_support;
 use image::{Rgba, RgbaImage};
 
 // Converts an image to ASCII art
-pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String {
-    // Enable colors
-    if args.print_color {
+pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> String {
+    // Enable colors (ANSI support is a Windows-only native concern; not needed in WASM)
+    #[cfg(not(target_arch = "wasm32"))]
+    if config.print_color {
         if let Err(e) = enable_ansi_support() {
             eprintln!("Warning: Could not enable ANSI support: {}", e);
         }
@@ -29,7 +31,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     let num_blocks_x = (width + font_width - 1) / font_width;
     let num_blocks_y = (height + vertical_step - 1) / vertical_step;
 
-    if args.verbose {
+    if config.verbose {
         println!("Image dimensions: {}x{}", width, height);
         println!("Number of characters: {}x{}", num_blocks_x, num_blocks_y);
 
@@ -46,17 +48,22 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
         }
     }
 
-    let color_overhead = match args.format {
+    let color_overhead = match config.format {
         OutputFormat::Ansi => 22,
         OutputFormat::Html => 60,
     };
-    let string_capacity =
-        num_blocks_x * num_blocks_y * if args.print_color { color_overhead } else { 1 };
+    let string_capacity = num_blocks_x
+        * num_blocks_y
+        * if config.print_color {
+            color_overhead
+        } else {
+            1
+        };
     let mut result = String::with_capacity(string_capacity);
 
     // HTML preamble
-    if args.print_color && matches!(args.format, OutputFormat::Html) {
-        let font_family = match &args.font_name {
+    if matches!(config.format, OutputFormat::Html) {
+        let font_family = match &config.font_name {
             Some(name) => format!("'{}', monospace", name),
             None => "monospace".to_string(),
         };
@@ -64,7 +71,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     }
 
     let mut block = vec![0f32; cell_size];
-    let mut color_block = if args.print_color {
+    let mut color_block = if config.print_color {
         Some(vec![(0u8, 0u8, 0u8); cell_size])
     } else {
         None
@@ -78,7 +85,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
                 font,
                 x,
                 y,
-                args,
+                config,
                 &mut block,
                 &mut color_block,
                 &mut result,
@@ -88,12 +95,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, args: &Args) -> String 
     }
 
     // Closing
-    match args.format {
+    match config.format {
         OutputFormat::Ansi => result.push_str("\x1b[0m"),
         OutputFormat::Html => {
-            if args.print_color {
-                result.push_str("</pre>");
-            }
+            result.push_str("</pre>");
         }
     }
 
@@ -107,7 +112,7 @@ fn process_block_pixels(
     font: &FontBitmap,
     x: usize,
     y: usize,
-    args: &Args,
+    config: &ImageConfig,
     block: &mut [f32],
     color_block: &mut Option<Vec<(u8, u8, u8)>>,
     result: &mut String,
@@ -134,49 +139,50 @@ fn process_block_pixels(
             if iy < height && ix < width {
                 // Process in-bounds pixel
                 let pixel = img.get_pixel(ix as u32, iy as u32);
-                let brightness = calc_custom_brightness(&pixel, args);
+                let brightness = calc_custom_brightness(&pixel, config);
                 block[cords_block] = brightness;
 
                 if let Some(color_block) = color_block {
                     color_block[cords_block] = (pixel[0], pixel[1], pixel[2]);
                 }
 
-                if brightness > -args.midpoint_brightness {
+                if brightness > -config.midpoint_brightness {
                     bright_pixels += 1;
                     if brightness >= 0.0 {
-                        full_pixels += (brightness == 1.0 - args.midpoint_brightness) as usize;
+                        full_pixels += (brightness == 1.0 - config.midpoint_brightness) as usize;
                     }
                 }
             } else {
                 // Out-of-bounds (the pixel in the image is transparent)
                 // Use background color and apply negative effect if needed
-                let bg_color = args.transparent_color;
+                let bg_color = config.transparent_color;
                 let mut bg_pixel = Rgba([bg_color[0], bg_color[1], bg_color[2], 255]);
 
-                if args.negative {
+                if config.negative {
                     apply_negative_to_pixel(&mut bg_pixel);
                 }
 
-                let brightness = calc_custom_brightness(&bg_pixel, args);
+                let brightness = calc_custom_brightness(&bg_pixel, config);
                 block[cords_block] = brightness;
 
                 if let Some(color_block) = color_block {
                     color_block[cords_block] = (bg_pixel[0], bg_pixel[1], bg_pixel[2]);
                 }
 
-                if brightness > -args.midpoint_brightness {
+                if brightness > -config.midpoint_brightness {
                     bright_pixels += 1;
                     if brightness >= 0.0 {
-                        full_pixels += (brightness == 1.0 - args.midpoint_brightness) as usize;
+                        full_pixels += (brightness == 1.0 - config.midpoint_brightness) as usize;
                     }
                 }
             }
         }
     }
 
-    let char_info = match_block_with_char(block, font, bright_pixels, full_pixels, &args.algorithm);
+    let char_info =
+        match_block_with_char(block, font, bright_pixels, full_pixels, &config.algorithm);
 
-    push_formatted_character(&char_info, result, color_block.as_ref(), block, args);
+    push_formatted_character(&char_info, result, color_block.as_ref(), block, config);
 }
 
 #[inline]
@@ -185,36 +191,47 @@ fn push_formatted_character(
     result: &mut String,
     color_block: Option<&Vec<(u8, u8, u8)>>,
     block: &[f32],
-    args: &Args,
+    config: &ImageConfig,
 ) {
-    // If the color flag is set, print the color of the character
-    if args.print_color {
-        if let Some(color_block) = color_block.as_ref() {
-            let (r, g, b) = get_color_for_block(color_block, &block, char_info);
-            match args.format {
+    if config.print_color {
+        if let Some(color_block) = color_block {
+            let (r, g, b) = get_color_for_block(color_block, block, char_info);
+            match config.format {
                 OutputFormat::Ansi => {
-                    result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
-                    result.push(char_info.char);
+                    result.push_str(&format!("\x1b[38;2;{};{};{}m{}", r, g, b, char_info.char))
                 }
-                OutputFormat::Html => {
-                    let ch = match char_info.char {
-                        '<' => "&lt;".to_string(),
-                        '>' => "&gt;".to_string(),
-                        '&' => "&amp;".to_string(),
-                        '"' => "&quot;".to_string(),
-                        c => c.to_string(),
-                    };
-                    result.push_str(&format!(
-                        "<span style=\"color:rgb({},{},{})\">{}</span>",
-                        r, g, b, ch
-                    ));
-                }
+                OutputFormat::Html => result.push_str(&format!(
+                    "<span style=\"color:rgb({},{},{})\">{}</span>",
+                    r,
+                    g,
+                    b,
+                    escape_html(char_info.char)
+                )),
             }
         } else {
-            result.push(char_info.char);
+            push_character(char_info.char, result, config);
         }
     } else {
-        // Append the character
-        result.push(char_info.char);
+        push_character(char_info.char, result, config);
+    }
+}
+
+#[inline]
+fn push_character(c: char, result: &mut String, config: &ImageConfig) {
+    if matches!(config.format, OutputFormat::Html) {
+        result.push_str(&escape_html(c));
+    } else {
+        result.push(c);
+    }
+}
+
+#[inline]
+fn escape_html(c: char) -> String {
+    match c {
+        '<' => "&lt;".to_string(),
+        '>' => "&gt;".to_string(),
+        '&' => "&amp;".to_string(),
+        '"' => "&quot;".to_string(),
+        _ => c.to_string(),
     }
 }

@@ -1,5 +1,3 @@
-use clap::ValueEnum;
-
 /// A structure representing a bitmap font, containing character information
 ///
 /// The font bitmap stores character data in a vector, ordered by their minimum
@@ -80,15 +78,17 @@ pub struct CharInfo {
 /// * `Brightness` - Detect borders based on brightness differences.
 /// * `Alpha` - Detect borders based on alpha (transparency) differences.
 /// * `All` - Detect borders using all criteria (color, brightness, and alpha).
-#[derive(Debug, Clone, ValueEnum)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(not(target_arch = "wasm32"), derive(clap::ValueEnum))]
+#[serde(rename_all = "snake_case")]
 pub enum BorderCriteria {
-    #[value(name = "color")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "color"))]
     Color,
-    #[value(name = "brightness")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "brightness"))]
     Brightness,
-    #[value(name = "alpha")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "alpha"))]
     Alpha,
-    #[value(name = "all")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "all"))]
     All,
 }
 
@@ -115,35 +115,37 @@ pub enum BorderCriteria {
 /// * `Math` - A set of mathematical symbols.
 /// * `Numbers` - A set of numeric characters (0-9).
 /// * `Letters` - A set of alphabetic characters (A-Z, a-z).
-#[derive(Debug, Clone, ValueEnum)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(not(target_arch = "wasm32"), derive(clap::ValueEnum))]
+#[serde(rename_all = "snake_case")]
 pub enum BuiltInCharSet {
-    #[value(name = "default")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "default"))]
     Default,
-    #[value(name = "all")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "all"))]
     All,
-    #[value(name = "symbols")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "symbols"))]
     Symbols,
-    #[value(name = "blocks")]
-    // #[value(name = "braille")]
+    // #[cfg_attr(not(target_arch = "wasm32"), value(name = "braille"))]
     // Braille,
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "blocks"))]
     Blocks,
-    #[value(name = "blocks_all")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "blocks_all"))]
     BlocksAll,
-    #[value(name = "box")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "box"))]
     Box,
-    #[value(name = "box_all")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "box_all"))]
     BoxAll,
-    #[value(name = "box_double")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "box_double"))]
     BoxDouble,
-    #[value(name = "box_double_all")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "box_double_all"))]
     BoxDoubleAll,
-    #[value(name = "nerd")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "nerd"))]
     Nerd,
-    #[value(name = "math")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "math"))]
     Math,
-    #[value(name = "numbers")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "numbers"))]
     Numbers,
-    #[value(name = "letters")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "letters"))]
     Letters,
 }
 
@@ -153,11 +155,13 @@ pub enum BuiltInCharSet {
 ///
 /// * `Ansi` - Use ANSI escape codes for terminal color output.
 /// * `Html` - Use HTML `<span>` tags with inline styles for web color output.
-#[derive(Debug, Clone, ValueEnum)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(not(target_arch = "wasm32"), derive(clap::ValueEnum))]
+#[serde(rename_all = "snake_case")]
 pub enum OutputFormat {
-    #[value(name = "ansi")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "ansi"))]
     Ansi,
-    #[value(name = "html")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "html"))]
     Html,
 }
 
@@ -174,18 +178,21 @@ pub enum OutputFormat {
 /// * `Gradient` - Uses the average brightness of the block to find the closest character match
 /// * `Correlation` - Uses Pearson correlation coefficient to find the most correlated character pattern
 /// * `Ncc` - Uses Normalized Cross-Correlation to match both pattern structure and brightness level
-#[derive(Debug, Clone, ValueEnum)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(not(target_arch = "wasm32"), derive(clap::ValueEnum))]
+#[serde(rename_all = "snake_case")]
 pub enum Algorithm {
-    #[value(name = "max_prod")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "max_prod"))]
     MaxProd,
-    #[value(name = "min_diff")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "min_diff"))]
     MinDiff,
-    #[value(name = "min_diff_sq")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "min_diff_sq"))]
     MinDiffSq,
-    #[value(name = "gradient")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "gradient"))]
     Gradient,
-    #[value(name = "corr")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "corr"))]
+    #[serde(rename = "corr")]
     Correlation,
-    #[value(name = "ncc")]
+    #[cfg_attr(not(target_arch = "wasm32"), value(name = "ncc"))]
     Ncc,
 }
