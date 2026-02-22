@@ -98,9 +98,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
     match config.format {
         OutputFormat::Ansi => result.push_str("\x1b[0m"),
         OutputFormat::Html => {
-            if config.print_color {
-                result.push_str("</pre>");
-            }
+            result.push_str("</pre>");
         }
     }
 
