@@ -193,34 +193,45 @@ fn push_formatted_character(
     block: &[f32],
     config: &ImageConfig,
 ) {
-    // If the color flag is set, print the color of the character
     if config.print_color {
-        if let Some(color_block) = color_block.as_ref() {
-            let (r, g, b) = get_color_for_block(color_block, &block, char_info);
+        if let Some(color_block) = color_block {
+            let (r, g, b) = get_color_for_block(color_block, block, char_info);
             match config.format {
                 OutputFormat::Ansi => {
-                    result.push_str(&format!("\x1b[38;2;{};{};{}m", r, g, b));
-                    result.push(char_info.char);
+                    result.push_str(&format!("\x1b[38;2;{};{};{}m{}", r, g, b, char_info.char))
                 }
-                OutputFormat::Html => {
-                    let ch = match char_info.char {
-                        '<' => "&lt;".to_string(),
-                        '>' => "&gt;".to_string(),
-                        '&' => "&amp;".to_string(),
-                        '"' => "&quot;".to_string(),
-                        c => c.to_string(),
-                    };
-                    result.push_str(&format!(
-                        "<span style=\"color:rgb({},{},{})\">{}</span>",
-                        r, g, b, ch
-                    ));
-                }
+                OutputFormat::Html => result.push_str(&format!(
+                    "<span style=\"color:rgb({},{},{})\">{}</span>",
+                    r,
+                    g,
+                    b,
+                    escape_html(char_info.char)
+                )),
             }
         } else {
-            result.push(char_info.char);
+            push_character(char_info.char, result, config);
         }
     } else {
-        // Append the character
-        result.push(char_info.char);
+        push_character(char_info.char, result, config);
+    }
+}
+
+#[inline]
+fn push_character(c: char, result: &mut String, config: &ImageConfig) {
+    if matches!(config.format, OutputFormat::Html) {
+        result.push_str(&escape_html(c));
+    } else {
+        result.push(c);
+    }
+}
+
+#[inline]
+fn escape_html(c: char) -> String {
+    match c {
+        '<' => "&lt;".to_string(),
+        '>' => "&gt;".to_string(),
+        '&' => "&amp;".to_string(),
+        '"' => "&quot;".to_string(),
+        _ => c.to_string(),
     }
 }
