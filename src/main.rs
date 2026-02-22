@@ -1,5 +1,7 @@
 use clap::Parser;
-use l2a::{args::Args, characters, config::ImageConfig, errors::L2aError, font, process_image};
+use logo_to_ascii::{
+    args::Args, characters, config::ImageConfig, errors::L2aError, font, process_image,
+};
 
 fn main() {
     if let Err(e) = run() {

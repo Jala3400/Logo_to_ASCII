@@ -4,6 +4,7 @@ version = "0.6.0"
 edition = "2021"
 
 [lib]
+name = "logo_to_ascii"
 # cdylib is needed to produce a .wasm file for the WASM target;
 # rlib keeps the normal Rust library usable by the CLI binary.
 crate-type = ["cdylib", "rlib"]

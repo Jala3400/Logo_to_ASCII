@@ -1,7 +1,6 @@
 use crate::{
-    characters,
     config::ImageConfig,
-    font, process_image,
+    process_image,
     types::{CharInfo, FontBitmap},
 };
 use wasm_bindgen::prelude::*;
