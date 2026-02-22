@@ -1,4 +1,9 @@
-use crate::{config::ImageConfig, process_image};
+use crate::{
+    characters,
+    config::ImageConfig,
+    font, process_image,
+    types::{CharInfo, FontBitmap},
+};
 use wasm_bindgen::prelude::*;
 
 /// The result of a [`convert`] call, containing both outputs of the pipeline.
@@ -34,44 +39,25 @@ impl ConvertResult {
     }
 }
 
-/// Convert an image to ASCII art.
+/// Convert an image using a font bitmap ripped from the browser canvas.
 ///
-/// # Arguments
-///
-/// * `image_bytes` — raw bytes of the image file (PNG, JPEG, GIF, …).
-///   Pass the result of `new Uint8Array(await file.arrayBuffer())`.
-///
-/// * `config` — a plain JS object whose keys match the fields of [`ImageConfig`].
-///   All fields are optional and fall back to their defaults (same defaults as
-///   the CLI). Only provide the fields you want to override. Example:
-///
-/// ```js
-/// import init, { convert } from './l2a.js';
-/// await init();
-///
-/// const bytes = new Uint8Array(await file.arrayBuffer());
-/// const result = convert(bytes, {
-///     chars: "8dbqp'. ",
-///     char_size: 16,
-///     print_color: true,
-///     format: "html",
-/// });
-///
-/// // Display the ASCII art
-/// document.getElementById("ascii").innerHTML = result.ascii;
-///
-/// // Display the processed image
-/// const url = URL.createObjectURL(
-///     new Blob([result.image_png], { type: "image/png" })
-/// );
-/// document.getElementById("preview").src = url;
-/// ```
-///
-/// # Errors
-///
-/// Returns a JS error string if the image cannot be decoded or the pipeline fails.
+/// `font_data` must be a JS object with:
+/// - `chars`         — the characters in order (string)
+/// - `cell_pixels`   — flat JS `Array` of brightness floats (0.0–1.0), `width × height` per char
+/// - `width`         — cell width in pixels (number)
+/// - `height`        — cell height in pixels (number)
+/// - `vertical_step` — line height in pixels (number)
 #[wasm_bindgen]
-pub fn convert(image_bytes: &[u8], config: JsValue) -> Result<ConvertResult, JsValue> {
+pub fn convert(
+    image_bytes: &[u8],
+    font_data: JsValue,
+    config: JsValue,
+) -> Result<ConvertResult, JsValue> {
+    let font_js: JsFontData =
+        serde_wasm_bindgen::from_value(font_data).map_err(|e| JsValue::from_str(&e.to_string()))?;
+
+    let font = build_bitmap_from_js(font_js).map_err(|e| JsValue::from_str(&e))?;
+
     let cfg: ImageConfig =
         serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
@@ -80,9 +66,8 @@ pub fn convert(image_bytes: &[u8], config: JsValue) -> Result<ConvertResult, JsV
         .to_rgba8();
 
     let (ascii, processed_img) =
-        process_image(img, cfg).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        process_image(img, cfg, font).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
-    // Encode the processed image as PNG bytes
     let mut png_bytes: Vec<u8> = Vec::new();
     processed_img
         .write_to(
@@ -95,4 +80,90 @@ pub fn convert(image_bytes: &[u8], config: JsValue) -> Result<ConvertResult, JsV
         ascii,
         image_png: png_bytes,
     })
+}
+
+/// JS-side font payload: pixel brightness values ripped from a browser canvas.
+#[derive(serde::Deserialize)]
+struct JsFontData {
+    /// The exact characters for which pixel data is provided (same order as cell_pixels).
+    chars: String,
+    /// Flat brightness array (0.0–1.0), `width × height` values per character.
+    cell_pixels: Vec<f32>,
+    width: usize,
+    height: usize,
+    vertical_step: usize,
+}
+
+/// Build a [`FontBitmap`] from brightness values ripped from a browser canvas.
+fn build_bitmap_from_js(data: JsFontData) -> Result<FontBitmap, String> {
+    let chars: Vec<char> = data.chars.chars().collect();
+    let cell_size = data.width * data.height;
+
+    if data.cell_pixels.len() != chars.len() * cell_size {
+        return Err(format!(
+            "Font data mismatch: expected {} pixels ({} chars × {}), got {}",
+            chars.len() * cell_size,
+            chars.len(),
+            cell_size,
+            data.cell_pixels.len()
+        ));
+    }
+
+    let pixel_count = cell_size as f32;
+    let mut bitmap = FontBitmap {
+        data: Vec::new(),
+        width: data.width,
+        height: data.height,
+        vertical_step: data.vertical_step,
+    };
+
+    for (i, &ch) in chars.iter().enumerate() {
+        let pixels = &data.cell_pixels[i * cell_size..(i + 1) * cell_size];
+        let mut char_data = Vec::with_capacity(cell_size);
+        let mut bright_pixels = 0usize;
+        let mut avg_brightness = 0.0f32;
+        let mut sum = 0.0f32;
+        let mut sum_squares = 0.0f32;
+
+        for &brightness in pixels {
+            // Match Rust's `custom_brightness = brightness - midpoint` convention
+            let custom = brightness - 0.5;
+            char_data.push(custom);
+            avg_brightness += brightness;
+            if custom > 0.0 {
+                bright_pixels += 1;
+            }
+            sum += custom;
+            sum_squares += custom * custom;
+        }
+
+        let mean = sum / pixel_count;
+        let variance = (sum_squares / pixel_count) - (mean * mean);
+        let std = variance.sqrt();
+        let norm = sum_squares.sqrt();
+
+        bitmap.insert_ord(CharInfo {
+            char: ch,
+            data: char_data,
+            min: bright_pixels / 2,
+            avg_brightness: avg_brightness / pixel_count,
+            norm,
+            mean,
+            std,
+        });
+    }
+
+    Ok(bitmap)
+}
+
+/// Runs `process_characters` on `config` and returns the resulting character set.
+///
+/// Call this before ripping a font so you know exactly which characters
+/// (after dict expansion, exclusions, and deduplication) need to be rendered.
+#[wasm_bindgen]
+pub fn get_final_chars(config: JsValue) -> Result<String, JsValue> {
+    let mut cfg: ImageConfig =
+        serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    crate::characters::process_characters(&mut cfg);
+    Ok(cfg.chars)
 }

@@ -1,5 +1,5 @@
 use clap::Parser;
-use l2a::{args::Args, config::ImageConfig, errors::L2aError, process_image};
+use l2a::{args::Args, characters, config::ImageConfig, errors::L2aError, font, process_image};
 
 fn main() {
     if let Err(e) = run() {
@@ -20,8 +20,13 @@ fn run() -> Result<(), L2aError> {
     let img = image::open(&path)?.to_rgba8();
 
     // Convert CLI args into the core config and run the pipeline
-    let config = ImageConfig::from(args);
-    let (ascii, processed_img) = process_image(img, config)?;
+    let mut config = ImageConfig::from(args);
+    characters::process_characters(&mut config);
+
+    let font_obj = font::load_font(&config)?;
+    let font_bitmap = font::build_font_bitmap(&font_obj, &config)?;
+
+    let (ascii, processed_img) = process_image(img, config, font_bitmap)?;
 
     // Print the ASCII art
     print!("{}", ascii);

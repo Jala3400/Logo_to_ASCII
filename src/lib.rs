@@ -15,27 +15,16 @@ pub mod wasm;
 use image::RgbaImage;
 use std::num::NonZeroU32;
 
-/// Run the full image-to-ASCII pipeline.
-///
-/// Accepts a decoded RGBA image and a configuration struct, applies all
-/// image processing steps in order, and returns the ASCII string together
-/// with the fully-processed image (so CLI callers can optionally save it).
+/// Internal pipeline: runs all image processing steps given a pre-built font.
 pub fn process_image(
     mut img: RgbaImage,
     mut cfg: config::ImageConfig,
+    font: types::FontBitmap,
 ) -> Result<(String, RgbaImage), errors::L2aError> {
     use image_ops::{
         add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
     };
-
-    characters::process_characters(&mut cfg);
-
-    #[cfg(not(target_arch = "wasm32"))]
-    let font_obj = font::load_font(&cfg)?;
-    #[cfg(target_arch = "wasm32")]
-    let font_obj = font::default_font()?;
-    let font = font::build_font_bitmap(&font_obj, &cfg)?;
 
     if font.data.is_empty() {
         return Err(errors::L2aError::NoCharacters);
