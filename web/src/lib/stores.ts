@@ -42,7 +42,7 @@ export const imageDisplayMode = writable<ImageDisplayMode>(
 );
 
 /** Overlay opacity (0–1) for overlay mode (applied to image) */
-export const overlayOpacity = writable<number>(0.8);
+export const overlayOpacity = writable<number>(0);
 
 /** Whether an image has been loaded */
 export const hasImage = derived(imageBytes, ($bytes) => $bytes !== null);
