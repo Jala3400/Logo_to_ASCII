@@ -8,6 +8,7 @@
         title?: string;
         onclick?: (e: MouseEvent) => void;
         children?: Snippet;
+        [key: string]: any;
     }
 
     let {
@@ -17,10 +18,17 @@
         title = "",
         onclick,
         children,
+        ...rest
     }: Props = $props();
 </script>
 
-<button class="btn btn--{variant} btn--{size}" {disabled} {title} {onclick}>
+<button
+    class="btn btn--{variant} btn--{size}"
+    {disabled}
+    {title}
+    {onclick}
+    {...rest}
+>
     {@render children?.()}
 </button>
 

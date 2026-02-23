@@ -44,5 +44,8 @@ export const imageDisplayMode = writable<ImageDisplayMode>(
 /** Overlay opacity (0–1) for overlay mode (applied to image) */
 export const overlayOpacity = writable<number>(0);
 
+/** Whether the sidebar is collapsed */
+export const sidebarCollapsed = writable<boolean>(false);
+
 /** Whether an image has been loaded */
 export const hasImage = derived(imageBytes, ($bytes) => $bytes !== null);
