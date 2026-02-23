@@ -18,12 +18,13 @@
         title = "",
         onclick,
         children,
+        class: className = "",
         ...rest
     }: Props = $props();
 </script>
 
 <button
-    class="btn btn--{variant} btn--{size}"
+    class="btn btn--{variant} btn--{size} {className}"
     {disabled}
     {title}
     {onclick}

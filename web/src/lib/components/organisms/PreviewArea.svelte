@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Button from "$lib/components/atoms/Button.svelte";
     import { loadImage } from "$lib/converter";
     import {
         errorMessage,
@@ -80,13 +81,20 @@
         </div>
     {:else}
         <div class="preview__toolbar">
+            <Button
+                size="sm"
+                variant="ghost"
+                onclick={openFilePicker}
+                class="preview__change-img"
+            >
+                Change Image
+            </Button>
+
             <ViewModeControls />
+
             {#if $isConverting}
                 <span class="preview__status">Converting...</span>
             {/if}
-            <button class="preview__change-img" onclick={openFilePicker}>
-                Change Image
-            </button>
         </div>
 
         {#if $errorMessage}
@@ -178,35 +186,33 @@
     /* Toolbar */
     .preview__toolbar {
         display: flex;
+        flex-wrap: wrap;
         align-items: flex-end;
         gap: var(--spacing-md);
-        padding: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
         border-bottom: 1px solid var(--border);
         background-color: var(--bg-secondary);
         flex-shrink: 0;
     }
 
     .preview__status {
+        margin-left: auto;
         font-size: var(--font-xs);
         color: var(--accent);
         animation: pulse 1s ease-in-out infinite;
     }
 
-    .preview__change-img {
-        margin-left: auto;
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-        padding: 0.25rem 0.75rem;
-        border-radius: var(--radius-sm);
-        font-size: var(--font-xs);
-        cursor: pointer;
-        transition: all 0.2s;
+    /* Change Image styling for the Button component */
+    :global(.preview__change-img) {
+        align-self: flex-end;
+        border: 1px solid var(--border) !important;
+        font-size: var(--font-xs) !important;
+        color: var(--text-muted) !important;
     }
 
-    .preview__change-img:hover {
-        border-color: var(--accent);
-        color: var(--accent);
+    :global(.preview__change-img:hover) {
+        border-color: var(--accent) !important;
+        color: var(--accent) !important;
     }
 
     @keyframes pulse {
