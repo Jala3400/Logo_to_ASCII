@@ -1,49 +1,25 @@
 <script lang="ts">
     import { loadImage } from "$lib/converter";
     import {
-        asciiOutput,
-        config,
         errorMessage,
         hasImage,
-        imageDisplayMode,
         isConverting,
-        originalImageUrl,
-        overlayOpacity,
-        processedImageUrl,
         viewMode,
         wasmReady,
     } from "$lib/stores";
     import ViewModeControls from "../molecules/ViewModeControls.svelte";
+    import PreviewOverlay from "./PreviewOverlay.svelte";
+    import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
-    let imageUrl = $derived(
-        $imageDisplayMode === "original"
-            ? $originalImageUrl
-            : $processedImageUrl,
-    );
+    const VIEWS = {
+        "side-by-side": PreviewSideBySide,
+        overlay: PreviewOverlay,
+    } as const;
+
+    let ViewComponent = $derived(VIEWS[$viewMode as keyof typeof VIEWS]);
 
     let dragover = $state(false);
     let fileInput: HTMLInputElement;
-
-    let imageWrapper: HTMLElement | undefined = $state();
-    let asciiWrapper: HTMLElement | undefined = $state();
-    let isSyncing = false;
-
-    function handleScroll(e: Event) {
-        if (isSyncing || $viewMode !== "side-by-side") return;
-
-        const source = e.target as HTMLElement;
-        const target = source === imageWrapper ? asciiWrapper : imageWrapper;
-
-        if (target) {
-            isSyncing = true;
-            target.scrollTop = source.scrollTop;
-            target.scrollLeft = source.scrollLeft;
-            // Use requestAnimationFrame to reset syncing flag after the next frame paints
-            requestAnimationFrame(() => {
-                isSyncing = false;
-            });
-        }
-    }
 
     function handleDrop(e: DragEvent) {
         e.preventDefault();
@@ -121,71 +97,7 @@
         {/if}
 
         <div class="preview__content">
-            {#if $viewMode === "side-by-side"}
-                <div class="preview__split">
-                    <div class="preview__panel">
-                        <h3 class="preview__panel-title">
-                            {$imageDisplayMode === "original"
-                                ? "Original"
-                                : "Processed Image"}
-                        </h3>
-                        <div
-                            bind:this={imageWrapper}
-                            onscroll={handleScroll}
-                            class="preview__image-wrapper"
-                        >
-                            {#if $imageDisplayMode === "original"}
-                                {#if $originalImageUrl}
-                                    <img
-                                        src={$originalImageUrl}
-                                        alt="Original"
-                                        class="preview__image"
-                                        draggable="false"
-                                    />
-                                {/if}
-                            {:else if $processedImageUrl}
-                                <img
-                                    src={$processedImageUrl}
-                                    alt="Processed"
-                                    class="preview__image"
-                                    draggable="false"
-                                />
-                            {/if}
-                        </div>
-                    </div>
-                    <div class="preview__panel">
-                        <h3 class="preview__panel-title">ASCII Output</h3>
-                        <div
-                            bind:this={asciiWrapper}
-                            onscroll={handleScroll}
-                            class="preview__ascii-wrapper"
-                            style="font-size: {$config.char_size}px"
-                        >
-                            {@html $asciiOutput}
-                        </div>
-                    </div>
-                </div>
-            {:else if $viewMode === "overlay"}
-                <div class="preview__overlay-container">
-                    <div class="preview__overlay-inner">
-                        {#if imageUrl}
-                            <img
-                                src={imageUrl}
-                                alt="Base"
-                                class="preview__image preview__overlay-base"
-                                style="opacity: {$overlayOpacity}"
-                                draggable="false"
-                            />
-                        {/if}
-                        <div
-                            class="preview__overlay-ascii"
-                            style="font-size: {$config.char_size}px"
-                        >
-                            {@html $asciiOutput}
-                        </div>
-                    </div>
-                </div>
-            {/if}
+            <ViewComponent />
         </div>
     {/if}
 
@@ -322,102 +234,7 @@
     /* Content area */
     .preview__content {
         flex: 1;
-        overflow: auto;
-        padding: var(--spacing-md);
-    }
-
-    /* Side by side */
-    .preview__split {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--spacing-md);
-        height: 100%;
-    }
-
-    .preview__panel {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-sm);
-        min-width: 0;
         overflow: hidden;
-    }
-
-    .preview__panel-title {
-        font-size: var(--font-xs);
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        flex-shrink: 0;
-    }
-
-    .preview__image-wrapper {
-        flex: 1;
-        display: flex;
-        overflow: auto;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-    }
-
-    .preview__image {
-        display: block;
-        margin: auto;
-    }
-
-    .preview__ascii-wrapper {
-        flex: 1;
-        overflow: auto;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-        padding: var(--spacing-sm);
-        line-height: 1;
-        font-family: "Ubuntu Mono", monospace;
-        display: flex;
-    }
-
-    /* Overlay mode */
-    .preview__overlay-container {
-        position: relative;
-        display: flex;
-        height: 100%;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        overflow: auto;
-    }
-
-    .preview__overlay-inner {
-        position: relative;
-        margin: auto;
-    }
-
-    .preview__overlay-base {
-        display: block;
-        z-index: 1;
-        pointer-events: none;
-    }
-
-    .preview__overlay-ascii {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-        z-index: 2;
-        font-family: "Ubuntu Mono", monospace;
-    }
-
-    /* Ensure pre tags inside the ASCII output behave properly */
-    .preview__ascii-wrapper :global(pre),
-    .preview__overlay-ascii :global(pre) {
-        margin: auto;
-        white-space: pre;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
+        padding: var(--spacing-md);
     }
 </style>
