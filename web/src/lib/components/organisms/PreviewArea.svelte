@@ -24,6 +24,27 @@
     let dragover = $state(false);
     let fileInput: HTMLInputElement;
 
+    let imageWrapper: HTMLElement | undefined = $state();
+    let asciiWrapper: HTMLElement | undefined = $state();
+    let isSyncing = false;
+
+    function handleScroll(e: Event) {
+        if (isSyncing || $viewMode !== "side-by-side") return;
+
+        const source = e.target as HTMLElement;
+        const target = source === imageWrapper ? asciiWrapper : imageWrapper;
+
+        if (target) {
+            isSyncing = true;
+            target.scrollTop = source.scrollTop;
+            target.scrollLeft = source.scrollLeft;
+            // Use requestAnimationFrame to reset syncing flag after the next frame paints
+            requestAnimationFrame(() => {
+                isSyncing = false;
+            });
+        }
+    }
+
     function handleDrop(e: DragEvent) {
         e.preventDefault();
         dragover = false;
@@ -108,7 +129,11 @@
                                 ? "Original"
                                 : "Processed Image"}
                         </h3>
-                        <div class="preview__image-wrapper">
+                        <div
+                            bind:this={imageWrapper}
+                            onscroll={handleScroll}
+                            class="preview__image-wrapper"
+                        >
                             {#if $imageDisplayMode === "original"}
                                 {#if $originalImageUrl}
                                     <img
@@ -131,6 +156,8 @@
                     <div class="preview__panel">
                         <h3 class="preview__panel-title">ASCII Output</h3>
                         <div
+                            bind:this={asciiWrapper}
+                            onscroll={handleScroll}
                             class="preview__ascii-wrapper"
                             style="font-size: {$config.char_size}px"
                         >
