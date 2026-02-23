@@ -21,15 +21,49 @@
 
     function handleInput(e: Event) {
         const target = e.target as HTMLInputElement;
-        value = parseFloat(target.value);
-        onchange?.(value);
+        const val = parseFloat(target.value);
+        if (!isNaN(val)) {
+            value = val;
+            onchange?.(value);
+        }
+    }
+
+    function handleWheel(e: WheelEvent) {
+        if (disabled) return;
+
+        // Determine if we are at the boundaries to allow page scroll if not adjusting
+        const isAtMax = value >= max && e.deltaY < 0;
+        const isAtMin = value <= min && e.deltaY > 0;
+
+        if (!isAtMax && !isAtMin) {
+            e.preventDefault();
+            const direction = e.deltaY > 0 ? -1 : 1;
+            const newValue = Math.min(
+                max,
+                Math.max(min, value + direction * step),
+            );
+
+            // Correct floating point precision issues
+            const decimals = step.toString().split(".")[1]?.length || 0;
+            value = parseFloat(newValue.toFixed(decimals));
+            onchange?.(value);
+        }
     }
 </script>
 
-<label class="slider">
+<label class="slider" class:slider--disabled={disabled} onwheel={handleWheel}>
     <div class="slider__header">
         <span class="slider__label">{label}</span>
-        <span class="slider__value">{value}</span>
+        <input
+            type="number"
+            class="slider__num-input"
+            {min}
+            {max}
+            {step}
+            {value}
+            {disabled}
+            oninput={handleInput}
+        />
     </div>
 
     <input
@@ -52,23 +86,49 @@
         cursor: pointer;
     }
 
+    .slider--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
     .slider__header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: var(--spacing-sm);
     }
 
     .slider__label {
         font-size: var(--font-sm);
         color: var(--text-secondary);
+        flex: 1;
     }
 
-    .slider__value {
+    .slider__num-input {
+        width: 6ch;
+        padding: 2px 4px;
         font-size: var(--font-xs);
-        color: var(--text-muted);
-        font-variant-numeric: tabular-nums;
-        min-width: 3ch;
+        font-family: inherit;
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
         text-align: right;
+        font-variant-numeric: tabular-nums;
+        outline: none;
+        transition: border-color var(--transition-base);
+    }
+
+    .slider__num-input:focus {
+        border-color: var(--accent);
+    }
+
+    /* Hide arrows for number input if needed */
+    .slider__num-input::-webkit-inner-spin-button,
+    .slider__num-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 
     .slider__input {
@@ -107,7 +167,6 @@
     }
 
     .slider__input:disabled {
-        opacity: 0.5;
         cursor: not-allowed;
     }
 </style>
