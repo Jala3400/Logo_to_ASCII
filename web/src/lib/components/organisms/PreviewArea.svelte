@@ -140,20 +140,22 @@
                 </div>
             {:else if $viewMode === "overlay"}
                 <div class="preview__overlay-container">
-                    {#if imageUrl}
-                        <img
-                            src={imageUrl}
-                            alt="Base"
-                            class="preview__image preview__overlay-base"
-                            style="opacity: {$overlayOpacity}"
-                            draggable="false"
-                        />
-                    {/if}
-                    <div
-                        class="preview__overlay-ascii"
-                        style="font-size: {$config.char_size}px"
-                    >
-                        {@html $asciiOutput}
+                    <div class="preview__overlay-inner">
+                        {#if imageUrl}
+                            <img
+                                src={imageUrl}
+                                alt="Base"
+                                class="preview__image preview__overlay-base"
+                                style="opacity: {$overlayOpacity}"
+                                draggable="false"
+                            />
+                        {/if}
+                        <div
+                            class="preview__overlay-ascii"
+                            style="font-size: {$config.char_size}px"
+                        >
+                            {@html $asciiOutput}
+                        </div>
                     </div>
                 </div>
             {/if}
@@ -324,8 +326,6 @@
     .preview__image-wrapper {
         flex: 1;
         display: flex;
-        align-items: center;
-        justify-content: center;
         overflow: auto;
         background-color: var(--bg-secondary);
         border-radius: var(--radius-md);
@@ -333,9 +333,8 @@
     }
 
     .preview__image {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        display: block;
+        margin: auto;
     }
 
     .preview__ascii-wrapper {
@@ -348,26 +347,25 @@
         line-height: 1;
         font-family: "Ubuntu Mono", monospace;
         display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     /* Overlay mode */
     .preview__overlay-container {
         position: relative;
         display: flex;
-        align-items: center;
-        justify-content: center;
         height: 100%;
         background-color: var(--bg-secondary);
         border-radius: var(--radius-md);
-        overflow: hidden;
+        overflow: auto;
+    }
+
+    .preview__overlay-inner {
+        position: relative;
+        margin: auto;
     }
 
     .preview__overlay-base {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        display: block;
         z-index: 1;
         pointer-events: none;
     }
@@ -389,7 +387,7 @@
     /* Ensure pre tags inside the ASCII output behave properly */
     .preview__ascii-wrapper :global(pre),
     .preview__overlay-ascii :global(pre) {
-        margin: 0;
+        margin: auto;
         white-space: pre;
         font-family: inherit;
         font-size: inherit;
