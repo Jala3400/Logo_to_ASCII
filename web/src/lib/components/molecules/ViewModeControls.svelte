@@ -24,46 +24,51 @@
 </script>
 
 <div class="view-controls">
-    <div class="view-controls__row">
-        <Select
-            label="View mode"
-            value={viewModeStr}
-            options={viewModeOptions}
-            onchange={(v) => viewMode.set(v as ViewMode)}
-        />
+    <Select
+        label="View mode"
+        value={viewModeStr}
+        options={viewModeOptions}
+        onchange={(v) => viewMode.set(v as ViewMode)}
+    />
 
-        <Select
-            label="Display image"
-            value={imageModeStr}
-            options={imageModeOptions}
-            onchange={(v) => imageDisplayMode.set(v as ImageDisplayMode)}
-        />
-    </div>
+    <Select
+        label="Display image"
+        value={imageModeStr}
+        options={imageModeOptions}
+        onchange={(v) => imageDisplayMode.set(v as ImageDisplayMode)}
+    />
+
     {#if $viewMode === "overlay"}
-        <Slider
-            label="Image opacity"
-            value={$overlayOpacity}
-            min={0}
-            max={1}
-            step={0.05}
-            onchange={(v) => overlayOpacity.set(v)}
-        />
+        <div class="view-controls__slider">
+            <Slider
+                label="Image opacity"
+                value={$overlayOpacity}
+                min={0}
+                max={1}
+                step={0.05}
+                onchange={(v) => overlayOpacity.set(v)}
+            />
+        </div>
     {/if}
 </div>
 
 <style>
     .view-controls {
         display: flex;
-        flex-direction: column;
-        gap: var(--spacing-sm);
-        padding: var(--spacing-sm) var(--spacing-md);
-        border-bottom: 1px solid var(--border);
-        width: 100%;
-    }
-
-    .view-controls__row {
-        display: flex;
+        flex-wrap: wrap;
         gap: var(--spacing-md);
         align-items: flex-end;
+        flex: 1;
+    }
+
+    .view-controls__slider {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    @media (max-width: 800px) {
+        .view-controls__slider {
+            flex-basis: 100%;
+        }
     }
 </style>

@@ -1,25 +1,23 @@
 <script lang="ts">
+    import Button from "$lib/components/atoms/Button.svelte";
     import { loadImage } from "$lib/converter";
     import {
-        asciiOutput,
-        config,
         errorMessage,
         hasImage,
-        imageDisplayMode,
         isConverting,
-        originalImageUrl,
-        overlayOpacity,
-        processedImageUrl,
         viewMode,
         wasmReady,
     } from "$lib/stores";
     import ViewModeControls from "../molecules/ViewModeControls.svelte";
+    import PreviewOverlay from "./PreviewOverlay.svelte";
+    import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
-    let imageUrl = $derived(
-        $imageDisplayMode === "original"
-            ? $originalImageUrl
-            : $processedImageUrl,
-    );
+    const VIEWS = {
+        "side-by-side": PreviewSideBySide,
+        overlay: PreviewOverlay,
+    } as const;
+
+    let ViewComponent = $derived(VIEWS[$viewMode as keyof typeof VIEWS]);
 
     let dragover = $state(false);
     let fileInput: HTMLInputElement;
@@ -83,13 +81,20 @@
         </div>
     {:else}
         <div class="preview__toolbar">
+            <Button
+                size="sm"
+                variant="ghost"
+                onclick={openFilePicker}
+                class="preview__change-img"
+            >
+                Change Image
+            </Button>
+
             <ViewModeControls />
+
             {#if $isConverting}
                 <span class="preview__status">Converting...</span>
             {/if}
-            <button class="preview__change-img" onclick={openFilePicker}>
-                Change Image
-            </button>
         </div>
 
         {#if $errorMessage}
@@ -100,63 +105,7 @@
         {/if}
 
         <div class="preview__content">
-            {#if $viewMode === "side-by-side"}
-                <div class="preview__split">
-                    <div class="preview__panel">
-                        <h3 class="preview__panel-title">
-                            {$imageDisplayMode === "original"
-                                ? "Original"
-                                : "Processed Image"}
-                        </h3>
-                        <div class="preview__image-wrapper">
-                            {#if $imageDisplayMode === "original"}
-                                {#if $originalImageUrl}
-                                    <img
-                                        src={$originalImageUrl}
-                                        alt="Original"
-                                        class="preview__image"
-                                        draggable="false"
-                                    />
-                                {/if}
-                            {:else if $processedImageUrl}
-                                <img
-                                    src={$processedImageUrl}
-                                    alt="Processed"
-                                    class="preview__image"
-                                    draggable="false"
-                                />
-                            {/if}
-                        </div>
-                    </div>
-                    <div class="preview__panel">
-                        <h3 class="preview__panel-title">ASCII Output</h3>
-                        <div
-                            class="preview__ascii-wrapper"
-                            style="font-size: {$config.char_size}px"
-                        >
-                            {@html $asciiOutput}
-                        </div>
-                    </div>
-                </div>
-            {:else if $viewMode === "overlay"}
-                <div class="preview__overlay-container">
-                    {#if imageUrl}
-                        <img
-                            src={imageUrl}
-                            alt="Base"
-                            class="preview__image preview__overlay-base"
-                            style="opacity: {$overlayOpacity}"
-                            draggable="false"
-                        />
-                    {/if}
-                    <div
-                        class="preview__overlay-ascii"
-                        style="font-size: {$config.char_size}px"
-                    >
-                        {@html $asciiOutput}
-                    </div>
-                </div>
-            {/if}
+            <ViewComponent />
         </div>
     {/if}
 
@@ -237,35 +186,33 @@
     /* Toolbar */
     .preview__toolbar {
         display: flex;
+        flex-wrap: wrap;
         align-items: flex-end;
         gap: var(--spacing-md);
-        padding: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
         border-bottom: 1px solid var(--border);
         background-color: var(--bg-secondary);
         flex-shrink: 0;
     }
 
     .preview__status {
+        margin-left: auto;
         font-size: var(--font-xs);
         color: var(--accent);
         animation: pulse 1s ease-in-out infinite;
     }
 
-    .preview__change-img {
-        margin-left: auto;
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--text-muted);
-        padding: 0.25rem 0.75rem;
-        border-radius: var(--radius-sm);
-        font-size: var(--font-xs);
-        cursor: pointer;
-        transition: all 0.2s;
+    /* Change Image styling for the Button component */
+    :global(.preview__change-img) {
+        align-self: flex-end;
+        border: 1px solid var(--border) !important;
+        font-size: var(--font-xs) !important;
+        color: var(--text-muted) !important;
     }
 
-    .preview__change-img:hover {
-        border-color: var(--accent);
-        color: var(--accent);
+    :global(.preview__change-img:hover) {
+        border-color: var(--accent) !important;
+        color: var(--accent) !important;
     }
 
     @keyframes pulse {
@@ -293,106 +240,7 @@
     /* Content area */
     .preview__content {
         flex: 1;
-        overflow: auto;
+        overflow: hidden;
         padding: var(--spacing-md);
-    }
-
-    /* Side by side */
-    .preview__split {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--spacing-md);
-        height: 100%;
-    }
-
-    .preview__panel {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-sm);
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .preview__panel-title {
-        font-size: var(--font-xs);
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        flex-shrink: 0;
-    }
-
-    .preview__image-wrapper {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: auto;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-    }
-
-    .preview__image {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-    }
-
-    .preview__ascii-wrapper {
-        flex: 1;
-        overflow: auto;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-        padding: var(--spacing-sm);
-        line-height: 1;
-        font-family: "Ubuntu Mono", monospace;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Overlay mode */
-    .preview__overlay-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        overflow: hidden;
-    }
-
-    .preview__overlay-base {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        z-index: 1;
-        pointer-events: none;
-    }
-
-    .preview__overlay-ascii {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-        z-index: 2;
-        font-family: "Ubuntu Mono", monospace;
-    }
-
-    /* Ensure pre tags inside the ASCII output behave properly */
-    .preview__ascii-wrapper :global(pre),
-    .preview__overlay-ascii :global(pre) {
-        margin: 0;
-        white-space: pre;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
     }
 </style>

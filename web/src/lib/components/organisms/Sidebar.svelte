@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { sidebarCollapsed } from "$lib/stores";
     import { runConversion } from "$lib/converter";
     import { config } from "$lib/stores";
     import { DEFAULT_CONFIG } from "$lib/wasm";
@@ -16,7 +17,7 @@
     }
 </script>
 
-<aside class="sidebar">
+<aside class="sidebar" class:sidebar--collapsed={$sidebarCollapsed}>
     <div class="sidebar__scroll">
         <div class="sidebar__controls">
             <CharacterControls />
@@ -46,6 +47,14 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .sidebar--collapsed {
+        width: 0;
+        min-width: 0;
+        border-right-width: 0;
+        pointer-events: none;
     }
 
     .sidebar__scroll {
@@ -53,6 +62,7 @@
         overflow-y: auto;
         display: flex;
         flex-direction: column;
+        min-width: var(--sidebar-width);
     }
 
     .sidebar__controls {
