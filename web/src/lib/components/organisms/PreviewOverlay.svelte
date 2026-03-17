@@ -38,7 +38,6 @@
 <style>
     .preview__image {
         display: block;
-        margin: auto;
     }
 
     .preview__overlay-container {
@@ -48,11 +47,13 @@
         background-color: var(--bg-secondary);
         border-radius: var(--radius-md);
         overflow: auto;
+        align-items: center;
+        justify-content: center;
     }
 
     .preview__overlay-inner {
         position: relative;
-        margin: auto;
+        display: inline-block;
     }
 
     .preview__overlay-base {
@@ -65,11 +66,9 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: flex-start;
+        justify-content: flex-start;
         line-height: 1;
         z-index: 2;
         font-family: "Ubuntu Mono", monospace;
