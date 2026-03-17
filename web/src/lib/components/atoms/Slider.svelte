@@ -6,6 +6,7 @@
         max?: number;
         step?: number;
         disabled?: boolean;
+        compact?: boolean;
         onchange?: (value: number) => void;
     }
 
@@ -16,6 +17,7 @@
         max = 100,
         step = 1,
         disabled = false,
+        compact = false,
         onchange,
     }: Props = $props();
 
@@ -51,7 +53,7 @@
     }
 </script>
 
-<label class="slider" class:slider--disabled={disabled} onwheel={handleWheel}>
+<label class="slider" class:slider--disabled={disabled} class:slider--compact={compact} onwheel={handleWheel}>
     <div class="slider__header">
         <span class="slider__label">{label}</span>
         <input
@@ -86,6 +88,13 @@
         cursor: pointer;
     }
 
+    .slider--compact {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-sm);
+        flex: 1;
+    }
+
     .slider--disabled {
         opacity: 0.5;
         cursor: not-allowed;
@@ -94,15 +103,27 @@
 
     .slider__header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        gap: var(--spacing-xs);
+    }
+
+    .slider--compact .slider__header {
         gap: var(--spacing-sm);
+        flex: 1;
     }
 
     .slider__label {
         font-size: var(--font-sm);
         color: var(--text-secondary);
         flex: 1;
+    }
+
+    .slider--compact .slider__label {
+        font-size: var(--font-xs);
+        color: var(--text-secondary);
+        flex: none;
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 
     .slider__num-input {

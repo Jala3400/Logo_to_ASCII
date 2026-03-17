@@ -9,6 +9,7 @@
         value: string;
         options: Option[];
         disabled?: boolean;
+        compact?: boolean;
         onchange?: (value: string) => void;
     }
 
@@ -17,6 +18,7 @@
         value = $bindable(),
         options,
         disabled = false,
+        compact = false,
         onchange,
     }: Props = $props();
 
@@ -27,7 +29,7 @@
     }
 </script>
 
-<label class="select">
+<label class="select" class:select--compact={compact}>
     <span class="select__label">{label}</span>
 
     <div class="select__wrapper">
@@ -54,13 +56,22 @@
         cursor: pointer;
     }
 
+    .select--compact {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
     .select__label {
         font-size: var(--font-sm);
         color: var(--text-secondary);
     }
 
-    .select__wrapper {
-        position: relative;
+    .select--compact .select__label {
+        font-size: var(--font-xs);
+        color: var(--text-secondary);
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 
     .select__input {

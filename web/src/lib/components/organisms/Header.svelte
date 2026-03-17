@@ -68,7 +68,9 @@
     .header__right {
         display: flex;
         align-items: center;
-        gap: var(--spacing-sm);
+        gap: var(--spacing-md);
+        flex: 1;
+        margin-left: var(--spacing-md);
     }
 
     /* Toggle Icon */
