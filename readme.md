@@ -11,7 +11,7 @@ Unlike other image to ASCII converters, this one doesn't calculate the average b
 
 It works best with images of few colors and well-defined edges.
 
-Now with a [web version](https://logo-to-ascii.pages.dev).
+Now with a [web version](https://logo-to-ascii.pages.dev) (vibe coded).
 
 ## Table of Contents
 

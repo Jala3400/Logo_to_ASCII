@@ -1,14 +1,6 @@
 <script lang="ts">
-    import Button from "$lib/components/atoms/Button.svelte";
     import { loadImage } from "$lib/converter";
-    import {
-        errorMessage,
-        hasImage,
-        isConverting,
-        viewMode,
-        wasmReady,
-    } from "$lib/stores";
-    import ViewModeControls from "../molecules/ViewModeControls.svelte";
+    import { errorMessage, hasImage, viewMode, wasmReady } from "$lib/stores";
     import PreviewOverlay from "./PreviewOverlay.svelte";
     import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
@@ -80,23 +72,6 @@
             <p class="preview__empty-hint">or click to browse</p>
         </div>
     {:else}
-        <div class="preview__toolbar">
-            <Button
-                size="sm"
-                variant="ghost"
-                onclick={openFilePicker}
-                class="preview__change-img"
-            >
-                Change Image
-            </Button>
-
-            <ViewModeControls />
-
-            {#if $isConverting}
-                <span class="preview__status">Converting...</span>
-            {/if}
-        </div>
-
         {#if $errorMessage}
             <div class="preview__error">
                 <span>⚠️</span>
@@ -181,48 +156,6 @@
 
     .preview__empty-hint {
         font-size: var(--font-sm);
-    }
-
-    /* Toolbar */
-    .preview__toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        gap: var(--spacing-md);
-        padding: var(--spacing-sm) var(--spacing-md);
-        border-bottom: 1px solid var(--border);
-        background-color: var(--bg-secondary);
-        flex-shrink: 0;
-    }
-
-    .preview__status {
-        margin-left: auto;
-        font-size: var(--font-xs);
-        color: var(--accent);
-        animation: pulse 1s ease-in-out infinite;
-    }
-
-    /* Change Image styling for the Button component */
-    :global(.preview__change-img) {
-        align-self: flex-end;
-        border: 1px solid var(--border) !important;
-        font-size: var(--font-xs) !important;
-        color: var(--text-muted) !important;
-    }
-
-    :global(.preview__change-img:hover) {
-        border-color: var(--accent) !important;
-        color: var(--accent) !important;
-    }
-
-    @keyframes pulse {
-        0%,
-        100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
     }
 
     /* Error */

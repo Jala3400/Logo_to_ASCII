@@ -28,6 +28,7 @@
         label="View mode"
         value={viewModeStr}
         options={viewModeOptions}
+        compact={true}
         onchange={(v) => viewMode.set(v as ViewMode)}
     />
 
@@ -35,40 +36,28 @@
         label="Display image"
         value={imageModeStr}
         options={imageModeOptions}
+        compact={true}
         onchange={(v) => imageDisplayMode.set(v as ImageDisplayMode)}
     />
 
     {#if $viewMode === "overlay"}
-        <div class="view-controls__slider">
-            <Slider
-                label="Image opacity"
-                value={$overlayOpacity}
-                min={0}
-                max={1}
-                step={0.05}
-                onchange={(v) => overlayOpacity.set(v)}
-            />
-        </div>
+        <Slider
+            label="Image opacity"
+            value={$overlayOpacity}
+            min={0}
+            max={1}
+            step={0.05}
+            compact={true}
+            onchange={(v) => overlayOpacity.set(v)}
+        />
     {/if}
 </div>
 
 <style>
     .view-controls {
         display: flex;
-        flex-wrap: wrap;
         gap: var(--spacing-md);
-        align-items: flex-end;
+        align-items: center;
         flex: 1;
-    }
-
-    .view-controls__slider {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    @media (max-width: 800px) {
-        .view-controls__slider {
-            flex-basis: 100%;
-        }
     }
 </style>
