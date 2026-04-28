@@ -98,7 +98,7 @@ pub fn process_image(
 /// free of file I/O so it can be called from any target, including WASM.
 pub fn process_gif(
     frames: Vec<RgbaImage>,
-    mut cfg: config::ImageConfig,
+    mut cfg: &mut config::ImageConfig,
     font: &types::FontBitmap,
 ) -> Result<Vec<(String, RgbaImage)>, errors::L2aError> {
     let mut results = Vec::with_capacity(frames.len());

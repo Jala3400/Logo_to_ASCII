@@ -31,9 +31,9 @@ fn run() -> Result<(), L2aError> {
         .unwrap_or(false);
 
     if is_gif {
-        process_gif_file(&path, output, config, &font_bitmap)?;
+        process_gif_file(&path, output, &mut config, &font_bitmap)?;
     } else {
-        process_static_image(&path, output, config, &font_bitmap)?;
+        process_image_file(&path, output, &mut config, &font_bitmap)?;
     }
 
     Ok(())
@@ -42,7 +42,7 @@ fn run() -> Result<(), L2aError> {
 fn process_gif_file(
     path: &str,
     output: Option<String>,
-    config: ImageConfig,
+    config: &mut ImageConfig,
     font_bitmap: &FontBitmap,
 ) -> Result<(), L2aError> {
     use image::codecs::gif::{GifDecoder, GifEncoder, Repeat};
@@ -65,7 +65,7 @@ fn process_gif_file(
     if let Some(ref output_path) = output {
         let out_path = match image::ImageFormat::from_path(output_path) {
             Ok(image::ImageFormat::Gif) => output_path.clone(),
-            _ => output_path.to_owned() + ".gif",
+            _ => format!("{}.gif", output_path),
         };
 
         let out_file = std::fs::File::create(&out_path)?;
@@ -81,10 +81,10 @@ fn process_gif_file(
     Ok(())
 }
 
-fn process_static_image(
+fn process_image_file(
     path: &str,
     output: Option<String>,
-    mut config: ImageConfig,
+    mut config: &mut ImageConfig,
     font_bitmap: &FontBitmap,
 ) -> Result<(), L2aError> {
     // Load the image only when it is not a GIF
@@ -96,12 +96,12 @@ fn process_static_image(
 
     // Optionally save the processed image
     if let Some(ref output_path) = output {
-        let path = std::path::Path::new(output_path);
+        let output_file_path = std::path::Path::new(output_path);
 
-        match image::ImageFormat::from_path(path) {
+        match image::ImageFormat::from_path(output_file_path) {
             Ok(format) => processed_img.save_with_format(output_path, format),
             Err(_) => processed_img
-                .save_with_format(output_path.to_owned() + ".png", image::ImageFormat::Png),
+                .save_with_format(&format!("{}.png", output_path), image::ImageFormat::Png),
         }
         .map_err(L2aError::Image)?
     }
