@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from "$lib/components/atoms/Button.svelte";
+    import HeaderControls from "$lib/components/molecules/HeaderControls.svelte";
     import Header from "$lib/components/organisms/Header.svelte";
     import PreviewArea from "$lib/components/organisms/PreviewArea.svelte";
     import Sidebar from "$lib/components/organisms/Sidebar.svelte";
@@ -21,6 +22,7 @@
 
 <div class="app-layout">
     <Header>
+        <HeaderControls />
         <Button
             size="sm"
             variant="ghost"
