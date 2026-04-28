@@ -18,8 +18,8 @@ use std::num::NonZeroU32;
 /// Internal pipeline: runs all image processing steps given a pre-built font.
 pub fn process_image(
     mut img: RgbaImage,
-    mut cfg: config::ImageConfig,
-    font: types::FontBitmap,
+    mut cfg: &mut config::ImageConfig,
+    font: &types::FontBitmap,
 ) -> Result<(String, RgbaImage), errors::L2aError> {
     use image_ops::{
         add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
@@ -88,4 +88,23 @@ pub fn process_image(
 
     let ascii = proc_image::convert_image(&img, &font, &cfg);
     Ok((ascii, img))
+}
+
+/// Processes each frame of an animated GIF and returns one `(ascii, image)` pair per frame,
+/// mirroring the return type of [`process_image`].
+///
+/// The caller is responsible for decoding the GIF into [`RgbaImage`] frames (and for
+/// preserving any timing metadata needed when saving the result). This keeps the function
+/// free of file I/O so it can be called from any target, including WASM.
+pub fn process_gif(
+    frames: Vec<RgbaImage>,
+    mut cfg: config::ImageConfig,
+    font: &types::FontBitmap,
+) -> Result<Vec<(String, RgbaImage)>, errors::L2aError> {
+    let mut results = Vec::with_capacity(frames.len());
+    for img in frames {
+        let result = process_image(img, &mut cfg, font)?;
+        results.push(result);
+    }
+    Ok(results)
 }

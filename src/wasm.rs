@@ -52,7 +52,7 @@ pub fn convert(image_bytes: &[u8], config: JsValue) -> Result<ConvertResult, JsV
         .to_rgba8();
 
     let (ascii, processed_img) =
-        process_image(img, cfg, font).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        process_image(img, cfg, &font).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
     let mut png_bytes: Vec<u8> = Vec::new();
     processed_img
