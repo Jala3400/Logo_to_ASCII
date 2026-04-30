@@ -48,7 +48,7 @@ Number of characters: 60x30
                           '888888'                          
                              88                             
                                                             
-[0m"#;
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
@@ -101,7 +101,7 @@ Number of characters: 60x30
 88888888888888888888888888q      p88888888888888888888888888
 8888888888888888888888888888q  p8888888888888888888888888888
 88888888888888888888888888888bd88888888888888888888888888888
-[0m"#;
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
@@ -155,7 +155,7 @@ ___@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@___
                           "@@@@@B"                          
                             `@@`                            
                                                             
-[0m"#;
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
@@ -233,7 +233,7 @@ Number of characters: 101x50
                                                 '888'                                                
                                                  '8'                                                 
                                                   8                                                  
-[0m"#;
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
@@ -291,7 +291,7 @@ Number of characters: 61x31
                             '888'                            
                               8                              
                               '                              
-[0m"#;
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
 
@@ -350,6 +350,6 @@ Unfilled space: 1x1 pixels
 888888888888888888888888qp   qq888888888888888888888888
 88888888888888888888888888q d88888888888888888888888888
 888888888888888888888888888q888888888888888888888888888
-[0m"#;
+"#;
     assert_eq!(stdout.trim(), expected.trim());
 }
