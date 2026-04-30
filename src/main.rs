@@ -1,7 +1,7 @@
 use clap::Parser;
 use logo_to_ascii::{
-    args::Args, characters, config::ImageConfig, errors::L2aError, font, process_gif,
-    process_image, types::FontBitmap,
+    args::Args, characters, config::ImageConfig, errors::L2aError, font, process_image,
+    types::FontBitmap,
 };
 
 fn main() {
@@ -49,20 +49,11 @@ fn process_gif_file(
     use image::AnimationDecoder;
     use image::Frame;
 
-    // Decode all frames upfront so we can access both pixel data and timing metadata
+    // Decode frames progressively
     let file = std::fs::File::open(path)?;
-    let raw_frames = GifDecoder::new(file)?.into_frames().collect_frames()?;
+    let frames = GifDecoder::new(file)?.into_frames();
 
-    let imgs: Vec<image::RgbaImage> = raw_frames.iter().map(|f| f.buffer().clone()).collect();
-    let processed = process_gif(imgs, config, font_bitmap)?;
-
-    // Print the ASCII art for every frame
-    for (ascii, _) in &processed {
-        println!("{}", ascii);
-    }
-
-    // Optionally save as an animated GIF, preserving the original frame delays
-    if let Some(ref output_path) = output {
+    let mut encoder_opt: Option<GifEncoder<std::fs::File>> = if let Some(ref output_path) = output {
         let out_path = match image::ImageFormat::from_path(output_path) {
             Ok(image::ImageFormat::Gif) => output_path.clone(),
             _ => format!("{}.gif", output_path),
@@ -71,10 +62,28 @@ fn process_gif_file(
         let out_file = std::fs::File::create(&out_path)?;
         let mut encoder = GifEncoder::new(out_file);
         encoder.set_repeat(Repeat::Infinite)?;
+        Some(encoder)
+    } else {
+        None
+    };
 
-        for ((_, processed_img), raw_frame) in processed.into_iter().zip(raw_frames.iter()) {
-            let frame = Frame::from_parts(processed_img, 0, 0, raw_frame.delay());
-            encoder.encode_frame(frame)?;
+    // Process each frame progressively
+    for frame_result in frames {
+        let raw_frame = frame_result?;
+        let img = raw_frame.buffer().clone();
+
+        // Process the frame
+        let (ascii, processed_img) = process_image(img, config, font_bitmap)?;
+
+        // Print the ASCII art for this frame
+        println!("{}", ascii);
+
+        // Setup encoder on first frame and save frames as they're processed
+        if let Some(_) = output {
+            if let Some(ref mut encoder) = encoder_opt {
+                let frame = Frame::from_parts(processed_img, 0, 0, raw_frame.delay());
+                encoder.encode_frame(frame)?;
+            }
         }
     }
 
