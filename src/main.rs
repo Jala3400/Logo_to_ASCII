@@ -1,7 +1,7 @@
 use clap::Parser;
 use logo_to_ascii::{
     args::Args, characters, config::ImageConfig, errors::L2aError, font, process_image,
-    types::FontBitmap,
+    types::{FontBitmap, GifFrame, GifOutput},
 };
 
 fn main() {
@@ -74,9 +74,28 @@ fn process_gif_file(
         None
     };
 
+    // Determine the font label for the JSON output
+    let font_label = config
+        .font_name
+        .clone()
+        .or_else(|| config.font_path.clone())
+        .unwrap_or_else(|| "default".to_string());
+
+    let mut gif_frames: Vec<GifFrame> = Vec::new();
+    let mut char_width: usize = 0;
+    let mut char_height: usize = 0;
+
     // Process each frame progressively
     for frame_result in frames {
         let raw_frame = frame_result?;
+
+        // Compute delay in milliseconds from the frame's Delay value
+        let (numer, denom) = raw_frame.delay().numer_denom_ms();
+        let delay_ms = if denom == 0 {
+            0u64
+        } else {
+            (numer as u64) / (denom as u64)
+        };
 
         // Get frame position and dimensions
         let x = raw_frame.left() as u32;
@@ -104,15 +123,32 @@ fn process_gif_file(
         // Process the full canvas frame
         let (ascii, processed_img) = process_image(canvas.clone(), config.clone(), font_bitmap)?;
 
-        // Print the ASCII art for this frame
-        println!("{}", ascii);
+        // Derive character dimensions from the processed image (only needed once)
+        if char_width == 0 {
+            char_width = (processed_img.width() as usize + font_bitmap.width - 1)
+                / font_bitmap.width;
+            char_height = (processed_img.height() as usize + font_bitmap.vertical_step - 1)
+                / font_bitmap.vertical_step;
+        }
 
-        // Save the full frame
+        gif_frames.push(GifFrame { ascii, delay_ms });
+
+        // Save the full frame to the output GIF if requested
         if let Some(ref mut encoder) = encoder_opt {
             let frame = Frame::from_parts(processed_img, 0, 0, raw_frame.delay());
             encoder.encode_frame(frame)?;
         }
     }
+
+    // Emit the JSON output
+    let output_json = GifOutput {
+        font: font_label,
+        width: char_width,
+        height: char_height,
+        frames: gif_frames,
+    };
+    println!("{}", serde_json::to_string_pretty(&output_json)
+        .map_err(|e| L2aError::Other(e.to_string()))?);
 
     Ok(())
 }

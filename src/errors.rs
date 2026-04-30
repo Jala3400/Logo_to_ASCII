@@ -10,4 +10,6 @@ pub enum L2aError {
     Font(String),
     #[error("No characters available for conversion. Provide characters and check if they are supported by the font.")]
     NoCharacters,
+    #[error("{0}")]
+    Other(String),
 }

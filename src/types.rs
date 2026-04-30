@@ -1,3 +1,25 @@
+/// Top-level JSON output structure for an animated GIF.
+#[derive(serde::Serialize)]
+pub struct GifOutput {
+    /// Font name, path, or "default" when using the built-in font
+    pub font: String,
+    /// Width of the ASCII art in characters
+    pub width: usize,
+    /// Height of the ASCII art in characters
+    pub height: usize,
+    /// Per-frame data (ASCII art + delay)
+    pub frames: Vec<GifFrame>,
+}
+
+/// JSON output structure for a single GIF frame.
+#[derive(serde::Serialize)]
+pub struct GifFrame {
+    /// The ASCII art string for this frame
+    pub ascii: String,
+    /// Frame delay in milliseconds
+    pub delay_ms: u64,
+}
+
 /// A structure representing a bitmap font, containing character information
 ///
 /// The font bitmap stores character data in a vector, ordered by their minimum
