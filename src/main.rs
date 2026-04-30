@@ -31,9 +31,9 @@ fn run() -> Result<(), L2aError> {
         .unwrap_or(false);
 
     if is_gif {
-        process_gif_file(&path, output, &mut config, &font_bitmap)?;
+        process_gif_file(&path, output, config, &font_bitmap)?;
     } else {
-        process_image_file(&path, output, &mut config, &font_bitmap)?;
+        process_image_file(&path, output, config, &font_bitmap)?;
     }
 
     Ok(())
@@ -42,7 +42,7 @@ fn run() -> Result<(), L2aError> {
 fn process_gif_file(
     path: &str,
     output: Option<String>,
-    config: &mut ImageConfig,
+    config: ImageConfig,
     font_bitmap: &FontBitmap,
 ) -> Result<(), L2aError> {
     use image::codecs::gif::{GifDecoder, GifEncoder, Repeat};
@@ -73,7 +73,7 @@ fn process_gif_file(
         let img = raw_frame.buffer().clone();
 
         // Process the frame
-        let (ascii, processed_img) = process_image(img, config, font_bitmap)?;
+        let (ascii, processed_img) = process_image(img, config.clone(), font_bitmap)?;
 
         // Print the ASCII art for this frame
         println!("{}", ascii);
@@ -93,12 +93,12 @@ fn process_gif_file(
 fn process_image_file(
     path: &str,
     output: Option<String>,
-    mut config: &mut ImageConfig,
+    config: ImageConfig,
     font_bitmap: &FontBitmap,
 ) -> Result<(), L2aError> {
     // Load the image only when it is not a GIF
     let img = image::open(path)?.to_rgba8();
-    let (ascii, processed_img) = process_image(img, &mut config, font_bitmap)?;
+    let (ascii, processed_img) = process_image(img, config, font_bitmap)?;
 
     // Print the ASCII art
     print!("{}", ascii);

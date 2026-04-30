@@ -18,7 +18,7 @@ use std::num::NonZeroU32;
 /// Internal pipeline: runs all image processing steps given a pre-built font.
 pub fn process_image(
     mut img: RgbaImage,
-    mut cfg: &mut config::ImageConfig,
+    mut cfg: config::ImageConfig,
     font: &types::FontBitmap,
 ) -> Result<(String, RgbaImage), errors::L2aError> {
     use image_ops::{
