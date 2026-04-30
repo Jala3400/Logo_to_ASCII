@@ -84,14 +84,19 @@ fn process_gif_file(
         let frame_width = raw_frame.buffer().width();
         let frame_height = raw_frame.buffer().height();
 
-        // Composite the frame onto the canvas at its correct position
-        for py in 0..frame_height {
-            for px in 0..frame_width {
-                let canvas_x = x + px;
-                let canvas_y = y + py;
-                if canvas_x < width && canvas_y < height {
-                    let pixel = *raw_frame.buffer().get_pixel(px, py);
-                    canvas.put_pixel(canvas_x, canvas_y, pixel);
+        // Optimize: if frame covers the entire canvas, just use it directly
+        if x == 0 && y == 0 && frame_width == width && frame_height == height {
+            canvas = raw_frame.buffer().clone();
+        } else {
+            // Composite the frame onto the canvas at its correct position
+            for py in 0..frame_height {
+                for px in 0..frame_width {
+                    let canvas_x = x + px;
+                    let canvas_y = y + py;
+                    if canvas_x < width && canvas_y < height {
+                        let pixel = *raw_frame.buffer().get_pixel(px, py);
+                        canvas.put_pixel(canvas_x, canvas_y, pixel);
+                    }
                 }
             }
         }
