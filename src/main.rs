@@ -48,11 +48,18 @@ fn process_gif_file(
     use image::codecs::gif::{GifDecoder, GifEncoder, Repeat};
     use image::AnimationDecoder;
     use image::Frame;
+    use image::ImageDecoder;
 
     // Decode frames progressively
     let file = std::fs::File::open(path)?;
-    let frames = GifDecoder::new(file)?.into_frames();
+    let decoder = GifDecoder::new(file)?;
 
+    // Get canvas dimensions and create a canvas buffer
+    let (width, height) = decoder.dimensions();
+    let mut canvas = image::RgbaImage::new(width, height);
+    let frames = decoder.into_frames();
+
+    // Setup encoder if output is specified
     let mut encoder_opt: Option<GifEncoder<std::fs::File>> = if let Some(ref output_path) = output {
         let out_path = match image::ImageFormat::from_path(output_path) {
             Ok(image::ImageFormat::Gif) => output_path.clone(),
@@ -70,20 +77,35 @@ fn process_gif_file(
     // Process each frame progressively
     for frame_result in frames {
         let raw_frame = frame_result?;
-        let img = raw_frame.buffer().clone();
 
-        // Process the frame
-        let (ascii, processed_img) = process_image(img, config.clone(), font_bitmap)?;
+        // Get frame position and dimensions
+        let x = raw_frame.left() as u32;
+        let y = raw_frame.top() as u32;
+        let frame_width = raw_frame.buffer().width();
+        let frame_height = raw_frame.buffer().height();
+
+        // Composite the frame onto the canvas at its correct position
+        for py in 0..frame_height {
+            for px in 0..frame_width {
+                let canvas_x = x + px;
+                let canvas_y = y + py;
+                if canvas_x < width && canvas_y < height {
+                    let pixel = *raw_frame.buffer().get_pixel(px, py);
+                    canvas.put_pixel(canvas_x, canvas_y, pixel);
+                }
+            }
+        }
+
+        // Process the full canvas frame
+        let (ascii, processed_img) = process_image(canvas.clone(), config.clone(), font_bitmap)?;
 
         // Print the ASCII art for this frame
         println!("{}", ascii);
 
-        // Setup encoder on first frame and save frames as they're processed
-        if let Some(_) = output {
-            if let Some(ref mut encoder) = encoder_opt {
-                let frame = Frame::from_parts(processed_img, 0, 0, raw_frame.delay());
-                encoder.encode_frame(frame)?;
-            }
+        // Save the full frame
+        if let Some(ref mut encoder) = encoder_opt {
+            let frame = Frame::from_parts(processed_img, 0, 0, raw_frame.delay());
+            encoder.encode_frame(frame)?;
         }
     }
 
