@@ -1,7 +1,7 @@
 import init, {
-    convert,
+    convert_image,
     get_final_chars,
-    type ConvertResult,
+    type ConvertImageResult,
 } from "$wasm/logo_to_ascii.js";
 
 let initialized = false;
@@ -120,7 +120,7 @@ export async function convertImage(
         }
     }
 
-    const result: ConvertResult = convert(imageBytes, cfg);
+    const result: ConvertImageResult = convert_image(imageBytes, cfg);
 
     const ascii = result.ascii;
     const pngBytes = result.image_png;

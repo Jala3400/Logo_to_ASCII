@@ -1,15 +1,15 @@
 use crate::{config::ImageConfig, process_image};
 use wasm_bindgen::prelude::*;
 
-/// The result of a [`convert`] call, containing both outputs of the pipeline.
+/// The result of a [`convert_image`] call, containing both outputs of the pipeline.
 #[wasm_bindgen]
-pub struct ConvertResult {
+pub struct ConvertImageResult {
     ascii: String,
     image_png: Vec<u8>,
 }
 
 #[wasm_bindgen]
-impl ConvertResult {
+impl ConvertImageResult {
     /// The ASCII art string.
     /// For colored output with `format: "html"` this is an HTML fragment
     /// wrapped in a `<pre>` tag, ready to set as `innerHTML`.
@@ -36,7 +36,7 @@ impl ConvertResult {
 
 /// Convert an image using the embedded default font.
 #[wasm_bindgen]
-pub fn convert(image_bytes: &[u8], config: JsValue) -> Result<ConvertResult, JsValue> {
+pub fn convert_image(image_bytes: &[u8], config: JsValue) -> Result<ConvertImageResult, JsValue> {
     let mut cfg: ImageConfig =
         serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
@@ -62,7 +62,7 @@ pub fn convert(image_bytes: &[u8], config: JsValue) -> Result<ConvertResult, JsV
         )
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
 
-    Ok(ConvertResult {
+    Ok(ConvertImageResult {
         ascii,
         image_png: png_bytes,
     })
