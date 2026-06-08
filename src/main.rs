@@ -1,6 +1,9 @@
 use clap::Parser;
 use logo_to_ascii::{
-    args::Args, characters, config::ImageConfig, errors::L2aError, font, process_image,
+    args::Args,
+    config::ImageConfig,
+    errors::L2aError,
+    font, process_image,
     types::{FontBitmap, GifFrame, GifOutput},
 };
 
@@ -20,8 +23,7 @@ fn run() -> Result<(), L2aError> {
     let output = args.output.clone();
 
     // Convert CLI args into the core config and run the pipeline
-    let mut config = ImageConfig::from(args);
-    characters::process_characters(&mut config);
+    let config = ImageConfig::from(args);
 
     let font_obj = font::load_font(&config)?;
     let font_bitmap = font::build_font_bitmap(&font_obj, &config)?;
@@ -125,8 +127,8 @@ fn process_gif_file(
 
         // Derive character dimensions from the processed image (only needed once)
         if char_width == 0 {
-            char_width = (processed_img.width() as usize + font_bitmap.width - 1)
-                / font_bitmap.width;
+            char_width =
+                (processed_img.width() as usize + font_bitmap.width - 1) / font_bitmap.width;
             char_height = (processed_img.height() as usize + font_bitmap.vertical_step - 1)
                 / font_bitmap.vertical_step;
         }
@@ -147,8 +149,10 @@ fn process_gif_file(
         height: char_height,
         frames: gif_frames,
     };
-    println!("{}", serde_json::to_string_pretty(&output_json)
-        .map_err(|e| L2aError::Other(e.to_string()))?);
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&output_json).map_err(|e| L2aError::Other(e.to_string()))?
+    );
 
     Ok(())
 }

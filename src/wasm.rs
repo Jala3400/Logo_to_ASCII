@@ -37,10 +37,8 @@ impl ConvertImageResult {
 /// Convert an image using the embedded default font.
 #[wasm_bindgen]
 pub fn convert_image(image_bytes: &[u8], config: JsValue) -> Result<ConvertImageResult, JsValue> {
-    let mut cfg: ImageConfig =
+    let cfg: ImageConfig =
         serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
-
-    crate::characters::process_characters(&mut cfg);
 
     // Use the embedded default font (Ubuntu Mono)
     let font_obj = crate::font::default_font().map_err(|e| JsValue::from_str(&e.to_string()))?;
@@ -71,8 +69,7 @@ pub fn convert_image(image_bytes: &[u8], config: JsValue) -> Result<ConvertImage
 /// Runs `process_characters` on `config` and returns the resulting character set.
 #[wasm_bindgen]
 pub fn get_final_chars(config: JsValue) -> Result<String, JsValue> {
-    let mut cfg: ImageConfig =
+    let cfg: ImageConfig =
         serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    crate::characters::process_characters(&mut cfg);
-    Ok(cfg.chars)
+    Ok(cfg.get_processed_chars())
 }
