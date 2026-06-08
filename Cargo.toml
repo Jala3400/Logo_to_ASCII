@@ -22,6 +22,7 @@ serde = { version = "1", features = ["derive"] }
 clap = { version = "4.5.60", features = ["derive"] }
 enable-ansi-support = "0.3.1"
 font-kit = "0.14"
+serde_json = "1"
 
 # Dependencies only needed for the WASM build
 [target.'cfg(target_arch = "wasm32")'.dependencies]

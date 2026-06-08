@@ -3,7 +3,7 @@ use crate::types::BuiltInCharSet;
 
 pub fn process_characters(config: &mut ImageConfig) {
     // If the flag indicates it, use all ASCII characters
-    if let Some(dicts) = config.dicts.clone() {
+    if let Some(dicts) = &config.dicts {
         config.chars.clear();
         for dict in dicts {
             match dict {

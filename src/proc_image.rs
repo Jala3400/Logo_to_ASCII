@@ -96,7 +96,11 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
 
     // Closing
     match config.format {
-        OutputFormat::Ansi => result.push_str("\x1b[0m"),
+        OutputFormat::Ansi => {
+            if config.print_color {
+                result.push_str("\x1b[0m");
+            }
+        }
         OutputFormat::Html => {
             result.push_str("</pre>");
         }
