@@ -193,7 +193,7 @@ pub fn convert_gif(gif_bytes: &[u8], config: JsValue) -> Result<ConvertGifResult
         .font_name
         .clone()
         .or_else(|| cfg.font_path.clone())
-        .unwrap_or_else(|| "default".to_string());
+        .unwrap_or_else(|| "Ubuntu Mono".to_string());
 
     let mut gif_frames: Vec<GifFrame> = Vec::new();
     let mut original_frames: Vec<GifFrameInfo> = Vec::new();

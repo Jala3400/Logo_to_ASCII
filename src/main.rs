@@ -81,7 +81,7 @@ fn process_gif_file(
         .font_name
         .clone()
         .or_else(|| config.font_path.clone())
-        .unwrap_or_else(|| "default".to_string());
+        .unwrap_or_else(|| "Ubuntu Mono".to_string());
 
     let mut gif_frames: Vec<GifFrame> = Vec::new();
     let mut char_width: usize = 0;
