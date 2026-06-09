@@ -1,7 +1,7 @@
 <script lang="ts">
     import Button from "$lib/components/atoms/Button.svelte";
     import { loadImage } from "$lib/converter";
-    import { hasImage, isConverting, wasmReady } from "$lib/stores";
+    import { showResult, isConverting, wasmReady } from "$lib/stores";
     import ViewModeControls from "./ViewModeControls.svelte";
 
     let fileInput: HTMLInputElement;
@@ -21,7 +21,7 @@
 </script>
 
 <div class="header-controls">
-    {#if $hasImage}
+    {#if $showResult}
         <div class="header-controls__content">
             <ViewModeControls />
         </div>

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { loadImage } from "$lib/converter";
-    import { errorMessage, hasImage, viewMode, wasmReady } from "$lib/stores";
+    import { loadImage, loadGif } from "$lib/converter";
+    import { errorMessage, showResult, viewMode, wasmReady } from "$lib/stores";
     import PreviewOverlay from "./PreviewOverlay.svelte";
     import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
     const VIEWS = {
         "side-by-side": PreviewSideBySide,
-        overlay: PreviewOverlay,
+        "overlay": PreviewOverlay,
     } as const;
 
     let ViewComponent = $derived(VIEWS[$viewMode as keyof typeof VIEWS]);
@@ -18,8 +18,13 @@
         e.preventDefault();
         dragover = false;
         if (!$wasmReady) return;
+
         const file = e.dataTransfer?.files[0];
-        if (file && file.type.startsWith("image/")) {
+        if (!file) return;
+
+        if (file.type === "image/gif") {
+            loadGif(file);
+        } else if (file.type.startsWith("image/")) {
             loadImage(file);
         }
     }
@@ -36,9 +41,18 @@
     function handleFileSelect(e: Event) {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
-        if (file) {
+
+        if (!file) {
+            target.value = "";
+            return;
+        }
+
+        if (file.type === "image/gif") {
+            loadGif(file);
+        } else if (file.type.startsWith("image/")) {
             loadImage(file);
         }
+
         target.value = "";
     }
 
@@ -59,7 +73,7 @@
             <span class="preview__spinner">⏳</span>
             <p>Loading WASM module...</p>
         </div>
-    {:else if !$hasImage}
+    {:else if !$showResult}
         <div
             class="preview__empty"
             onclick={openFilePicker}

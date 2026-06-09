@@ -6,7 +6,7 @@ import init, {
     GifFrameInfo,
     type ConvertImageResult,
 } from "$wasm/logo_to_ascii.js";
-import type { AsciiAnimation } from "./gif_player/ascii_gif_renderer";
+import type { AsciiAnimation } from "./web_components/ascii_gif_renderer";
 
 let initialized = false;
 
@@ -15,6 +15,13 @@ export async function initWasm(): Promise<void> {
     await init();
     initialized = true;
 }
+
+export const OutputFormat = {
+    Ansi: "ansi",
+    Html: "html",
+} as const;
+
+export type OutputFormat = (typeof OutputFormat)[keyof typeof OutputFormat];
 
 export interface L2aConfig {
     // Font
@@ -28,7 +35,7 @@ export interface L2aConfig {
     char_size: number;
 
     // Output
-    format: "ansi" | "html";
+    format: OutputFormat;
 
     // Image processing
     negative: boolean;
@@ -75,7 +82,7 @@ export const DEFAULT_CONFIG: L2aConfig = {
     except: "",
     dicts: ["all"],
     char_size: 16,
-    format: "html",
+    format: OutputFormat.Html,
     negative: false,
     black_and_white: false,
     threshold: 0.5,
@@ -142,7 +149,7 @@ export interface GifFrameOutput {
     pngUrl: string;
 }
 export interface ConvertGifOutput {
-    ascii: AsciiAnimation;
+    ascii_json: AsciiAnimation;
     originalGif: GifFrameOutput[];
     processedGif: GifFrameOutput[];
 }
@@ -177,7 +184,7 @@ export async function convertGif(
     const ascii = JSON.parse(result.ascii_json) as AsciiAnimation;
 
     const output = {
-        ascii,
+        ascii_json: ascii,
         originalGif: result.original_gif.map(toFrameOutput),
         processedGif: result.processed_gif.map(toFrameOutput),
     };

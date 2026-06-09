@@ -1,11 +1,14 @@
 <script lang="ts">
     import {
-        asciiOutput,
+        asciiImageOutput,
         config,
+        FileType,
+        fileType,
+        ImageDisplayMode,
         imageDisplayMode,
         originalImageUrl,
         processedImageUrl,
-        viewMode,
+        viewMode
     } from "$lib/stores";
 
     let imageWrapper: HTMLElement | undefined = $state();
@@ -27,34 +30,42 @@
             });
         }
     }
+
+    let imageUrl = $derived(
+        $imageDisplayMode === ImageDisplayMode.Original
+            ? $originalImageUrl
+            : $processedImageUrl,
+    );
 </script>
 
 <div class="preview__split">
     <div class="preview__panel">
         <h3 class="preview__panel-title">
-            {$imageDisplayMode === "original" ? "Original" : "Processed Image"}
+            {$imageDisplayMode === ImageDisplayMode.Original
+                ? "Original"
+                : "Processed Image"}
         </h3>
         <div
             bind:this={imageWrapper}
             onscroll={handleScroll}
             class="preview__image-wrapper"
         >
-            {#if $imageDisplayMode === "original"}
-                {#if $originalImageUrl}
+            {#if $fileType === FileType.Gif}
+                <p class="preview__overlay-placeholder">
+                    GIF preview not available.
+                </p>
+            {/if}
+            {#if $fileType === FileType.Image}
+                {#if imageUrl}
                     <img
-                        src={$originalImageUrl}
-                        alt="Original"
-                        class="preview__image"
+                        src={imageUrl}
+                        alt={$imageDisplayMode === ImageDisplayMode.Original
+                            ? "Original"
+                            : "Processed Image"}
+                        class="preview__image preview__overlay-base"
                         draggable="false"
                     />
                 {/if}
-            {:else if $processedImageUrl}
-                <img
-                    src={$processedImageUrl}
-                    alt="Processed"
-                    class="preview__image"
-                    draggable="false"
-                />
             {/if}
         </div>
     </div>
@@ -66,7 +77,7 @@
             class="preview__ascii-wrapper"
             style="font-size: {$config.char_size}px"
         >
-            {@html $asciiOutput}
+            {@html $asciiImageOutput}
         </div>
     </div>
 </div>

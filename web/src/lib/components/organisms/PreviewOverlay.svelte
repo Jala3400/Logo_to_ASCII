@@ -1,7 +1,10 @@
 <script lang="ts">
     import {
-        asciiOutput,
+        asciiImageOutput,
         config,
+        FileType,
+        fileType,
+        ImageDisplayMode,
         imageDisplayMode,
         originalImageUrl,
         overlayOpacity,
@@ -9,7 +12,7 @@
     } from "$lib/stores";
 
     let imageUrl = $derived(
-        $imageDisplayMode === "original"
+        $imageDisplayMode === ImageDisplayMode.Original
             ? $originalImageUrl
             : $processedImageUrl,
     );
@@ -17,20 +20,31 @@
 
 <div class="preview__overlay-container">
     <div class="preview__overlay-inner">
-        {#if imageUrl}
-            <img
-                src={imageUrl}
-                alt="Base"
-                class="preview__image preview__overlay-base"
-                style="opacity: {$overlayOpacity}"
-                draggable="false"
-            />
+        {#if $fileType === FileType.Gif}
+            <p class="preview__overlay-placeholder">
+                GIF preview not available.
+            </p>
         {/if}
+
+        {#if $fileType === FileType.Image}
+            {#if imageUrl}
+                <img
+                    src={imageUrl}
+                    alt={$imageDisplayMode === ImageDisplayMode.Original
+                        ? "Original"
+                        : "Processed Image"}
+                    class="preview__image preview__overlay-base"
+                    style="opacity: {$overlayOpacity}"
+                    draggable="false"
+                />
+            {/if}
+        {/if}
+
         <div
             class="preview__overlay-ascii"
             style="font-size: {$config.char_size}px"
         >
-            {@html $asciiOutput}
+            {@html $asciiImageOutput}
         </div>
     </div>
 </div>
