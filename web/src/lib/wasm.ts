@@ -1,8 +1,12 @@
 import init, {
+    convert_gif,
     convert_image,
+    ConvertGifResult,
     get_final_chars,
+    GifFrameInfo,
     type ConvertImageResult,
 } from "$wasm/logo_to_ascii.js";
+import type { AsciiAnimation } from "./gif_player/ascii_gif_renderer";
 
 let initialized = false;
 
@@ -95,7 +99,7 @@ export const DEFAULT_CONFIG: L2aConfig = {
     algorithm: "max_prod",
 };
 
-export interface ConvertOutput {
+export interface ConvertImageOutput {
     ascii: string;
     imagePngUrl: string;
 }
@@ -107,7 +111,7 @@ export interface ConvertOutput {
 export async function convertImage(
     imageBytes: Uint8Array,
     config: Partial<L2aConfig>,
-): Promise<ConvertOutput> {
+): Promise<ConvertImageOutput> {
     await initWasm();
 
     // Build the config object, only including non-null values
@@ -131,6 +135,55 @@ export async function convertImage(
     result.free();
 
     return { ascii, imagePngUrl };
+}
+
+export interface GifFrameOutput {
+    delayMs: number;
+    pngUrl: string;
+}
+export interface ConvertGifOutput {
+    ascii: AsciiAnimation;
+    originalGif: GifFrameOutput[];
+    processedGif: GifFrameOutput[];
+}
+
+/**
+ * Convert a GIF to ASCII art using the WASM module.
+ * Returns the ASCII animation and blob URLs for the original and processed GIF frames.
+ */
+export async function convertGif(
+    gifBytes: Uint8Array,
+    config: Partial<L2aConfig>,
+): Promise<ConvertGifOutput> {
+    await initWasm();
+
+    const cfg: Record<string, unknown> = {};
+    const merged = { ...DEFAULT_CONFIG, ...config };
+
+    for (const [key, value] of Object.entries(merged)) {
+        if (value !== null) cfg[key] = value;
+    }
+
+    const result: ConvertGifResult = convert_gif(gifBytes, cfg);
+
+    const toFrameOutput = (frame: GifFrameInfo): GifFrameOutput => {
+        const blob = new Blob([frame.png_bytes as any], { type: "image/png" });
+        return {
+            delayMs: Number(frame.delay_ms),
+            pngUrl: URL.createObjectURL(blob),
+        };
+    };
+
+    const ascii = JSON.parse(result.ascii_json) as AsciiAnimation;
+
+    const output = {
+        ascii,
+        originalGif: result.original_gif.map(toFrameOutput),
+        processedGif: result.processed_gif.map(toFrameOutput),
+    };
+
+    result.free();
+    return output;
 }
 
 // ── Font helpers ──────────────────────────────────────────────────────────────
