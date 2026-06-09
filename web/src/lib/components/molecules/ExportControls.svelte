@@ -5,15 +5,17 @@
         config,
         FileType,
         fileType,
+        processedGif,
         processedImageUrl,
     } from "$lib/stores";
+    import { makeGif } from "$lib/utils/makeGif";
     import { OutputFormat } from "$lib/wasm";
     import Button from "../atoms/Button.svelte";
 
     let currentText = $derived(
         ($fileType === FileType.Image
             ? $asciiImageOutput
-            : $asciiGifOutput?.toString()) ??
+            : JSON.stringify($asciiGifOutput)) ??
             "This should not happen: no ASCII output available.",
     );
 
@@ -53,6 +55,27 @@
     }
 
     function downloadImage() {
+        switch ($fileType) {
+            case FileType.Image:
+                downloadProcessedImage();
+                break;
+            case FileType.Gif:
+                downloadProcessedGif();
+                break;
+        }
+    }
+
+    async function downloadProcessedGif() {
+        if ($processedGif) {
+            const blob = await makeGif($processedGif);
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "output.gif";
+            a.click();
+        }
+    }
+
+    function downloadProcessedImage() {
         if ($processedImageUrl) {
             const a = document.createElement("a");
             a.href = $processedImageUrl;
