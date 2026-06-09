@@ -33,6 +33,17 @@
         }
     }
 
+    function downloadResult() {
+        if (
+            $config.format === OutputFormat.Html &&
+            $fileType === FileType.Image
+        ) {
+            downloadHtml();
+        } else {
+            downloadTxt();
+        }
+    }
+
     function downloadTxt() {
         // Prepare text content: if it's HTML, we should really just get the text for a .txt file
         const blob = new Blob([currentText], { type: "text/plain" });
@@ -95,27 +106,14 @@
         📋 Copy
     </Button>
 
-    {#if $config.format === OutputFormat.Ansi}
-        <Button
-            size="sm"
-            onclick={downloadTxt}
-            title="Download as .txt"
-            disabled={$fileType === FileType.None}
-        >
-            💾 .txt
-        </Button>
-    {/if}
-
-    {#if $config.format === OutputFormat.Html}
-        <Button
-            size="sm"
-            onclick={downloadHtml}
-            title="Download as .html"
-            disabled={$fileType === FileType.None}
-        >
-            🌐 .html
-        </Button>
-    {/if}
+    <Button
+        size="sm"
+        onclick={downloadResult}
+        title="Download the result"
+        disabled={$fileType === FileType.None}
+    >
+        💾 Save
+    </Button>
 
     <Button
         size="sm"
