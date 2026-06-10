@@ -83,7 +83,7 @@ function loadImage(file: File): void {
         originalImageUrl.set(url);
 
         // Trigger conversion
-        runConversion();
+        runConversion(0);
     };
     reader.readAsArrayBuffer(file);
 
@@ -100,7 +100,7 @@ function loadGif(file: File): void {
         gifBytes.set(bytes);
 
         // Trigger conversion
-        runConversion();
+        runConversion(0);
     };
     reader.readAsArrayBuffer(file);
 
