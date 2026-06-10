@@ -1,7 +1,6 @@
 <script lang="ts">
     import { asciiGifPlayer } from "$lib/stores";
     import "$lib/web_components/ascii_gif_renderer";
-    import { onMount } from "svelte";
     import Button from "../atoms/Button.svelte";
     import Slider from "../atoms/Slider.svelte";
 
@@ -16,7 +15,7 @@
         isPlaying = $asciiGifPlayer.playing;
     }
 
-    onMount(() => {
+    $effect(() => {
         if (!$asciiGifPlayer) return;
 
         const onFrame = (e: CustomEvent<{ index: number }>) => {

@@ -7,6 +7,7 @@ import init, {
     type ConvertImageResult,
 } from "$wasm/logo_to_ascii.js";
 import type { AsciiAnimation } from "./web_components/ascii_gif_renderer";
+import type { GifFrameOutput } from "./web_components/gif_player";
 
 let initialized = false;
 
@@ -144,10 +145,6 @@ export async function convertImage(
     return { ascii, imagePngUrl };
 }
 
-export interface GifFrameOutput {
-    delayMs: number;
-    pngUrl: string;
-}
 export interface ConvertGifOutput {
     ascii_json: AsciiAnimation;
     originalGif: GifFrameOutput[];
