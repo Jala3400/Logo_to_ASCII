@@ -83,7 +83,7 @@
                 min={1}
                 max={20}
                 step={1}
-                onchange={(v) => updateConfig("border_thickness", v)}
+                oninput={(v) => updateConfig("border_thickness", v)}
             />
 
             {#if isChecked("color")}
@@ -93,7 +93,7 @@
                     min={0}
                     max={360}
                     step={1}
-                    onchange={(v) => updateConfig("color_diff", v)}
+                    oninput={(v) => updateConfig("color_diff", v)}
                 />
             {/if}
 
@@ -104,7 +104,7 @@
                     min={0}
                     max={1}
                     step={0.01}
-                    onchange={(v) => updateConfig("brightness_diff", v)}
+                    oninput={(v) => updateConfig("brightness_diff", v)}
                 />
             {/if}
 
@@ -115,7 +115,7 @@
                     min={0}
                     max={1}
                     step={0.01}
-                    onchange={(v) => updateConfig("alpha_diff", v)}
+                    oninput={(v) => updateConfig("alpha_diff", v)}
                 />
             {/if}
         </div>
@@ -131,9 +131,6 @@
     }
 
     .border-settings {
-        margin-top: var(--spacing-sm);
-        padding-top: var(--spacing-sm);
-        border-top: 1px solid var(--border);
         display: flex;
         flex-direction: column;
         gap: var(--spacing-sm);

@@ -63,7 +63,7 @@
         min={0}
         max={1}
         step={0.01}
-        onchange={(v) => updateConfig("threshold", v)}
+        oninput={(v) => updateConfig("threshold", v)}
     />
 
     <Slider
@@ -72,7 +72,7 @@
         min={0}
         max={1}
         step={0.01}
-        onchange={(v) => updateConfig("midpoint_brightness", v)}
+        oninput={(v) => updateConfig("midpoint_brightness", v)}
     />
 </Section>
 
