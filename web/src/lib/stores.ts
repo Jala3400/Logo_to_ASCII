@@ -1,6 +1,9 @@
 import { derived, writable } from "svelte/store";
 import { DEFAULT_CONFIG, type GifFrameOutput, type L2aConfig } from "./wasm";
-import type { AsciiAnimation } from "./web_components/ascii_gif_renderer";
+import type {
+    AsciiAnimation,
+    AsciiPlayerElement,
+} from "./web_components/ascii_gif_renderer";
 
 /** User configuration (reactive — triggers re-conversion) */
 export const config = writable<L2aConfig>({ ...DEFAULT_CONFIG });
@@ -32,6 +35,9 @@ export const processedGif = writable<GifFrameOutput[] | null>(null);
 
 /** ASCII output for GIFs */
 export const asciiGifOutput = writable<AsciiAnimation | null>(null);
+
+/** GIF player */
+export const asciiGifPlayer = writable<AsciiPlayerElement | null>(null);
 
 /** ========== Status flags ========== */
 

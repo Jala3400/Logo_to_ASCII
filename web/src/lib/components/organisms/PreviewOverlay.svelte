@@ -1,5 +1,6 @@
 <script lang="ts">
     import {
+        asciiGifOutput,
         asciiImageOutput,
         config,
         FileType,
@@ -10,6 +11,7 @@
         overlayOpacity,
         processedImageUrl,
     } from "$lib/stores";
+    import AsciiPlayer from "../molecules/AsciiGifPlayer.svelte";
 
     let imageUrl = $derived(
         $imageDisplayMode === ImageDisplayMode.Original
@@ -21,9 +23,9 @@
 <div class="preview__overlay-container">
     <div class="preview__overlay-inner">
         {#if $fileType === FileType.Gif}
-            <p class="preview__overlay-placeholder">
-                GIF preview not available.
-            </p>
+            {#if $asciiGifOutput}
+                <AsciiPlayer animation={$asciiGifOutput} autoplay />
+            {/if}
         {/if}
 
         {#if $fileType === FileType.Image}

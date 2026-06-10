@@ -187,13 +187,15 @@ class AsciiPlayer extends HTMLElement implements AsciiPlayerElement {
     #render(): void {
         if (!this.#anim) return;
         const frame = this.#anim.frames[this.#idx];
-        this.#pre.textContent = frame.ascii;
+        this.#pre.innerHTML = frame.ascii;
+
         this.dispatchEvent(
             new CustomEvent<AsciiFrameEvent>("ascii-frame", {
                 bubbles: true,
                 detail: { index: this.#idx, frame },
             }),
         );
+
         if (this.#idx === this.#anim.frames.length - 1) {
             this.dispatchEvent(
                 new CustomEvent("ascii-end", { bubbles: true, detail: {} }),
@@ -203,14 +205,11 @@ class AsciiPlayer extends HTMLElement implements AsciiPlayerElement {
 
     #schedule(): void {
         const delay = this.#anim!.frames[this.#idx].delay_ms / this.#speed;
-        this.#timer = setTimeout(
-            () => {
-                this.#idx = this.#wrap(this.#idx + 1);
-                this.#render();
-                if (this.#playing) this.#schedule();
-            },
-            Math.max(16, delay),
-        );
+        this.#timer = setTimeout(() => {
+            this.#idx = this.#wrap(this.#idx + 1);
+            this.#render();
+            if (this.#playing) this.#schedule();
+        }, delay);
     }
 
     #stop(): void {

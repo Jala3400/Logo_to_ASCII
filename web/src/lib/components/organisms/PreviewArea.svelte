@@ -1,6 +1,14 @@
 <script lang="ts">
     import { loadFile } from "$lib/converter";
-    import { errorMessage, showResult, viewMode, wasmReady } from "$lib/stores";
+    import {
+        errorMessage,
+        FileType,
+        fileType,
+        showResult,
+        viewMode,
+        wasmReady,
+    } from "$lib/stores";
+    import GifControls from "../molecules/GifControls.svelte";
     import PreviewOverlay from "./PreviewOverlay.svelte";
     import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
@@ -77,17 +85,21 @@
             <p class="preview__empty-title">Drop an image here</p>
             <p class="preview__empty-hint">or click to browse</p>
         </div>
+    {:else if $errorMessage}
+        <div class="preview__error">
+            <span>⚠️</span>
+            <span>{$errorMessage}</span>
+        </div>
     {:else}
-        {#if $errorMessage}
-            <div class="preview__error">
-                <span>⚠️</span>
-                <span>{$errorMessage}</span>
-            </div>
-        {/if}
-
         <div class="preview__content">
             <ViewComponent />
         </div>
+
+        {#if $fileType === FileType.Gif}
+            <div id="preview__gif-controls">
+                <GifControls />
+            </div>
+        {/if}
     {/if}
 
     <input
@@ -105,6 +117,9 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md);
+        padding-bottom: var(--spacing-xs);
         background-color: var(--bg-primary);
         position: relative;
         transition: border-color 0.2s ease;
@@ -180,6 +195,10 @@
     .preview__content {
         flex: 1;
         overflow: hidden;
-        padding: var(--spacing-md);
+    }
+
+    #preview__gif-controls {
+        display: flex;
+        justify-content: center;
     }
 </style>
