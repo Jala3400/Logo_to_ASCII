@@ -56,10 +56,18 @@ export async function initialize(): Promise<void> {
     }
 }
 
+export function loadFile(file: File): void {
+    if (file.type === "image/gif") {
+        loadGif(file);
+    } else if (file.type.startsWith("image/")) {
+        loadImage(file);
+    }
+}
+
 /**
  * Load an image file. Creates the original preview URL and stores the bytes.
  */
-export function loadImage(file: File): void {
+function loadImage(file: File): void {
     const reader = new FileReader();
     reader.onload = () => {
         const bytes = new Uint8Array(reader.result as ArrayBuffer);
@@ -85,7 +93,7 @@ export function loadImage(file: File): void {
 /**
  * Load a GIF file. Calls
  */
-export function loadGif(file: File): void {
+function loadGif(file: File): void {
     const reader = new FileReader();
     reader.onload = () => {
         const bytes = new Uint8Array(reader.result as ArrayBuffer);

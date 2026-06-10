@@ -38,14 +38,14 @@
                     draggable="false"
                 />
             {/if}
-        {/if}
 
-        <div
-            class="preview__overlay-ascii"
-            style="font-size: {$config.char_size}px"
-        >
-            {@html $asciiImageOutput}
-        </div>
+            <div
+                class="preview__overlay-ascii"
+                style="font-size: {$config.char_size}px"
+            >
+                {@html $asciiImageOutput}
+            </div>
+        {/if}
     </div>
 </div>
 

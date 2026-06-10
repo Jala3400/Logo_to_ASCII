@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { loadImage, loadGif } from "$lib/converter";
+    import { loadFile } from "$lib/converter";
     import { errorMessage, showResult, viewMode, wasmReady } from "$lib/stores";
     import PreviewOverlay from "./PreviewOverlay.svelte";
     import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
     const VIEWS = {
         "side-by-side": PreviewSideBySide,
-        "overlay": PreviewOverlay,
+        overlay: PreviewOverlay,
     } as const;
 
     let ViewComponent = $derived(VIEWS[$viewMode as keyof typeof VIEWS]);
@@ -22,11 +22,7 @@
         const file = e.dataTransfer?.files[0];
         if (!file) return;
 
-        if (file.type === "image/gif") {
-            loadGif(file);
-        } else if (file.type.startsWith("image/")) {
-            loadImage(file);
-        }
+        loadFile(file);
     }
 
     function handleDragOver(e: DragEvent) {
@@ -47,11 +43,7 @@
             return;
         }
 
-        if (file.type === "image/gif") {
-            loadGif(file);
-        } else if (file.type.startsWith("image/")) {
-            loadImage(file);
-        }
+        loadFile(file);
 
         target.value = "";
     }
