@@ -57,6 +57,9 @@ export async function initialize(): Promise<void> {
 }
 
 export function loadFile(file: File): void {
+    isConverting.set(true);
+    errorMessage.set(null);
+
     if (file.type === "image/gif") {
         loadGif(file);
     } else if (file.type.startsWith("image/")) {
@@ -112,14 +115,15 @@ function loadGif(file: File): void {
  */
 export function runConversion(delay = 150): void {
     if (debounceTimer) clearTimeout(debounceTimer);
+
+    isConverting.set(true);
+    errorMessage.set(null);
+
     debounceTimer = setTimeout(() => doConvert(), delay);
 }
 
 async function doConvert(): Promise<void> {
     const type = get(fileType);
-
-    isConverting.set(true);
-    errorMessage.set(null);
 
     try {
         if (type === FileType.Image) {

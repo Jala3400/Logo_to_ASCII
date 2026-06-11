@@ -4,6 +4,7 @@
         errorMessage,
         FileType,
         fileType,
+        isConverting,
         showResult,
         viewMode,
         wasmReady,
@@ -73,6 +74,13 @@
             <span class="preview__spinner">⏳</span>
             <p>Loading WASM module...</p>
         </div>
+    {:else if $isConverting}
+        <div class="preview__empty">
+            <span class="preview__spinner">⏳</span>
+            <p>
+                Converting {$fileType === FileType.Image ? "image" : "gif"}...
+            </p>
+        </div>
     {:else if !$showResult}
         <div
             class="preview__empty"
@@ -82,7 +90,7 @@
             onkeydown={(e) => e.key === "Enter" && openFilePicker()}
         >
             <span class="preview__empty-icon">🖼️</span>
-            <p class="preview__empty-title">Drop an image here</p>
+            <p class="preview__empty-title">Drop an image/gif here</p>
             <p class="preview__empty-hint">or click to browse</p>
         </div>
     {:else if $errorMessage}
