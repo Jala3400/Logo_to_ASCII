@@ -91,7 +91,6 @@
             bind:this={asciiWrapper}
             onscroll={handleScroll}
             class="preview__scroll-area"
-            style="font-size: ${$config.char_size}px"
         >
             {#if $fileType === FileType.Gif}
                 {#if $asciiGifOutput}

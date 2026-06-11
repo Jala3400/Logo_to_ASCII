@@ -67,7 +67,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
             Some(name) => format!("'{}', monospace", name),
             None => "monospace".to_string(),
         };
-        result.push_str(&format!("<pre style=\"font-family:{}\">", font_family));
+        result.push_str(&format!(
+            "<pre style=\"font-family:{}; font-size: {}px\">",
+            font_family, config.char_size
+        ));
     }
 
     let mut block = vec![0f32; cell_size];
