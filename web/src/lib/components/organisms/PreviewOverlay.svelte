@@ -117,25 +117,4 @@
         font-size: inherit;
         line-height: inherit;
     }
-
-    /* Let gif-player render at natural size inside the overlay */
-    .preview__overlay-base :global(gif-player)::part(img) {
-        max-width: none;
-        display: block;
-    }
-
-    /* Stretch ascii overlay to cover the base exactly */
-    .preview__overlay-ascii {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        line-height: 1;
-        z-index: 2;
-        font-family: "Ubuntu Mono", monospace;
-    }
 </style>

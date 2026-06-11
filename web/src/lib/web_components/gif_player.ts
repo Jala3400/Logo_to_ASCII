@@ -90,7 +90,6 @@ class GifPlayer extends HTMLElement implements GifPlayerElement {
         :host { display: block; }
         img {
           display: block;
-          max-width: 100%;
           height: auto;
         }
       </style>

@@ -146,20 +146,6 @@
         font-family: "Ubuntu Mono", monospace;
     }
 
-    /* Images and players sit at natural size from top-left */
-    .preview__scroll-area :global(img),
-    .preview__scroll-area :global(gif-player),
-    .preview__scroll-area :global(ascii-player) {
-        display: block;
-        max-width: none;
-    }
-
-    /* Pierce the gif-player shadow DOM to remove the default max-width constraint */
-    .preview__scroll-area :global(gif-player)::part(img) {
-        max-width: none;
-        display: block;
-    }
-
     .preview__center-in-div {
         display: flex;
         align-items: center;
