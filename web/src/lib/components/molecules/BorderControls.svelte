@@ -79,11 +79,12 @@
 
             <Slider
                 label="Thickness (px)"
-                value={$config.border_thickness ?? 1}
-                min={1}
+                value={$config.border_thickness ?? 0}
+                min={0}
                 max={20}
                 step={1}
-                oninput={(v) => updateConfig("border_thickness", v)}
+                oninput={(v) =>
+                    updateConfig("border_thickness", v === 0 ? null : v)}
             />
 
             {#if isChecked("color")}
