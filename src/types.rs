@@ -1,7 +1,7 @@
 /// Top-level JSON output structure for an animated GIF.
 #[derive(serde::Serialize)]
 pub struct GifOutput {
-    /// Font name, path, or "default" when using the built-in font
+    /// Font name, path, or "Ubuntu Mono" when using the built-in font
     pub font: String,
     /// Width of the ASCII art in characters
     pub width: usize,

@@ -1,6 +1,15 @@
 <script lang="ts">
-    import { loadImage } from "$lib/converter";
-    import { errorMessage, hasImage, viewMode, wasmReady } from "$lib/stores";
+    import { loadFile } from "$lib/converter";
+    import {
+        errorMessage,
+        FileType,
+        fileType,
+        isConverting,
+        showResult,
+        viewMode,
+        wasmReady,
+    } from "$lib/stores";
+    import GifControls from "../molecules/GifControls.svelte";
     import PreviewOverlay from "./PreviewOverlay.svelte";
     import PreviewSideBySide from "./PreviewSideBySide.svelte";
 
@@ -18,10 +27,11 @@
         e.preventDefault();
         dragover = false;
         if (!$wasmReady) return;
+
         const file = e.dataTransfer?.files[0];
-        if (file && file.type.startsWith("image/")) {
-            loadImage(file);
-        }
+        if (!file) return;
+
+        loadFile(file);
     }
 
     function handleDragOver(e: DragEvent) {
@@ -36,9 +46,14 @@
     function handleFileSelect(e: Event) {
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
-        if (file) {
-            loadImage(file);
+
+        if (!file) {
+            target.value = "";
+            return;
         }
+
+        loadFile(file);
+
         target.value = "";
     }
 
@@ -59,7 +74,14 @@
             <span class="preview__spinner">⏳</span>
             <p>Loading WASM module...</p>
         </div>
-    {:else if !$hasImage}
+    {:else if $isConverting}
+        <div class="preview__empty">
+            <span class="preview__spinner">⏳</span>
+            <p>
+                Converting {$fileType === FileType.Image ? "image" : "gif"}...
+            </p>
+        </div>
+    {:else if !$showResult}
         <div
             class="preview__empty"
             onclick={openFilePicker}
@@ -68,20 +90,24 @@
             onkeydown={(e) => e.key === "Enter" && openFilePicker()}
         >
             <span class="preview__empty-icon">🖼️</span>
-            <p class="preview__empty-title">Drop an image here</p>
+            <p class="preview__empty-title">Drop an image/gif here</p>
             <p class="preview__empty-hint">or click to browse</p>
         </div>
+    {:else if $errorMessage}
+        <div class="preview__error">
+            <span>⚠️</span>
+            <span>{$errorMessage}</span>
+        </div>
     {:else}
-        {#if $errorMessage}
-            <div class="preview__error">
-                <span>⚠️</span>
-                <span>{$errorMessage}</span>
-            </div>
-        {/if}
-
         <div class="preview__content">
             <ViewComponent />
         </div>
+
+        {#if $fileType === FileType.Gif}
+            <div id="preview__gif-controls">
+                <GifControls />
+            </div>
+        {/if}
     {/if}
 
     <input
@@ -99,6 +125,9 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md);
+        padding-bottom: var(--spacing-xs);
         background-color: var(--bg-primary);
         position: relative;
         transition: border-color 0.2s ease;
@@ -174,6 +203,10 @@
     .preview__content {
         flex: 1;
         overflow: hidden;
-        padding: var(--spacing-md);
+    }
+
+    #preview__gif-controls {
+        display: flex;
+        justify-content: center;
     }
 </style>

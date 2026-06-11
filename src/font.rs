@@ -72,7 +72,7 @@ pub fn load_font(config: &ImageConfig) -> Result<Font<'static>, L2aError> {
     }
 }
 
-/// Builds a [`FontBitmap`] by rendering each character in `config.chars` using
+/// Builds a [`FontBitmap`] by rendering each character in `config.get_processed_chars()` using
 /// the supplied font.
 ///
 /// This is an I/O-free step
@@ -96,7 +96,7 @@ pub fn build_font_bitmap(font: &Font<'_>, config: &ImageConfig) -> Result<FontBi
     let width = glyph.h_metrics().advance_width.ceil() as usize;
 
     // Create a vector of characters directly from the input string
-    let characters: Vec<char> = config.chars.chars().collect();
+    let characters: Vec<char> = config.get_processed_chars().chars().collect();
 
     let pixel_count = (width * height) as f32;
     let mut final_font = FontBitmap {

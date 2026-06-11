@@ -1,13 +1,13 @@
 <script lang="ts">
     interface Props {
-        label: string;
+        label?: string;
         value: number;
         min?: number;
         max?: number;
         step?: number;
         disabled?: boolean;
         compact?: boolean;
-        onchange?: (value: number) => void;
+        oninput?: (value: number) => void;
     }
 
     let {
@@ -18,7 +18,7 @@
         step = 1,
         disabled = false,
         compact = false,
-        onchange,
+        oninput,
     }: Props = $props();
 
     function handleInput(e: Event) {
@@ -26,7 +26,7 @@
         const val = parseFloat(target.value);
         if (!isNaN(val)) {
             value = val;
-            onchange?.(value);
+            oninput?.(value);
         }
     }
 
@@ -48,14 +48,22 @@
             // Correct floating point precision issues
             const decimals = step.toString().split(".")[1]?.length || 0;
             value = parseFloat(newValue.toFixed(decimals));
-            onchange?.(value);
+            oninput?.(value);
         }
     }
 </script>
 
-<label class="slider" class:slider--disabled={disabled} class:slider--compact={compact} onwheel={handleWheel}>
+<label
+    class="slider"
+    class:slider--disabled={disabled}
+    class:slider--compact={compact}
+    onwheel={handleWheel}
+>
     <div class="slider__header">
-        <span class="slider__label">{label}</span>
+        {#if label}
+            <span class="slider__label">{label}</span>
+        {/if}
+
         <input
             type="number"
             class="slider__num-input"
