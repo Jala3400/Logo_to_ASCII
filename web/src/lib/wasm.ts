@@ -50,6 +50,8 @@ export interface L2aConfig {
     // Dimensions
     width_in_chars: number | null;
     height_in_chars: number | null;
+    width_in_pixels: number | null;
+    height_in_pixels: number | null;
 
     // Padding
     padding: number;
@@ -93,6 +95,8 @@ export const DEFAULT_CONFIG: L2aConfig = {
     midpoint_brightness: 0.5,
     width_in_chars: null,
     height_in_chars: null,
+    width_in_pixels: null,
+    height_in_pixels: null,
     padding: 0,
     padding_x: 0,
     padding_y: 0,

@@ -26,6 +26,24 @@
     />
 
     <Slider
+        label="Width (pixels)"
+        value={$config.width_in_pixels ?? 0}
+        min={0}
+        max={2000}
+        step={1}
+        oninput={(v) => updateConfig("width_in_pixels", v === 0 ? null : v)}
+    />
+
+    <Slider
+        label="Height (pixels)"
+        value={$config.height_in_pixels ?? 0}
+        min={0}
+        max={2000}
+        step={1}
+        oninput={(v) => updateConfig("height_in_pixels", v === 0 ? null : v)}
+    />
+
+    <Slider
         label="Padding"
         value={$config.padding}
         min={0}
