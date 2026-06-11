@@ -19,7 +19,7 @@ use std::num::NonZeroU32;
 pub fn process_image(
     mut img: RgbaImage,
     mut cfg: config::ImageConfig,
-    font: types::FontBitmap,
+    font: &types::FontBitmap,
 ) -> Result<(String, RgbaImage), errors::L2aError> {
     use image_ops::{
         add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,

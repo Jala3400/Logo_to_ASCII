@@ -67,7 +67,10 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
             Some(name) => format!("'{}', monospace", name),
             None => "monospace".to_string(),
         };
-        result.push_str(&format!("<pre style=\"font-family:{}\">", font_family));
+        result.push_str(&format!(
+            "<pre style=\"font-family:{}; font-size: {}px\">",
+            font_family, config.char_size
+        ));
     }
 
     let mut block = vec![0f32; cell_size];
@@ -96,7 +99,11 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
 
     // Closing
     match config.format {
-        OutputFormat::Ansi => result.push_str("\x1b[0m"),
+        OutputFormat::Ansi => {
+            if config.print_color {
+                result.push_str("\x1b[0m");
+            }
+        }
         OutputFormat::Html => {
             result.push_str("</pre>");
         }

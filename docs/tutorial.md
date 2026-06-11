@@ -144,17 +144,17 @@ Other important arguments are:
 
 - `--verbose`: Will give you information about the characters used and the image.
 
-An example of this is:
-
-```txt
-Characters:  .·'qpbd8
-Char size: 8x16, Line gap: 0
-Block size: 8x16
-Original dimensions 1920x1600
-Image dimensions: 640x533
-Number of characters: 80x34
-Unfilled space: 0x11 pixels
-```
+  An example of this is:
+  
+  ```txt
+  Characters:  .·'qpbd8
+  Char size: 8x16, Line gap: 0
+  Block size: 8x16
+  Original dimensions 1920x1600
+  Image dimensions: 640x533
+  Number of characters: 80x34
+  Unfilled space: 0x11 pixels
+  ```
 
 - `-o, --output <OUTPUT>`: Saves the image after all the transformations.
 - `--alg <ALGORITHM>`: Changes how a character is chosen for a block. Find more in the [algorithm tutorial](tutorial/tutorial-algorithms.md)
@@ -162,6 +162,7 @@ Unfilled space: 0x11 pixels
 
 Other important tutorials:
 
+- In the [how to use the results](./use-the-results.md) doc you will find how to fit the outputs of the program in the terminal and in the web.
 - To adapt the result to your specific font you should check out the [font tutorial](tutorial/tutorial-font.md)
 - In the [preprocessing tutorial](tutorial/tutorial-preprocessing.md) you will learn more transformations this app can do to the image before converting it.
 - You can learn other formats of printing the colors (like one you can use in html), in the [format tutorial](tutorial/tutorial-format.md)

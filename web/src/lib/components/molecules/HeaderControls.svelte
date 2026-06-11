@@ -1,7 +1,7 @@
 <script lang="ts">
     import Button from "$lib/components/atoms/Button.svelte";
-    import { loadImage } from "$lib/converter";
-    import { hasImage, isConverting, wasmReady } from "$lib/stores";
+    import { loadFile } from "$lib/converter";
+    import { showResult, isConverting, wasmReady } from "$lib/stores";
     import ViewModeControls from "./ViewModeControls.svelte";
 
     let fileInput: HTMLInputElement;
@@ -10,7 +10,7 @@
         const target = e.target as HTMLInputElement;
         const file = target.files?.[0];
         if (file) {
-            loadImage(file);
+            loadFile(file);
         }
         target.value = "";
     }
@@ -21,16 +21,12 @@
 </script>
 
 <div class="header-controls">
-    {#if $hasImage}
+    {#if $showResult}
         <div class="header-controls__content">
             <ViewModeControls />
         </div>
         <div class="change-img-btn-wrapper">
-            <Button
-                size="sm"
-                variant="ghost"
-                onclick={openFilePicker}
-            >
+            <Button size="sm" variant="ghost" onclick={openFilePicker}>
                 Change Image
             </Button>
         </div>

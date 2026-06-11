@@ -1,37 +1,73 @@
 <script lang="ts">
     import {
-        asciiOutput,
+        asciiGifOutput,
+        asciiImageOutput,
         config,
+        FileType,
+        fileType,
+        ImageDisplayMode,
         imageDisplayMode,
+        originalGif,
         originalImageUrl,
         overlayOpacity,
+        processedGif,
         processedImageUrl,
     } from "$lib/stores";
+    import AsciiGifPlayer from "../molecules/AsciiGifPlayer.svelte";
+    import GifPlayer from "../molecules/GifPlayer.svelte";
 
     let imageUrl = $derived(
-        $imageDisplayMode === "original"
+        $imageDisplayMode === ImageDisplayMode.Original
             ? $originalImageUrl
             : $processedImageUrl,
+    );
+
+    let gifAnimation = $derived(
+        $imageDisplayMode === ImageDisplayMode.Original
+            ? $originalGif
+            : $processedGif,
     );
 </script>
 
 <div class="preview__overlay-container">
     <div class="preview__overlay-inner">
-        {#if imageUrl}
-            <img
-                src={imageUrl}
-                alt="Base"
-                class="preview__image preview__overlay-base"
-                style="opacity: {$overlayOpacity}"
-                draggable="false"
-            />
+        {#if $fileType === FileType.Gif}
+            {#if gifAnimation}
+                <div
+                    class="preview__image preview__overlay-base"
+                    style="opacity: {$overlayOpacity}"
+                >
+                    <GifPlayer animation={gifAnimation} />
+                </div>
+            {/if}
+
+            {#if $asciiGifOutput}
+                <div class="preview__overlay-ascii">
+                    <AsciiGifPlayer animation={$asciiGifOutput} autoplay />
+                </div>
+            {/if}
+        {:else if $fileType === FileType.Image}
+            {#if imageUrl}
+                <img
+                    src={imageUrl}
+                    alt={$imageDisplayMode === ImageDisplayMode.Original
+                        ? "Original"
+                        : "Processed Image"}
+                    class="preview__image preview__overlay-base"
+                    style="opacity: {$overlayOpacity}"
+                    draggable="false"
+                />
+            {/if}
+
+            {#if $asciiImageOutput}
+                <div
+                    class="preview__overlay-ascii"
+                    style="font-size: {$config.char_size}px"
+                >
+                    {@html $asciiImageOutput}
+                </div>
+            {/if}
         {/if}
-        <div
-            class="preview__overlay-ascii"
-            style="font-size: {$config.char_size}px"
-        >
-            {@html $asciiOutput}
-        </div>
     </div>
 </div>
 

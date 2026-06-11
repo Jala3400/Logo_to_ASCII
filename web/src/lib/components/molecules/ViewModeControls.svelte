@@ -48,7 +48,7 @@
             max={1}
             step={0.05}
             compact={true}
-            onchange={(v) => overlayOpacity.set(v)}
+            oninput={(v) => overlayOpacity.set(v)}
         />
     {/if}
 </div>

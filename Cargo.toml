@@ -1,6 +1,6 @@
 [package]
 name = "l2a"
-version = "0.7.0"
+version = "0.8.0"
 edition = "2021"
 
 [lib]
@@ -12,10 +12,11 @@ crate-type = ["cdylib", "rlib"]
 # Dependencies available on every target
 [dependencies]
 image = "0.24.6"
-imageproc = "0.23.0"
+imageproc = "0.23.1"
 rusttype = "0.9.3"
 thiserror = "2.0.18"
 serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 # Dependencies only needed for the native CLI build
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

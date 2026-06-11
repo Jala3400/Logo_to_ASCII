@@ -13,7 +13,7 @@
         min={0}
         max={200}
         step={1}
-        onchange={(v) => updateConfig("width_in_chars", v === 0 ? null : v)}
+        oninput={(v) => updateConfig("width_in_chars", v === 0 ? null : v)}
     />
 
     <Slider
@@ -22,7 +22,25 @@
         min={0}
         max={200}
         step={1}
-        onchange={(v) => updateConfig("height_in_chars", v === 0 ? null : v)}
+        oninput={(v) => updateConfig("height_in_chars", v === 0 ? null : v)}
+    />
+
+    <Slider
+        label="Width (pixels)"
+        value={$config.width_in_pixels ?? 0}
+        min={0}
+        max={2000}
+        step={1}
+        oninput={(v) => updateConfig("width_in_pixels", v === 0 ? null : v)}
+    />
+
+    <Slider
+        label="Height (pixels)"
+        value={$config.height_in_pixels ?? 0}
+        min={0}
+        max={2000}
+        step={1}
+        oninput={(v) => updateConfig("height_in_pixels", v === 0 ? null : v)}
     />
 
     <Slider
@@ -31,7 +49,7 @@
         min={0}
         max={20}
         step={1}
-        onchange={(v) => updateConfig("padding", v)}
+        oninput={(v) => updateConfig("padding", v)}
     />
 
     <Slider
@@ -40,7 +58,7 @@
         min={0}
         max={20}
         step={1}
-        onchange={(v) => updateConfig("padding_x", v)}
+        oninput={(v) => updateConfig("padding_x", v)}
     />
 
     <Slider
@@ -49,7 +67,7 @@
         min={0}
         max={20}
         step={1}
-        onchange={(v) => updateConfig("padding_y", v)}
+        oninput={(v) => updateConfig("padding_y", v)}
     />
 
     <Toggle
