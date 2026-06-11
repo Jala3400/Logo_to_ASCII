@@ -6,7 +6,7 @@
     import Toggle from "../atoms/Toggle.svelte";
 
     const algorithmOptions = [
-        { value: "max_prod", label: "Max Product" },
+        { value: "max_prod", label: "Max Product (default)" },
         { value: "min_diff", label: "Min Difference" },
         { value: "min_diff_sq", label: "Min Difference Squared" },
         { value: "gradient", label: "Gradient" },
@@ -15,8 +15,8 @@
     ];
 
     const formatOptions = [
-        { value: "html", label: "HTML (colored)" },
-        { value: "ansi", label: "ANSI (terminal)" },
+        { value: "html", label: "HTML" },
+        { value: "ansi", label: "ANSI" },
     ];
 </script>
 
