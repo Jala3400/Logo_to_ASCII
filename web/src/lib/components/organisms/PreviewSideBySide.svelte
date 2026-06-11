@@ -1,15 +1,20 @@
 <script lang="ts">
     import {
+        asciiGifOutput,
         asciiImageOutput,
         config,
         FileType,
         fileType,
         ImageDisplayMode,
         imageDisplayMode,
+        originalGif,
         originalImageUrl,
+        processedGif,
         processedImageUrl,
-        viewMode
+        viewMode,
     } from "$lib/stores";
+    import AsciiGifPlayer from "../molecules/AsciiGifPlayer.svelte";
+    import GifPlayer from "../molecules/GifPlayer.svelte";
 
     let imageWrapper: HTMLElement | undefined = $state();
     let asciiWrapper: HTMLElement | undefined = $state();
@@ -36,6 +41,12 @@
             ? $originalImageUrl
             : $processedImageUrl,
     );
+
+    let gifAnimation = $derived(
+        $imageDisplayMode === ImageDisplayMode.Original
+            ? $originalGif
+            : $processedGif,
+    );
 </script>
 
 <div class="preview__split">
@@ -43,41 +54,58 @@
         <h3 class="preview__panel-title">
             {$imageDisplayMode === ImageDisplayMode.Original
                 ? "Original"
-                : "Processed Image"}
+                : "Processed"}
         </h3>
+
         <div
             bind:this={imageWrapper}
             onscroll={handleScroll}
-            class="preview__image-wrapper"
+            class="preview__scroll-area"
         >
             {#if $fileType === FileType.Gif}
-                <p class="preview__overlay-placeholder">
-                    GIF preview not available.
-                </p>
-            {/if}
-            {#if $fileType === FileType.Image}
+                {#if gifAnimation}
+                    <div class="preview__center-in-div">
+                        <GifPlayer animation={gifAnimation} />
+                    </div>
+                {/if}
+            {:else if $fileType === FileType.Image}
                 {#if imageUrl}
-                    <img
-                        src={imageUrl}
-                        alt={$imageDisplayMode === ImageDisplayMode.Original
-                            ? "Original"
-                            : "Processed Image"}
-                        class="preview__image preview__overlay-base"
-                        draggable="false"
-                    />
+                    <div class="preview__center-in-div">
+                        <img
+                            src={imageUrl}
+                            alt={$imageDisplayMode === ImageDisplayMode.Original
+                                ? "Original"
+                                : "Processed Image"}
+                            draggable="false"
+                        />
+                    </div>
                 {/if}
             {/if}
         </div>
     </div>
+
     <div class="preview__panel">
         <h3 class="preview__panel-title">ASCII Output</h3>
+
         <div
             bind:this={asciiWrapper}
             onscroll={handleScroll}
-            class="preview__ascii-wrapper"
-            style="font-size: {$config.char_size}px"
+            class="preview__scroll-area"
+            style="font-size: ${$config.char_size}px"
         >
-            {@html $asciiImageOutput}
+            {#if $fileType === FileType.Gif}
+                {#if $asciiGifOutput}
+                    <div class="preview__center-in-div">
+                        <AsciiGifPlayer animation={$asciiGifOutput} autoplay />
+                    </div>
+                {/if}
+            {:else if $fileType === FileType.Image}
+                {#if $asciiImageOutput}
+                    <div class="preview__center-in-div">
+                        {@html $asciiImageOutput}
+                    </div>
+                {/if}
+            {/if}
         </div>
     </div>
 </div>
@@ -106,21 +134,8 @@
         flex-shrink: 0;
     }
 
-    .preview__image-wrapper {
-        flex: 1;
-        display: flex;
-        overflow: auto;
-        background-color: var(--bg-secondary);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border);
-    }
-
-    .preview__image {
-        display: block;
-        margin: auto;
-    }
-
-    .preview__ascii-wrapper {
+    /* Single scroll area — no flex centering, content overflows naturally */
+    .preview__scroll-area {
         flex: 1;
         overflow: auto;
         background-color: var(--bg-secondary);
@@ -129,10 +144,33 @@
         padding: var(--spacing-sm);
         line-height: 1;
         font-family: "Ubuntu Mono", monospace;
-        display: flex;
     }
 
-    .preview__ascii-wrapper :global(pre) {
+    /* Images and players sit at natural size from top-left */
+    .preview__scroll-area :global(img),
+    .preview__scroll-area :global(gif-player),
+    .preview__scroll-area :global(ascii-player) {
+        display: block;
+        max-width: none;
+    }
+
+    /* Pierce the gif-player shadow DOM to remove the default max-width constraint */
+    .preview__scroll-area :global(gif-player)::part(img) {
+        max-width: none;
+        display: block;
+    }
+
+    .preview__center-in-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: min-content;
+        min-height: min-content;
+        width: 100%;
+        height: 100%;
+    }
+
+    .preview__scroll-area :global(pre) {
         margin: auto;
         white-space: pre;
         font-family: inherit;
