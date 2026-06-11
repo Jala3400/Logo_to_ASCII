@@ -13,6 +13,8 @@ It works best with images of few colors and well-defined edges.
 
 Now with a [web version](https://logo-to-ascii.pages.dev) (vibe coded).
 
+Supports images and gifs.
+
 ## Table of Contents
 
 - [Logo to ASCII](#logo-to-ascii)
@@ -56,6 +58,7 @@ For more options, see the [Tutorial](docs/tutorial.md).
 ## Documentation
 
 - [Detailed Installation](docs/installation.md)
+- [How to use the results](docs/use-the-results.md)
 - [Tutorial](docs/tutorial.md)
   - [Algorithms](docs/tutorial/tutorial-algorithms.md)
   - [Borders](docs/tutorial/tutorial-borders.md)
