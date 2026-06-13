@@ -51,6 +51,36 @@ fn get_conversion_info(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig)
     }
 }
 
+fn get_starting_string(num_blocks_x: usize, num_blocks_y: usize, config: &ImageConfig) -> String {
+    let color_overhead = match config.format {
+        OutputFormat::Ansi => 22,
+        OutputFormat::Html => 60,
+    };
+
+    let string_capacity = num_blocks_x
+        * num_blocks_y
+        * if config.print_color {
+            color_overhead
+        } else {
+            1
+        };
+
+    let mut result = String::with_capacity(string_capacity);
+
+    // HTML preamble
+    if matches!(config.format, OutputFormat::Html) {
+        let font_family = match &config.font_name {
+            Some(name) => format!("'{}', monospace", name),
+            None => "monospace".to_string(),
+        };
+        result.push_str(&format!(
+            "<pre style=\"font-family:{}; font-size: {}px\">",
+            font_family, config.char_size
+        ));
+    }
+    result
+}
+
 // Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> String {
     // Enable colors (ANSI support is a Windows-only native concern; not needed in WASM)
@@ -67,30 +97,7 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
         cell_size,
     } = get_conversion_info(img, font, config);
 
-    let color_overhead = match config.format {
-        OutputFormat::Ansi => 22,
-        OutputFormat::Html => 60,
-    };
-    let string_capacity = num_blocks_x
-        * num_blocks_y
-        * if config.print_color {
-            color_overhead
-        } else {
-            1
-        };
-    let mut result = String::with_capacity(string_capacity);
-
-    // HTML preamble
-    if matches!(config.format, OutputFormat::Html) {
-        let font_family = match &config.font_name {
-            Some(name) => format!("'{}', monospace", name),
-            None => "monospace".to_string(),
-        };
-        result.push_str(&format!(
-            "<pre style=\"font-family:{}; font-size: {}px\">",
-            font_family, config.char_size
-        ));
-    }
+    let mut result = get_starting_string(num_blocks_x, num_blocks_y, config);
 
     let mut block = vec![0f32; cell_size];
     let mut color_block = if config.print_color {
