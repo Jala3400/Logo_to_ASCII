@@ -11,9 +11,12 @@ use image::{Rgba, RgbaImage};
 
 // Struct with the necessary information to convert an image to ASCII art
 struct ConversionInfo {
+    height: usize,
+    width: usize,
     num_blocks_x: usize,
     num_blocks_y: usize,
     cell_size: usize,
+    vertical_step: usize,
 }
 
 fn get_conversion_info(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> ConversionInfo {
@@ -45,9 +48,12 @@ fn get_conversion_info(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig)
     }
 
     ConversionInfo {
+        height,
+        width,
         num_blocks_x,
         num_blocks_y,
         cell_size,
+        vertical_step,
     }
 }
 
@@ -106,23 +112,15 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
         }
     }
 
-    let ConversionInfo {
-        num_blocks_x,
-        num_blocks_y,
-        cell_size,
-    } = get_conversion_info(img, font, config);
+    let conversion_info = get_conversion_info(img, font, config);
 
-    let mut result = get_starting_string(num_blocks_x, num_blocks_y, config);
-
-    process_image_blocks(
-        img,
-        font,
-        num_blocks_x,
-        num_blocks_y,
-        cell_size,
+    let mut result = get_starting_string(
+        conversion_info.num_blocks_x,
+        conversion_info.num_blocks_y,
         config,
-        &mut result,
     );
+
+    process_image_blocks(img, font, &conversion_info, config, &mut result);
 
     // Closing
     close_string(&mut result, config);
@@ -134,27 +132,26 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
 fn process_image_blocks(
     img: &RgbaImage,
     font: &FontBitmap,
-    num_blocks_x: usize,
-    num_blocks_y: usize,
-    cell_size: usize,
+    conversion_info: &ConversionInfo,
     config: &ImageConfig,
     result: &mut String,
 ) {
-    let mut block = vec![0.0; cell_size];
+    let mut block = vec![0.0; conversion_info.cell_size];
     let mut color_block = if config.print_color {
-        Some(vec![(0, 0, 0); cell_size])
+        Some(vec![(0, 0, 0); conversion_info.cell_size])
     } else {
         None
     };
 
-    for y in 0..num_blocks_y {
-        for x in 0..num_blocks_x {
+    for y in 0..conversion_info.num_blocks_y {
+        for x in 0..conversion_info.num_blocks_x {
             process_block_pixels(
                 img,
                 font,
                 x,
                 y,
                 config,
+                conversion_info,
                 &mut block,
                 &mut color_block,
                 result,
@@ -172,6 +169,7 @@ fn process_block_pixels(
     x: usize,
     y: usize,
     config: &ImageConfig,
+    conversion_info: &ConversionInfo,
     block: &mut [f32],
     color_block: &mut Option<Vec<(u8, u8, u8)>>,
     result: &mut String,
@@ -179,23 +177,17 @@ fn process_block_pixels(
     let mut bright_pixels = 0;
     let mut full_pixels = 0;
 
-    let font_width = font.width;
-    let font_height = font.height;
-    let vertical_step = font.vertical_step;
-    let width = img.width() as usize;
-    let height = img.height() as usize;
-
     // For each pixel in the block generate the brightness value and store the color
     // The block height might be greater than the character height, so iterate by the
     // font_height but calculate the coordinates with the vertical_step.
-    for by in 0..font_height {
-        let iy = y * vertical_step + by;
-        for bx in 0..font_width {
-            let ix = x * font_width + bx;
-            let cords_block = by * font_width + bx;
+    for by in 0..font.height {
+        let iy = y * conversion_info.vertical_step + by;
+        for bx in 0..font.width {
+            let ix = x * font.width + bx;
+            let cords_block = by * font.width + bx;
 
             // Handle out-of-bounds pixels (transparent)
-            if iy < height && ix < width {
+            if iy < conversion_info.height && ix < conversion_info.width {
                 // Process in-bounds pixel
                 let pixel = img.get_pixel(ix as u32, iy as u32);
                 let brightness = calc_custom_brightness(&pixel, config);
