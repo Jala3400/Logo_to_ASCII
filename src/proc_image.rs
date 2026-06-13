@@ -65,7 +65,8 @@ fn get_starting_string(num_blocks_x: usize, num_blocks_y: usize, config: &ImageC
             1
         };
 
-    let mut result = String::with_capacity(string_capacity);
+    // Add some extra space for the HTML preamble and closing tags
+    let mut result = String::with_capacity(string_capacity + 100);
 
     // HTML preamble
     if matches!(config.format, OutputFormat::Html) {
@@ -78,6 +79,7 @@ fn get_starting_string(num_blocks_x: usize, num_blocks_y: usize, config: &ImageC
             font_family, config.char_size
         ));
     }
+
     result
 }
 
