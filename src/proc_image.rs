@@ -81,6 +81,19 @@ fn get_starting_string(num_blocks_x: usize, num_blocks_y: usize, config: &ImageC
     result
 }
 
+fn close_string(result: &mut String, config: &ImageConfig) {
+    match config.format {
+        OutputFormat::Ansi => {
+            if config.print_color {
+                result.push_str("\x1b[0m");
+            }
+        }
+        OutputFormat::Html => {
+            result.push_str("</pre>");
+        }
+    }
+}
+
 // Converts an image to ASCII art
 pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> String {
     // Enable colors (ANSI support is a Windows-only native concern; not needed in WASM)
@@ -99,14 +112,39 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
 
     let mut result = get_starting_string(num_blocks_x, num_blocks_y, config);
 
-    let mut block = vec![0f32; cell_size];
+    process_image_blocks(
+        img,
+        font,
+        num_blocks_x,
+        num_blocks_y,
+        cell_size,
+        config,
+        &mut result,
+    );
+
+    // Closing
+    close_string(&mut result, config);
+
+    result
+}
+
+#[inline]
+fn process_image_blocks(
+    img: &RgbaImage,
+    font: &FontBitmap,
+    num_blocks_x: usize,
+    num_blocks_y: usize,
+    cell_size: usize,
+    config: &ImageConfig,
+    result: &mut String,
+) {
+    let mut block = vec![0.0; cell_size];
     let mut color_block = if config.print_color {
-        Some(vec![(0u8, 0u8, 0u8); cell_size])
+        Some(vec![(0, 0, 0); cell_size])
     } else {
         None
     };
 
-    // Iterate over the blocks of pixels and print each character
     for y in 0..num_blocks_y {
         for x in 0..num_blocks_x {
             process_block_pixels(
@@ -117,25 +155,11 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
                 config,
                 &mut block,
                 &mut color_block,
-                &mut result,
+                result,
             );
         }
         result.push('\n');
     }
-
-    // Closing
-    match config.format {
-        OutputFormat::Ansi => {
-            if config.print_color {
-                result.push_str("\x1b[0m");
-            }
-        }
-        OutputFormat::Html => {
-            result.push_str("</pre>");
-        }
-    }
-
-    result
 }
 
 /// Process a single block of pixels, match it with a character and push it to the result
