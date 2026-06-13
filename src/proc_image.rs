@@ -9,22 +9,18 @@ use crate::{
 use enable_ansi_support::enable_ansi_support;
 use image::{Rgba, RgbaImage};
 
-// Converts an image to ASCII art
-pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> String {
-    // Enable colors (ANSI support is a Windows-only native concern; not needed in WASM)
-    #[cfg(not(target_arch = "wasm32"))]
-    if config.print_color {
-        if let Err(e) = enable_ansi_support() {
-            eprintln!("Warning: Could not enable ANSI support: {}", e);
-        }
-    }
+// Struct with the necessary information to convert an image to ASCII art
+struct ConversionInfo {
+    num_blocks_x: usize,
+    num_blocks_y: usize,
+    cell_size: usize,
+}
 
-    // Get font dimensions
+fn get_conversion_info(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> ConversionInfo {
     let cell_size = font.cell_size();
     let font_width = font.width;
     let vertical_step = font.vertical_step;
 
-    // Precalculate needed values
     let height = img.height() as usize;
     let width = img.width() as usize;
 
@@ -47,6 +43,29 @@ pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -
             );
         }
     }
+
+    ConversionInfo {
+        num_blocks_x,
+        num_blocks_y,
+        cell_size,
+    }
+}
+
+// Converts an image to ASCII art
+pub fn convert_image(img: &RgbaImage, font: &FontBitmap, config: &ImageConfig) -> String {
+    // Enable colors (ANSI support is a Windows-only native concern; not needed in WASM)
+    #[cfg(not(target_arch = "wasm32"))]
+    if config.print_color {
+        if let Err(e) = enable_ansi_support() {
+            eprintln!("Warning: Could not enable ANSI support: {}", e);
+        }
+    }
+
+    let ConversionInfo {
+        num_blocks_x,
+        num_blocks_y,
+        cell_size,
+    } = get_conversion_info(img, font, config);
 
     let color_overhead = match config.format {
         OutputFormat::Ansi => 22,
