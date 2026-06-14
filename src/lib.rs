@@ -1,19 +1,18 @@
 #[cfg(not(target_arch = "wasm32"))]
-pub mod args;
-pub mod characters;
-pub mod config;
-pub mod errors;
-pub mod font;
-pub mod image_ops;
-pub mod proc_block;
-pub mod proc_image;
-pub mod proc_pixel;
-pub mod types;
+pub mod cli;
+pub mod core;
+pub mod processing;
+pub mod text;
 #[cfg(target_arch = "wasm32")]
 pub mod wasm;
 
 use image::RgbaImage;
 use std::num::NonZeroU32;
+
+use crate::{
+    core::{config, errors, types},
+    processing::{image_ops, proc_image},
+};
 
 /// Internal pipeline: runs all image processing steps given a pre-built font.
 pub fn process_image(

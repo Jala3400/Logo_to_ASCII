@@ -1,8 +1,8 @@
 use crate::{
     config::ImageConfig,
     image_ops::apply_negative_to_pixel,
-    proc_block::{get_color_for_block, match_block_with_char},
-    proc_pixel::calc_custom_brightness,
+    processing::proc_block::{get_color_for_block, match_block_with_char},
+    processing::proc_pixel::calc_custom_brightness,
     types::{CharInfo, FontBitmap, OutputFormat},
 };
 #[cfg(not(target_arch = "wasm32"))]

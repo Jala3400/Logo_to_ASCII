@@ -96,8 +96,8 @@ impl Default for ImageConfig {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-impl From<crate::args::Args> for ImageConfig {
-    fn from(args: crate::args::Args) -> Self {
+impl From<crate::cli::args::Args> for ImageConfig {
+    fn from(args: crate::cli::args::Args) -> Self {
         ImageConfig {
             font_name: args.font_name,
             font_path: args.font_path,

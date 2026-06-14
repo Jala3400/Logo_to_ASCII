@@ -1,7 +1,7 @@
 use crate::{
     config::ImageConfig,
     errors::L2aError,
-    proc_pixel::calculate_brightness,
+    processing::proc_pixel::calculate_brightness,
     types::{CharInfo, FontBitmap},
 };
 #[cfg(not(target_arch = "wasm32"))]
@@ -13,7 +13,7 @@ use std::vec;
 
 /// The raw bytes of the embedded default font, baked into the binary at compile time.
 pub const DEFAULT_FONT_BYTES: &[u8] =
-    include_bytes!("../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf");
+    include_bytes!("../../fonts/UbuntuMono/UbuntuMonoNerdFont-Regular.ttf");
 
 /// Returns the embedded default font as a `Font<'static>`.
 
