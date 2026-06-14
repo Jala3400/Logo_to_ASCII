@@ -1,4 +1,4 @@
-use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet, OutputFormat};
+use crate::core::types::{Algorithm, BorderCriteria, BuiltInCharSet, OutputFormat};
 use std::num::NonZeroU32;
 
 /// Plain configuration struct used by the core processing pipeline.

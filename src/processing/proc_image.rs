@@ -1,9 +1,13 @@
 use crate::{
-    config::ImageConfig,
+    core::{
+        config::ImageConfig,
+        types::{CharInfo, FontBitmap, OutputFormat},
+    },
     image_ops::apply_negative_to_pixel,
-    processing::proc_block::{get_color_for_block, match_block_with_char},
-    processing::proc_pixel::calc_custom_brightness,
-    types::{CharInfo, FontBitmap, OutputFormat},
+    processing::{
+        proc_block::{get_color_for_block, match_block_with_char},
+        proc_pixel::calc_custom_brightness,
+    },
 };
 #[cfg(not(target_arch = "wasm32"))]
 use enable_ansi_support::enable_ansi_support;

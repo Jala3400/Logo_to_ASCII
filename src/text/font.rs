@@ -1,8 +1,10 @@
 use crate::{
-    config::ImageConfig,
-    errors::L2aError,
+    core::{
+        config::ImageConfig,
+        errors::L2aError,
+        types::{CharInfo, FontBitmap},
+    },
     processing::proc_pixel::calculate_brightness,
-    types::{CharInfo, FontBitmap},
 };
 #[cfg(not(target_arch = "wasm32"))]
 use font_kit::{family_name::FamilyName, properties::Properties, source::SystemSource};
