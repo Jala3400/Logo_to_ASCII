@@ -8,6 +8,7 @@ use crate::{
 #[cfg(not(target_arch = "wasm32"))]
 use enable_ansi_support::enable_ansi_support;
 use image::{Rgba, RgbaImage};
+use rayon::prelude::*;
 use std::fmt::Write;
 
 // Struct with the necessary information to convert an image to ASCII art
@@ -138,31 +139,39 @@ fn process_image_blocks(
     config: &ImageConfig,
     result: &mut String,
 ) {
-    let mut block = vec![0.0; conversion_info.cell_size];
-    let mut color_block = if config.print_color {
-        Some(vec![(0, 0, 0); conversion_info.cell_size])
-    } else {
-        None
-    };
-
     let outbound_pixel = get_outbound_pixel(config);
 
-    for y in 0..conversion_info.num_blocks_y {
-        for x in 0..conversion_info.num_blocks_x {
-            process_block_pixels(
-                img,
-                font,
-                x,
-                y,
-                config,
-                conversion_info,
-                &outbound_pixel,
-                &mut block,
-                &mut color_block,
-                result,
-            );
-        }
-        result.push('\n');
+    let rows: Vec<String> = (0..conversion_info.num_blocks_y)
+        .into_par_iter()
+        .map(|y| {
+            // Each thread gets its own scratch buffers — no sharing needed
+            let mut block = vec![0.0f32; conversion_info.cell_size];
+            let mut color_block = config
+                .print_color
+                .then(|| vec![(0u8, 0u8, 0u8); conversion_info.cell_size]);
+            let mut row = String::new();
+
+            for x in 0..conversion_info.num_blocks_x {
+                process_block_pixels(
+                    img,
+                    font,
+                    x,
+                    y,
+                    config,
+                    conversion_info,
+                    &outbound_pixel,
+                    &mut block,
+                    &mut color_block,
+                    &mut row,
+                );
+            }
+            row.push('\n');
+            row
+        })
+        .collect(); // preserves order — rayon guarantees this
+
+    for row in rows {
+        result.push_str(&row);
     }
 }
 
