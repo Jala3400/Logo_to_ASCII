@@ -1,4 +1,4 @@
-use crate::types::{Algorithm, CharInfo, FontBitmap};
+use crate::core::types::{Algorithm, CharInfo, FontBitmap};
 
 // Matches a block of pixels with a character
 pub fn match_block_with_char<'a>(
