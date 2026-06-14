@@ -583,7 +583,7 @@ dependencies = [
 
 [[package]]
 name = "l2a"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "clap",
  "enable-ansi-support",
