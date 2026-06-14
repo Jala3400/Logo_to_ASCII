@@ -272,15 +272,11 @@ fn push_formatted_character(
                 OutputFormat::Ansi => {
                     let _ = write!(result, "\x1b[38;2;{};{};{}m{}", r, g, b, char_info.char);
                 }
+
                 OutputFormat::Html => {
-                    let _ = write!(
-                        result,
-                        "<span style=\"color:rgb({},{},{})\">{}</span>",
-                        r,
-                        g,
-                        b,
-                        escape_html(char_info.char)
-                    );
+                    let _ = write!(result, "<span style=\"color:rgb({},{},{})\">", r, g, b);
+                    push_escaped_html(char_info.char, result);
+                    result.push_str("</span>");
                 }
             }
         } else {
@@ -294,19 +290,19 @@ fn push_formatted_character(
 #[inline]
 fn push_character(c: char, result: &mut String, config: &ImageConfig) {
     if matches!(config.format, OutputFormat::Html) {
-        result.push_str(&escape_html(c));
+        push_escaped_html(c, result);
     } else {
         result.push(c);
     }
 }
 
 #[inline]
-fn escape_html(c: char) -> String {
+fn push_escaped_html(c: char, result: &mut String) {
     match c {
-        '<' => "&lt;".to_string(),
-        '>' => "&gt;".to_string(),
-        '&' => "&amp;".to_string(),
-        '"' => "&quot;".to_string(),
-        _ => c.to_string(),
+        '<' => result.push_str("&lt;"),
+        '>' => result.push_str("&gt;"),
+        '&' => result.push_str("&amp;"),
+        '"' => result.push_str("&quot;"),
+        _ => result.push(c),
     }
 }
