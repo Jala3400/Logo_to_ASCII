@@ -8,6 +8,7 @@ use crate::{
 #[cfg(not(target_arch = "wasm32"))]
 use enable_ansi_support::enable_ansi_support;
 use image::{Rgba, RgbaImage};
+use std::fmt::Write;
 
 // Struct with the necessary information to convert an image to ASCII art
 struct ConversionInfo {
@@ -80,10 +81,11 @@ fn get_starting_string(num_blocks_x: usize, num_blocks_y: usize, config: &ImageC
             Some(name) => format!("'{}', monospace", name),
             None => "monospace".to_string(),
         };
-        result.push_str(&format!(
+        let _ = write!(
+            result,
             "<pre style=\"font-family:{}; font-size: {}px\">",
             font_family, config.char_size
-        ));
+        );
     }
 
     result
@@ -249,15 +251,18 @@ fn push_formatted_character(
             let (r, g, b) = get_color_for_block(color_block, block, char_info);
             match config.format {
                 OutputFormat::Ansi => {
-                    result.push_str(&format!("\x1b[38;2;{};{};{}m{}", r, g, b, char_info.char))
+                    let _ = write!(result, "\x1b[38;2;{};{};{}m{}", r, g, b, char_info.char);
                 }
-                OutputFormat::Html => result.push_str(&format!(
-                    "<span style=\"color:rgb({},{},{})\">{}</span>",
-                    r,
-                    g,
-                    b,
-                    escape_html(char_info.char)
-                )),
+                OutputFormat::Html => {
+                    let _ = write!(
+                        result,
+                        "<span style=\"color:rgb({},{},{})\">{}</span>",
+                        r,
+                        g,
+                        b,
+                        escape_html(char_info.char)
+                    );
+                }
             }
         } else {
             push_character(char_info.char, result, config);
