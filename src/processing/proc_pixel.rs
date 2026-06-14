@@ -1,4 +1,4 @@
-use crate::config::ImageConfig;
+use crate::core::config::ImageConfig;
 use image::Rgba;
 
 // Calculate the brightness and subtract the midpoint brightness

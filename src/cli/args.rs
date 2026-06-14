@@ -1,4 +1,4 @@
-use crate::types::{Algorithm, BorderCriteria, BuiltInCharSet, OutputFormat};
+use crate::core::types::{Algorithm, BorderCriteria, BuiltInCharSet, OutputFormat};
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::Parser;

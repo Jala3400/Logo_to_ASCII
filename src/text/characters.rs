@@ -1,5 +1,5 @@
-use crate::config::ImageConfig;
-use crate::types::BuiltInCharSet;
+use crate::core::config::ImageConfig;
+use crate::core::types::BuiltInCharSet;
 
 impl ImageConfig {
     pub fn get_processed_chars(&self) -> String {

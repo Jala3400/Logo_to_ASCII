@@ -1,8 +1,13 @@
-use crate::types::{GifFrame, GifOutput};
-use crate::{config::ImageConfig, process_image};
-use image::codecs::gif::GifDecoder;
-use image::AnimationDecoder;
-use image::ImageDecoder;
+use crate::{
+    core::{
+        config::ImageConfig,
+        types::{GifFrame, GifOutput},
+    },
+    process_gif, process_image,
+    processing::gif_ops::composite_gif_frames,
+    text::font,
+};
+use rayon::prelude::*;
 use wasm_bindgen::prelude::*;
 
 // * Image-related structures
@@ -47,9 +52,9 @@ pub fn convert_image(image_bytes: &[u8], config: JsValue) -> Result<ConvertImage
         serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
     // Use the embedded default font (Ubuntu Mono)
-    let font_obj = crate::font::default_font().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    let font = crate::font::build_font_bitmap(&font_obj, &cfg)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let font_obj = font::default_font().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let font =
+        font::build_font_bitmap(&font_obj, &cfg).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
     let img = image::load_from_memory(image_bytes)
         .map_err(|e| JsValue::from_str(&e.to_string()))?
@@ -174,106 +179,68 @@ impl ConvertGifResult {
 pub fn convert_gif(gif_bytes: &[u8], config: JsValue) -> Result<ConvertGifResult, JsValue> {
     let cfg: ImageConfig =
         serde_wasm_bindgen::from_value(config).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let font_obj = font::default_font().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let font =
+        font::build_font_bitmap(&font_obj, &cfg).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
-    // Build font bitmap (same as convert_image)
-    let font_obj = crate::font::default_font().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    let font = crate::font::build_font_bitmap(&font_obj, &cfg)
+    let raw_frames = composite_gif_frames(std::io::Cursor::new(gif_bytes))
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
 
-    // Decode GIF from memory
-    let cursor = std::io::Cursor::new(gif_bytes);
-    let decoder = GifDecoder::new(cursor).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    // Encode original frames in parallel — they're already composited
+    let original_frames: Vec<GifFrameInfo> = raw_frames
+        .par_iter()
+        .map(|f| {
+            let png_bytes = rgba_image_to_png_bytes(&f.image).unwrap();
+            GifFrameInfo {
+                png_bytes,
+                delay_ms: f.delay_ms,
+            }
+        })
+        .collect();
 
-    let (width, height) = decoder.dimensions();
-    let mut canvas = image::RgbaImage::new(width, height);
-    let frames = decoder.into_frames();
+    let processed =
+        process_gif(raw_frames, &cfg, &font).map_err(|e| JsValue::from_str(&e.to_string()))?;
 
-    // Determine the font label for JSON output
     let font_label = cfg
         .font_name
         .clone()
         .or_else(|| cfg.font_path.clone())
         .unwrap_or_else(|| "Ubuntu Mono".to_string());
 
-    let mut gif_frames: Vec<GifFrame> = Vec::new();
-    let mut original_frames: Vec<GifFrameInfo> = Vec::new();
-    let mut processed_frames: Vec<GifFrameInfo> = Vec::new();
-    let mut char_width: usize = 0;
-    let mut char_height: usize = 0;
+    let (char_width, char_height) = processed
+        .first()
+        .map(|f| {
+            (
+                (f.image.width() as usize + font.width - 1) / font.width,
+                (f.image.height() as usize + font.vertical_step - 1) / font.vertical_step,
+            )
+        })
+        .unwrap_or((0, 0));
 
-    for frame_result in frames {
-        let raw_frame = frame_result.map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let (processed_frames, gif_frames): (Vec<_>, Vec<_>) = processed
+        .par_iter()
+        .map(|f| {
+            let png_bytes = rgba_image_to_png_bytes(&f.image).unwrap();
+            (
+                GifFrameInfo {
+                    png_bytes,
+                    delay_ms: f.delay_ms,
+                },
+                GifFrame {
+                    ascii: f.ascii.clone(),
+                    delay_ms: f.delay_ms,
+                },
+            )
+        })
+        .unzip();
 
-        // Delay in milliseconds
-        let (numer, denom) = raw_frame.delay().numer_denom_ms();
-        let delay_ms = if denom == 0 {
-            0u64
-        } else {
-            (numer as u64) / (denom as u64)
-        };
-
-        // Composite frame onto canvas
-        let x = raw_frame.left() as u32;
-        let y = raw_frame.top() as u32;
-        let frame_width = raw_frame.buffer().width();
-        let frame_height = raw_frame.buffer().height();
-
-        if x == 0 && y == 0 && frame_width == width && frame_height == height {
-            canvas = raw_frame.buffer().clone();
-        } else {
-            for py in 0..frame_height {
-                for px in 0..frame_width {
-                    let cx = x + px;
-                    let cy = y + py;
-                    if cx < width && cy < height {
-                        canvas.put_pixel(cx, cy, *raw_frame.buffer().get_pixel(px, py));
-                    }
-                }
-            }
-        }
-
-        // Encode the original (composited) canvas as PNG
-        let original_png =
-            rgba_image_to_png_bytes(&canvas).map_err(|e| JsValue::from_str(&e.to_string()))?;
-
-        original_frames.push(GifFrameInfo {
-            png_bytes: original_png,
-            delay_ms,
-        });
-
-        // Run the ASCII pipeline on the canvas
-        let (ascii, processed_img) = process_image(canvas.clone(), cfg.clone(), &font)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-
-        // Derive character grid dimensions once
-        if char_width == 0 {
-            char_width = (processed_img.width() as usize + font.width - 1) / font.width;
-            char_height =
-                (processed_img.height() as usize + font.vertical_step - 1) / font.vertical_step;
-        }
-
-        // Encode the processed frame as PNG
-        let processed_png = rgba_image_to_png_bytes(&processed_img)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-
-        processed_frames.push(GifFrameInfo {
-            png_bytes: processed_png,
-            delay_ms,
-        });
-
-        gif_frames.push(GifFrame { ascii, delay_ms });
-    }
-
-    // Serialise the ASCII/JSON output
-    let gif_output = GifOutput {
+    let ascii_json = serde_json::to_string_pretty(&GifOutput {
         font: font_label,
         width: char_width,
         height: char_height,
         frames: gif_frames,
-    };
-
-    let ascii_json = serde_json::to_string_pretty(&gif_output)
-        .map_err(|e: serde_json::Error| JsValue::from_str(&e.to_string()))?;
+    })
+    .map_err(|e| JsValue::from_str(&e.to_string()))?;
 
     Ok(ConvertGifResult {
         ascii_json,

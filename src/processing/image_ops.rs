@@ -1,11 +1,13 @@
 use crate::{
-    config::ImageConfig,
-    errors::L2aError,
-    proc_pixel::{
+    core::{
+        config::ImageConfig,
+        errors::L2aError,
+        types::{BorderCriteria, FontBitmap},
+    },
+    processing::proc_pixel::{
         alpha_difference, brightness_difference, calculate_brightness, calculate_linear_brightness,
         hue_difference,
     },
-    types::{BorderCriteria, FontBitmap},
 };
 use image::{imageops, EncodableLayout, RgbaImage};
 use std::num::NonZeroU32;
