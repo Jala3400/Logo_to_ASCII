@@ -7,26 +7,30 @@ pub mod text;
 pub mod wasm;
 
 use image::RgbaImage;
+use rayon::prelude::*;
 use std::num::NonZeroU32;
 
 use crate::{
-    core::{config, errors, types},
-    processing::{image_ops, proc_image},
+    core::{config::ImageConfig, errors::L2aError, types::FontBitmap},
+    processing::{
+        gif_ops::{ProcessedGifFrame, RawGifFrame},
+        image_ops, proc_image,
+    },
 };
 
 /// Internal pipeline: runs all image processing steps given a pre-built font.
 pub fn process_image(
     mut img: RgbaImage,
-    mut cfg: config::ImageConfig,
-    font: &types::FontBitmap,
-) -> Result<(String, RgbaImage), errors::L2aError> {
+    mut cfg: ImageConfig,
+    font: &FontBitmap,
+) -> Result<(String, RgbaImage), L2aError> {
     use image_ops::{
         add_padding, borders_image, bw_filter, center_image, grayscale, negative, resize, saturate,
         treat_transparent,
     };
 
     if font.data.is_empty() {
-        return Err(errors::L2aError::NoCharacters);
+        return Err(L2aError::NoCharacters);
     }
 
     // Resolve character-based dimensions to pixels now that we know the font metrics.
@@ -87,4 +91,24 @@ pub fn process_image(
 
     let ascii = proc_image::convert_image(&img, &font, &cfg);
     Ok((ascii, img))
+}
+
+/// Pocess all composited frames in parallel.
+pub fn process_gif(
+    frames: Vec<RawGifFrame>,
+    config: &ImageConfig,
+    font: &FontBitmap,
+) -> Result<Vec<ProcessedGifFrame>, L2aError> {
+    frames
+        .into_par_iter()
+        .map(|f| {
+            let (ascii, image) = process_image(f.image, config.clone(), font)?;
+            Ok(ProcessedGifFrame {
+                ascii,
+                image,
+                delay_ms: f.delay_ms,
+                delay: f.delay,
+            })
+        })
+        .collect()
 }

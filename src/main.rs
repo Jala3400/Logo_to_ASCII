@@ -1,10 +1,17 @@
 use clap::Parser;
+use image::{
+    codecs::gif::{GifEncoder, Repeat},
+    Frame,
+};
 use logo_to_ascii::{
     cli::args::Args,
-    core::config::ImageConfig,
-    core::errors::L2aError,
-    core::types::{FontBitmap, GifFrame, GifOutput},
-    process_image,
+    core::{
+        config::ImageConfig,
+        errors::L2aError,
+        types::{FontBitmap, GifFrame, GifOutput},
+    },
+    process_gif, process_image,
+    processing::gif_ops::composite_gif_frames,
     text::font,
 };
 
@@ -53,111 +60,57 @@ fn process_gif_file(
     config: ImageConfig,
     font_bitmap: &FontBitmap,
 ) -> Result<(), L2aError> {
-    use image::codecs::gif::{GifDecoder, GifEncoder, Repeat};
-    use image::AnimationDecoder;
-    use image::Frame;
-    use image::ImageDecoder;
-
-    // Decode frames progressively
     let file = std::fs::File::open(path)?;
-    let decoder = GifDecoder::new(file)?;
+    let raw_frames = composite_gif_frames(file)?;
+    let processed = process_gif(raw_frames, &config, font_bitmap)?;
 
-    // Get canvas dimensions and create a canvas buffer
-    let (width, height) = decoder.dimensions();
-    let mut canvas = image::RgbaImage::new(width, height);
-    let frames = decoder.into_frames();
-
-    // Setup encoder if output is specified
-    let mut encoder_opt: Option<GifEncoder<std::fs::File>> = if let Some(ref output_path) = output {
-        let out_path = match image::ImageFormat::from_path(output_path) {
-            Ok(image::ImageFormat::Gif) => output_path.clone(),
-            _ => format!("{}.gif", output_path),
-        };
-
-        let out_file = std::fs::File::create(&out_path)?;
-        let mut encoder = GifEncoder::new(out_file);
-        encoder.set_repeat(Repeat::Infinite)?;
-        Some(encoder)
-    } else {
-        None
-    };
-
-    // Determine the font label for the JSON output
     let font_label = config
         .font_name
         .clone()
         .or_else(|| config.font_path.clone())
         .unwrap_or_else(|| "Ubuntu Mono".to_string());
 
-    let mut gif_frames: Vec<GifFrame> = Vec::new();
-    let mut char_width: usize = 0;
-    let mut char_height: usize = 0;
+    let (char_width, char_height) = processed
+        .first()
+        .map(|f| {
+            (
+                (f.image.width() as usize + font_bitmap.width - 1) / font_bitmap.width,
+                (f.image.height() as usize + font_bitmap.vertical_step - 1)
+                    / font_bitmap.vertical_step,
+            )
+        })
+        .unwrap_or((0, 0));
 
-    // Process each frame progressively
-    for frame_result in frames {
-        let raw_frame = frame_result?;
-
-        // Compute delay in milliseconds from the frame's Delay value
-        let (numer, denom) = raw_frame.delay().numer_denom_ms();
-        let delay_ms = if denom == 0 {
-            0u64
-        } else {
-            (numer as u64) / (denom as u64)
+    // Write output GIF if requested — stays sequential, GifEncoder is not Send
+    if let Some(ref output_path) = output {
+        let out_path = match image::ImageFormat::from_path(output_path) {
+            Ok(image::ImageFormat::Gif) => output_path.clone(),
+            _ => format!("{}.gif", output_path),
         };
-
-        // Get frame position and dimensions
-        let x = raw_frame.left() as u32;
-        let y = raw_frame.top() as u32;
-        let frame_width = raw_frame.buffer().width();
-        let frame_height = raw_frame.buffer().height();
-
-        // Optimize: if frame covers the entire canvas, just use it directly
-        if x == 0 && y == 0 && frame_width == width && frame_height == height {
-            canvas = raw_frame.buffer().clone();
-        } else {
-            // Composite the frame onto the canvas at its correct position
-            for py in 0..frame_height {
-                for px in 0..frame_width {
-                    let canvas_x = x + px;
-                    let canvas_y = y + py;
-                    if canvas_x < width && canvas_y < height {
-                        let pixel = *raw_frame.buffer().get_pixel(px, py);
-                        canvas.put_pixel(canvas_x, canvas_y, pixel);
-                    }
-                }
-            }
-        }
-
-        // Process the full canvas frame
-        let (ascii, processed_img) = process_image(canvas.clone(), config.clone(), font_bitmap)?;
-
-        // Derive character dimensions from the processed image (only needed once)
-        if char_width == 0 {
-            char_width =
-                (processed_img.width() as usize + font_bitmap.width - 1) / font_bitmap.width;
-            char_height = (processed_img.height() as usize + font_bitmap.vertical_step - 1)
-                / font_bitmap.vertical_step;
-        }
-
-        gif_frames.push(GifFrame { ascii, delay_ms });
-
-        // Save the full frame to the output GIF if requested
-        if let Some(ref mut encoder) = encoder_opt {
-            let frame = Frame::from_parts(processed_img, 0, 0, raw_frame.delay());
-            encoder.encode_frame(frame)?;
+        let mut encoder = GifEncoder::new(std::fs::File::create(&out_path)?);
+        encoder.set_repeat(Repeat::Infinite)?;
+        for f in &processed {
+            encoder.encode_frame(Frame::from_parts(f.image.clone(), 0, 0, f.delay))?;
         }
     }
 
-    // Emit the JSON output
-    let output_json = GifOutput {
-        font: font_label,
-        width: char_width,
-        height: char_height,
-        frames: gif_frames,
-    };
+    let gif_frames: Vec<GifFrame> = processed
+        .iter()
+        .map(|f| GifFrame {
+            ascii: f.ascii.clone(),
+            delay_ms: f.delay_ms,
+        })
+        .collect();
+
     println!(
         "{}",
-        serde_json::to_string_pretty(&output_json).map_err(|e| L2aError::Other(e.to_string()))?
+        serde_json::to_string_pretty(&GifOutput {
+            font: font_label,
+            width: char_width,
+            height: char_height,
+            frames: gif_frames,
+        })
+        .map_err(|e| L2aError::Other(e.to_string()))?
     );
 
     Ok(())
