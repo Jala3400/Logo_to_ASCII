@@ -145,6 +145,8 @@ fn process_image_blocks(
         None
     };
 
+    let outbound_pixel = get_outbound_pixel(config);
+
     for y in 0..conversion_info.num_blocks_y {
         for x in 0..conversion_info.num_blocks_x {
             process_block_pixels(
@@ -154,12 +156,41 @@ fn process_image_blocks(
                 y,
                 config,
                 conversion_info,
+                &outbound_pixel,
                 &mut block,
                 &mut color_block,
                 result,
             );
         }
         result.push('\n');
+    }
+}
+
+struct OutboundPixel {
+    brightness: f32,
+    color: (u8, u8, u8),
+    bright_pixel: usize,
+    full_pixel: usize,
+}
+
+fn get_outbound_pixel(config: &ImageConfig) -> OutboundPixel {
+    // An out of bounds pixel is considered a transparent pixel
+    let bg_color = config.transparent_color;
+    let mut bg_pixel = Rgba([bg_color[0], bg_color[1], bg_color[2], 255]);
+
+    if config.negative {
+        apply_negative_to_pixel(&mut bg_pixel);
+    }
+
+    let brightness = calc_custom_brightness(&bg_pixel, config);
+    let bright_pixel = (brightness > -config.midpoint_brightness) as usize;
+    let full_pixel = (brightness >= 0.0) as usize;
+
+    OutboundPixel {
+        brightness,
+        color: (bg_pixel[0], bg_pixel[1], bg_pixel[2]),
+        bright_pixel,
+        full_pixel,
     }
 }
 
@@ -172,6 +203,7 @@ fn process_block_pixels(
     y: usize,
     config: &ImageConfig,
     conversion_info: &ConversionInfo,
+    outbound_pixel: &OutboundPixel,
     block: &mut [f32],
     color_block: &mut Option<Vec<(u8, u8, u8)>>,
     result: &mut String,
@@ -207,27 +239,14 @@ fn process_block_pixels(
                 }
             } else {
                 // Out-of-bounds (the pixel in the image is transparent)
-                // Use background color and apply negative effect if needed
-                let bg_color = config.transparent_color;
-                let mut bg_pixel = Rgba([bg_color[0], bg_color[1], bg_color[2], 255]);
-
-                if config.negative {
-                    apply_negative_to_pixel(&mut bg_pixel);
-                }
-
-                let brightness = calc_custom_brightness(&bg_pixel, config);
-                block[cords_block] = brightness;
+                block[cords_block] = outbound_pixel.brightness;
 
                 if let Some(color_block) = color_block {
-                    color_block[cords_block] = (bg_pixel[0], bg_pixel[1], bg_pixel[2]);
+                    color_block[cords_block] = outbound_pixel.color;
                 }
 
-                if brightness > -config.midpoint_brightness {
-                    bright_pixels += 1;
-                    if brightness >= 0.0 {
-                        full_pixels += (brightness == 1.0 - config.midpoint_brightness) as usize;
-                    }
-                }
+                bright_pixels += outbound_pixel.bright_pixel;
+                full_pixels += outbound_pixel.full_pixel;
             }
         }
     }
