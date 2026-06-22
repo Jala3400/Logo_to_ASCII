@@ -23,8 +23,6 @@ fn main() {
 }
 
 fn run() -> Result<(), L2aError> {
-    let now = std::time::Instant::now();
-
     // Parse the command line arguments
     let args = Args::parse();
 
@@ -47,9 +45,6 @@ fn run() -> Result<(), L2aError> {
     } else {
         process_image_file(&path, output, config, &font_bitmap)?;
     }
-
-    let elapsed = now.elapsed();
-    eprintln!("Processing time: {:?} ms", elapsed * 1000);
 
     Ok(())
 }
