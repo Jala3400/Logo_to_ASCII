@@ -57,7 +57,7 @@ l2a ./images/sources/Cross_Calatrava.png -w 100
 
 This image is 100 characters wide.
 
-![Cross of Calatrava with 100 characters width](../images/ascii/cross_w100.md)
+![Cross of Calatrava with 100 characters width](../images/ascii/cross_w100.png)
 
 - Sometimes the image will not line up perfectly with the characters we have.
 
@@ -69,7 +69,7 @@ Here we apply a padding in the x-axis and y-axis of half a block, so the points 
 l2a .\images\sources\Cross_Calatrava.png --padx 4 --pady 8
 ```
 
-![Cross of Calatrava with offset](../images/ascii/cross_padx4_pady8.md)
+![Cross of Calatrava with offset](../images/ascii/cross_padx4_pady8.png)
 
 ## Colored Logo
 
